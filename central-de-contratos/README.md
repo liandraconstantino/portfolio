@@ -29,10 +29,19 @@ cria pastas e documentos → grava os links de volta na planilha.
 - Economia estimada: cerca de 1,2 h/mês e 14 h/ano
 
 ## Prints
-![Cenário no Make](01-cenario-make.png)
-![Planilha](02-planilha.png)
-![Pasta no Drive](03-drive.png)
-![E-mail de alerta](04-email.png)
+
+### Fluxo 1: alerta de vencimento
+![Cenário do alerta no Make](01-alerta-cenario.png)
+![E-mail de alerta recebido](02-alerta-email.png)
+![Planilha com os status](03-alerta-planilha.png)
+
+### Fluxo 2: pastas e anotações por pessoa
+![Cenário das pastas no Make](04-pastas-cenario.png)
+![Pastas criadas no Drive](05-pastas-drive.png)
+![Subpastas e anotações de uma pessoa](06-subpastas-pessoa.png)
+
+### Resultado final
+![Planilha completa com os links preenchidos](07-planilha-final.png)
 
 ## Limites
 Demonstração com 8 pessoas fictícias. O fluxo roda manualmente
