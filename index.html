@@ -3,48 +3,76 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Liandra Constantino | Portfólio de automação e IA</title>
+<title>Liandra Constantino | Projetos de IA e automação</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
 <style>
-  :root{--rosa:#c2185b;--roxo:#6a1b9a;--fundo:#faf7fb;--texto:#2a2330;--cinza:#6b6475}
+  :root{--bg:#070b16;--card:rgba(255,255,255,.05);--borda:rgba(255,255,255,.12);--texto:#e8ecf5;--suave:#9aa6c2;--ciano:#22d3ee;--violeta:#8b5cf6;--rosa:#ec4899}
   *{box-sizing:border-box}
-  body{margin:0;font-family:system-ui,-apple-system,Segoe UI,sans-serif;background:var(--fundo);color:var(--texto);line-height:1.5}
-  header{background:linear-gradient(135deg,var(--roxo),var(--rosa));color:#fff;padding:56px 20px 64px;text-align:center}
-  header h1{margin:0 0 8px;font-size:clamp(28px,5vw,42px)}
-  header p{margin:6px auto;max-width:620px;opacity:.95}
-  .aviso{display:inline-block;margin-top:14px;background:rgba(255,255,255,.18);border-radius:999px;padding:6px 14px;font-size:14px}
-  main{max-width:980px;margin:-32px auto 60px;padding:0 20px}
-  .filtros{display:flex;flex-wrap:wrap;gap:8px;justify-content:center;margin-bottom:22px}
-  .filtros button{border:0;background:#fff;color:var(--texto);padding:10px 18px;border-radius:999px;cursor:pointer;font-size:15px;box-shadow:0 2px 8px rgba(0,0,0,.08)}
-  .filtros button.ativo{background:var(--rosa);color:#fff}
-  .grade{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:18px}
-  .card{background:#fff;border-radius:16px;padding:20px;cursor:pointer;box-shadow:0 4px 14px rgba(0,0,0,.07);transition:transform .15s,box-shadow .15s;border:2px solid transparent}
-  .card:hover,.card:focus{transform:translateY(-4px);box-shadow:0 10px 24px rgba(106,27,154,.18);border-color:var(--rosa);outline:0}
-  .card .icone{font-size:32px}
-  .card h3{margin:8px 0 6px;font-size:18px}
-  .card p{margin:0 0 12px;color:var(--cinza);font-size:15px}
-  .selo{font-size:12px;border-radius:6px;padding:3px 9px;margin-right:6px;background:#f3e5f5;color:var(--roxo);display:inline-block;margin-bottom:4px}
-  .status{font-size:13px;font-weight:600}
-  .noar{color:#2e7d32}.breve{color:#e65100}
-  .fundo-modal{position:fixed;inset:0;background:rgba(20,10,30,.6);display:none;align-items:center;justify-content:center;padding:16px;z-index:10}
+  html{scroll-behavior:smooth}
+  body{margin:0;font-family:Inter,system-ui,sans-serif;background:var(--bg);color:var(--texto);line-height:1.55;overflow-x:hidden;min-height:100vh}
+  body::before{content:"";position:fixed;inset:0;z-index:-2;
+    background:radial-gradient(600px 400px at 15% 10%,rgba(139,92,246,.30),transparent 60%),
+               radial-gradient(700px 500px at 85% 20%,rgba(34,211,238,.22),transparent 60%),
+               radial-gradient(600px 500px at 50% 100%,rgba(236,72,153,.16),transparent 60%)}
+  body::after{content:"";position:fixed;inset:0;z-index:-1;opacity:.5;
+    background-image:linear-gradient(rgba(255,255,255,.04) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,.04) 1px,transparent 1px);
+    background-size:48px 48px;mask-image:radial-gradient(ellipse at 50% 30%,#000 30%,transparent 75%)}
+  header{text-align:center;padding:90px 20px 40px;max-width:860px;margin:0 auto}
+  .etiqueta{display:inline-block;font-size:13px;letter-spacing:.12em;text-transform:uppercase;color:var(--ciano);border:1px solid rgba(34,211,238,.4);padding:6px 14px;border-radius:999px;background:rgba(34,211,238,.08)}
+  h1{font-family:"Space Grotesk",sans-serif;font-size:clamp(38px,7vw,68px);margin:22px 0 10px;line-height:1.05;
+     background:linear-gradient(90deg,#fff,var(--ciano) 55%,var(--violeta));-webkit-background-clip:text;background-clip:text;color:transparent}
+  .sub{font-size:clamp(16px,2.4vw,20px);color:var(--suave);max-width:640px;margin:0 auto}
+  .selos{display:flex;flex-wrap:wrap;gap:10px;justify-content:center;margin-top:26px}
+  .selos span{font-size:13px;color:var(--texto);background:var(--card);border:1px solid var(--borda);padding:6px 12px;border-radius:999px;backdrop-filter:blur(8px)}
+  main{max-width:1040px;margin:0 auto;padding:10px 20px 60px}
+  .dica{text-align:center;color:var(--suave);font-size:14px;margin:0 0 18px}
+  .filtros{display:flex;flex-wrap:wrap;gap:10px;justify-content:center;margin-bottom:28px}
+  .filtros button{font:inherit;font-size:14px;color:var(--texto);background:var(--card);border:1px solid var(--borda);padding:10px 18px;border-radius:999px;cursor:pointer;transition:.2s;backdrop-filter:blur(8px)}
+  .filtros button:hover{border-color:var(--ciano)}
+  .filtros button.ativo{background:linear-gradient(90deg,var(--violeta),var(--ciano));border-color:transparent;color:#06101c;font-weight:600}
+  .grade{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:20px}
+  .card{position:relative;background:var(--card);border:1px solid var(--borda);border-radius:20px;padding:24px;cursor:pointer;backdrop-filter:blur(12px);
+        transition:transform .25s,border-color .25s,box-shadow .25s;animation:entra .5s both;overflow:hidden}
+  .card::before{content:"";position:absolute;inset:0;background:radial-gradient(300px 160px at var(--x,50%) var(--y,0%),rgba(34,211,238,.18),transparent 70%);opacity:0;transition:.3s}
+  .card:hover,.card:focus{transform:translateY(-6px);border-color:rgba(34,211,238,.6);box-shadow:0 18px 40px rgba(34,211,238,.12);outline:0}
+  .card:hover::before,.card:focus::before{opacity:1}
+  .card>*{position:relative}
+  .icone{width:48px;height:48px;border-radius:14px;display:grid;place-items:center;font-size:24px;background:linear-gradient(135deg,rgba(139,92,246,.35),rgba(34,211,238,.25));border:1px solid var(--borda)}
+  .setor{font-size:12px;letter-spacing:.1em;text-transform:uppercase;color:var(--ciano);margin:16px 0 4px}
+  .card h3{font-family:"Space Grotesk",sans-serif;font-size:20px;margin:0 0 8px}
+  .card p{margin:0 0 14px;color:var(--suave);font-size:15px}
+  .tags{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:14px}
+  .tags span{font-size:12px;padding:3px 10px;border-radius:6px;background:rgba(139,92,246,.18);color:#cdbbff}
+  .status{font-size:13px;font-weight:600;display:flex;align-items:center;gap:8px}
+  .status i{width:8px;height:8px;border-radius:50%;display:inline-block}
+  .noar{color:#4ade80}.noar i{background:#4ade80;box-shadow:0 0 10px #4ade80;animation:pulsa 1.8s infinite}
+  .breve{color:#fbbf24}.breve i{background:#fbbf24}
+  @keyframes pulsa{50%{opacity:.35}}
+  @keyframes entra{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:none}}
+  .fundo-modal{position:fixed;inset:0;background:rgba(3,6,14,.8);backdrop-filter:blur(6px);display:none;align-items:center;justify-content:center;padding:16px;z-index:10}
   .fundo-modal.aberto{display:flex}
-  .modal{background:#fff;border-radius:18px;max-width:900px;width:100%;max-height:92vh;overflow:auto;padding:26px;position:relative}
-  .fechar{position:absolute;top:12px;right:14px;border:0;background:#eee;border-radius:50%;width:36px;height:36px;font-size:20px;cursor:pointer}
-  .modal h2{margin-top:0;padding-right:40px}
-  .modal h4{margin:18px 0 4px;color:var(--roxo)}
-  .modal iframe{width:100%;height:520px;border:1px solid #ddd;border-radius:12px;margin-top:10px}
-  .botao{display:inline-block;margin-top:12px;background:var(--rosa);color:#fff;text-decoration:none;padding:10px 18px;border-radius:10px;font-weight:600}
-  footer{text-align:center;color:var(--cinza);padding:0 20px 40px;font-size:14px}
-  footer a{color:var(--rosa);font-weight:600}
+  .modal{background:#0d1324;border:1px solid var(--borda);border-radius:22px;max-width:920px;width:100%;max-height:92vh;overflow:auto;padding:30px;position:relative;box-shadow:0 30px 80px rgba(0,0,0,.6);animation:entra .3s}
+  .fechar{position:absolute;top:14px;right:16px;border:1px solid var(--borda);background:var(--card);color:var(--texto);border-radius:50%;width:38px;height:38px;font-size:20px;cursor:pointer}
+  .modal h2{font-family:"Space Grotesk",sans-serif;margin:0 0 6px;padding-right:44px;font-size:28px}
+  .modal h4{margin:22px 0 4px;color:var(--ciano);font-size:13px;letter-spacing:.1em;text-transform:uppercase}
+  .modal p{margin:0;color:var(--texto)}
+  .modal iframe{width:100%;height:540px;border:1px solid var(--borda);border-radius:14px;margin-top:10px;background:#fff}
+  .botao{display:inline-block;margin-top:14px;background:linear-gradient(90deg,var(--violeta),var(--ciano));color:#06101c;text-decoration:none;padding:11px 20px;border-radius:12px;font-weight:600}
+  footer{text-align:center;color:var(--suave);padding:20px 20px 50px;font-size:14px;border-top:1px solid var(--borda);max-width:1040px;margin:0 auto}
+  footer a{color:var(--ciano);text-decoration:none;font-weight:600}
 </style>
 </head>
 <body>
 <header>
+  <span class="etiqueta">Portfólio · IA e automação</span>
   <h1>Liandra Constantino</h1>
-  <p>Recrutadora, advogada e estudante de Psicologia. Uso IA e automação para resolver problemas reais de RH, organização e ações sociais.</p>
-  <span class="aviso">Clique em um projeto para ver mais. Todos os dados são fictícios.</span>
+  <p class="sub">Projetos que criei com IA e automação em diferentes setores: gestão de pessoas, produtividade e impacto social.</p>
+  <div class="selos"><span>Make</span><span>Bolt</span><span>Claude</span><span>APIs</span><span>GitHub</span></div>
 </header>
 
 <main>
+  <p class="dica">Escolha um setor e clique em um projeto para ver como funciona</p>
   <div class="filtros" id="filtros"></div>
   <div class="grade" id="grade"></div>
 </main>
@@ -52,71 +80,59 @@
 <div class="fundo-modal" id="fundo"><div class="modal" id="modal"></div></div>
 
 <footer>
-  Tempos de economia sempre marcados como <b>"medido em cenário simulado"</b>.<br>
+  Dados 100% fictícios. Economia de tempo sempre marcada como <b>"medido em cenário simulado"</b>.<br><br>
   <a href="https://github.com/liandraconstantino">GitHub</a> ·
   <a href="https://liandraconstantino.github.io/menuseguro/">MenuSeguro (MVP)</a>
 </footer>
 
 <script>
 const projetos = [
-  {
-    id:"plataforma", tema:"Organização", icone:"🗂️", status:"no ar",
+  { tema:"Produtividade", icone:"🗂️", status:"no ar",
     titulo:"Plataforma única de organização",
     resumo:"Kanban, notas e semana num só lugar, com modo demonstração.",
-    ferramentas:["Bolt","JavaScript","GitHub Pages"],
-    problema:"Minha rotina ficava espalhada entre Notion, Trello, Agenda e Drive, e eu perdia tempo abrindo e conferindo cada um.",
+    ferramentas:["Bolt","JavaScript"],
+    problema:"Tarefas, notas e agenda ficavam espalhadas em várias ferramentas, e muito tempo se perdia abrindo e conferindo cada uma.",
     como:"Um app próprio com quadro Kanban, notas em pastas e visão da semana. Os dados ficam no navegador de quem usa. O modo demonstração mostra dados fictícios para qualquer pessoa testar.",
-    horas:"Medição em andamento (tempo de conferir várias ferramentas versus um lugar só).",
-    link:"plataforma-unica/", embed:true
-  },
-  {
-    id:"estagio", tema:"R&S", icone:"⏰", status:"em breve",
+    horas:"Medição em andamento: tempo de conferir várias ferramentas versus um lugar só.",
+    link:"plataforma-unica/", embed:true },
+  { tema:"Gestão de pessoas", icone:"⏰", status:"em breve",
     titulo:"Alerta de contratos de estágio",
     resumo:"Aviso automático 2 meses antes do vencimento.",
     ferramentas:["Make","Google Planilhas"],
     problema:"Contratos de estágio vencem e alguém precisa lembrar de renovar ou encerrar a tempo.",
     como:"Uma planilha com os contratos e um fluxo no Make que lê as datas e envia um alerta 2 meses antes.",
-    horas:"Medição em andamento."
-  },
-  {
-    id:"entrevista", tema:"R&S", icone:"🎤", status:"em breve",
+    horas:"Medição em andamento." },
+  { tema:"Gestão de pessoas", icone:"🎤", status:"em breve",
     titulo:"Agente de roteiro de entrevista",
     resumo:"Gera roteiro por competências e parecer padronizado.",
-    ferramentas:["Claude","Prompt engineering"],
+    ferramentas:["Claude","Prompts"],
     problema:"Montar roteiro e parecer para cada vaga toma tempo e muda de pessoa para pessoa.",
-    como:"Um agente recebe a vaga e devolve perguntas por competência e um modelo de parecer. A decisão final é sempre da pessoa recrutadora.",
-    horas:"Medição em andamento."
-  },
-  {
-    id:"funil", tema:"R&S", icone:"📊", status:"em breve",
+    como:"Um agente recebe a vaga e devolve perguntas por competência e um modelo de parecer. A decisão final é sempre humana.",
+    horas:"Medição em andamento." },
+  { tema:"Gestão de pessoas", icone:"📊", status:"em breve",
     titulo:"Painel do funil de seleção",
     resumo:"Conversão, tempo e origem dos candidatos num dashboard.",
     ferramentas:["Análise de dados com IA"],
-    problema:"Sem números, fica difícil saber onde o processo seletivo trava.",
-    como:"Dashboard com dados fictícios e resumo escrito por IA.",
-    horas:"Medição em andamento."
-  },
-  {
-    id:"dinamicas", tema:"Impacto social", icone:"🧩", status:"em breve",
+    problema:"Sem números, fica difícil saber onde um processo seletivo trava.",
+    como:"Dashboard com dados fictícios e um resumo escrito por IA.",
+    horas:"Medição em andamento." },
+  { tema:"Impacto social", icone:"🧩", status:"em breve",
     titulo:"Gerador de dinâmicas de grupo",
     resumo:"Atividades por idade, objetivo, tempo e materiais.",
     ferramentas:["Claude"],
-    problema:"Em escolas públicas e ações sociais há pouco recurso e pouco tempo para planejar.",
-    como:"A pessoa informa faixa etária, objetivo, tempo e materiais, e recebe uma proposta de atividade. Ela organiza e sugere, nunca faz diagnóstico.",
-    horas:"Medição em andamento."
-  },
-  {
-    id:"impacto", tema:"Impacto social", icone:"💗", status:"em breve",
+    problema:"Em escolas públicas e ações sociais há pouco recurso e pouco tempo para planejar atividades.",
+    como:"A pessoa informa faixa etária, objetivo, tempo e materiais, e recebe uma proposta de atividade. A IA organiza e sugere, nunca faz diagnóstico.",
+    horas:"Medição em andamento." },
+  { tema:"Impacto social", icone:"💗", status:"em breve",
     titulo:"Painel de impacto de ações sociais",
     resumo:"Presença e antes e depois, com gráficos para relatório.",
     ferramentas:["Google Planilhas","IA"],
     problema:"Ações sociais precisam mostrar resultado para conseguir apoio.",
     como:"Formulário simples de presença e escala curta de antes e depois, com gráficos prontos.",
-    horas:"Medição em andamento."
-  }
+    horas:"Medição em andamento." }
 ];
 
-const temas = ["Todos","R&S","Organização","Impacto social"];
+const temas = ["Todos","Gestão de pessoas","Produtividade","Impacto social"];
 let filtroAtual = "Todos";
 const grade = document.getElementById("grade");
 const filtros = document.getElementById("filtros");
@@ -136,12 +152,16 @@ function desenharFiltros(){
 
 function desenharCards(){
   grade.innerHTML = "";
-  projetos.filter(p=>filtroAtual==="Todos"||p.tema===filtroAtual).forEach(p=>{
+  projetos.filter(p=>filtroAtual==="Todos"||p.tema===filtroAtual).forEach((p,i)=>{
     const c = document.createElement("div");
     c.className = "card"; c.tabIndex = 0;
-    c.innerHTML = `<div class="icone">${p.icone}</div><h3>${p.titulo}</h3><p>${p.resumo}</p>
-      <div>${p.ferramentas.map(f=>`<span class="selo">${f}</span>`).join("")}</div>
-      <div class="status ${p.status==="no ar"?"noar":"breve"}">${p.status==="no ar"?"● No ar":"● Em breve"}</div>`;
+    c.style.animationDelay = (i*0.07)+"s";
+    c.innerHTML = `<div class="icone">${p.icone}</div>
+      <div class="setor">${p.tema}</div>
+      <h3>${p.titulo}</h3><p>${p.resumo}</p>
+      <div class="tags">${p.ferramentas.map(f=>`<span>${f}</span>`).join("")}</div>
+      <div class="status ${p.status==="no ar"?"noar":"breve"}"><i></i>${p.status==="no ar"?"No ar":"Em breve"}</div>`;
+    c.onmousemove = e=>{ const r=c.getBoundingClientRect(); c.style.setProperty("--x",(e.clientX-r.left)+"px"); c.style.setProperty("--y",(e.clientY-r.top)+"px"); };
     c.onclick = ()=>abrir(p);
     c.onkeydown = e=>{ if(e.key==="Enter") abrir(p); };
     grade.appendChild(c);
