@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Central de contratos de estágio | Liandra Constantino</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root{--bg:#070b16;--card:rgba(255,255,255,.05);--borda:rgba(255,255,255,.12);--texto:#e8ecf5;--suave:#9aa6c2;--ciano:#22d3ee;--violeta:#8b5cf6}
+  *{box-sizing:border-box}
+  body{margin:0;font-family:Inter,system-ui,sans-serif;background:var(--bg);color:var(--texto);line-height:1.65;overflow-x:hidden}
+  body::before{content:"";position:fixed;inset:0;z-index:-2;
+    background:radial-gradient(600px 400px at 15% 10%,rgba(139,92,246,.30),transparent 60%),
+               radial-gradient(700px 500px at 85% 20%,rgba(34,211,238,.22),transparent 60%)}
+  body::after{content:"";position:fixed;inset:0;z-index:-1;opacity:.5;
+    background-image:linear-gradient(rgba(255,255,255,.04) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,.04) 1px,transparent 1px);
+    background-size:48px 48px;mask-image:radial-gradient(ellipse at 50% 20%,#000 30%,transparent 75%)}
+  .voltar{display:inline-block;margin:24px 20px 0;color:var(--ciano);text-decoration:none;font-weight:600}
+  header{text-align:center;padding:40px 20px 30px;max-width:860px;margin:0 auto}
+  .etiqueta{display:inline-block;font-size:13px;letter-spacing:.12em;text-transform:uppercase;color:var(--ciano);border:1px solid rgba(34,211,238,.4);padding:6px 14px;border-radius:999px;background:rgba(34,211,238,.08)}
+  h1{font-family:"Space Grotesk",sans-serif;font-size:clamp(32px,6vw,54px);margin:20px 0 10px;line-height:1.1;
+     background:linear-gradient(90deg,#fff,var(--ciano) 55%,var(--violeta));-webkit-background-clip:text;background-clip:text;color:transparent}
+  .sub{font-size:clamp(16px,2.4vw,19px);color:var(--suave);max-width:660px;margin:0 auto}
+  .selos{display:flex;flex-wrap:wrap;gap:10px;justify-content:center;margin-top:22px}
+  .selos span{font-size:13px;background:var(--card);border:1px solid var(--borda);padding:6px 12px;border-radius:999px}
+  .aviso{display:inline-block;margin-top:18px;font-size:14px;color:#fbbf24;border:1px solid rgba(251,191,36,.4);background:rgba(251,191,36,.08);padding:6px 14px;border-radius:10px}
+  main{max-width:900px;margin:0 auto;padding:10px 20px 60px}
+  section{background:var(--card);border:1px solid var(--borda);border-radius:20px;padding:26px;margin:20px 0;backdrop-filter:blur(10px)}
+  h2{font-family:"Space Grotesk",sans-serif;font-size:24px;margin:0 0 12px}
+  h3{font-family:"Space Grotesk",sans-serif;font-size:18px;margin:22px 0 8px;color:var(--ciano)}
+  p{margin:0 0 12px}
+  ol,ul{margin:0 0 12px;padding-left:22px}
+  li{margin-bottom:6px}
+  table{width:100%;border-collapse:collapse;margin:10px 0;font-size:15px}
+  th,td{padding:10px 12px;text-align:left;border-bottom:1px solid var(--borda)}
+  th{color:var(--ciano);font-size:13px;letter-spacing:.08em;text-transform:uppercase}
+  .tabela{overflow-x:auto}
+  .fluxo{display:flex;flex-wrap:wrap;align-items:center;gap:8px;margin:12px 0 18px}
+  .fluxo span{background:rgba(139,92,246,.18);border:1px solid var(--borda);padding:8px 12px;border-radius:10px;font-size:14px}
+  .fluxo b{color:var(--ciano)}
+  figure{margin:16px 0}
+  figure img{width:100%;border-radius:12px;border:1px solid var(--borda);display:block}
+  figcaption{font-size:14px;color:var(--suave);margin-top:6px}
+  .destaque{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:12px;margin:14px 0}
+  .destaque div{background:rgba(34,211,238,.07);border:1px solid rgba(34,211,238,.3);border-radius:14px;padding:14px;text-align:center}
+  .destaque strong{display:block;font-family:"Space Grotesk",sans-serif;font-size:28px;color:#fff}
+  .destaque small{color:var(--suave)}
+  footer{text-align:center;color:var(--suave);padding:10px 20px 50px;font-size:14px}
+  footer a{color:var(--ciano);font-weight:600;text-decoration:none}
+</style>
+</head>
+<body>
+<a class="voltar" href="../">← Voltar ao portfólio</a>
+<header>
+  <span class="etiqueta">Projeto · Gestão de pessoas</span>
+  <h1>Central de contratos de estágio</h1>
+  <p class="sub">Alertas de vencimento e uma pasta organizada para cada pessoa, montados com Make, Google Planilhas e Google Drive.</p>
+  <div class="selos"><span>Make</span><span>Google Planilhas</span><span>Google Drive</span><span>Google Docs</span><span>Gmail</span></div>
+  <span class="aviso">Demonstração: todos os nomes e dados são fictícios</span>
+</header>
+
+<main>
+<section>
+  <h2>Qual era o objetivo</h2>
+  <p>Deixar a gestão de contratos de estágio mais segura e mais rápida, com dois resultados:</p>
+  <ol>
+    <li><b>Avisar com antecedência</b> quando um contrato está perto de vencer (a partir de 2 meses antes), para dar tempo de decidir se renova ou encerra.</li>
+    <li><b>Juntar em um só lugar</b> tudo o que diz respeito a cada pessoa: anotações, avaliação de desempenho, pesquisa de clima e outras observações.</li>
+  </ol>
+  <p>Este é um tipo de fluxo que já usei na prática. Aqui, recriei do zero com dados fictícios para poder <b>medir o tempo economizado</b>, o que eu não tinha como comprovar antes.</p>
+</section>
+
+<section>
+  <h2>O problema, em palavras simples</h2>
+  <ul>
+    <li>As datas de fim de contrato ficam numa planilha, e o aviso depende de alguém lembrar de olhar.</li>
+    <li>As informações de cada pessoa ficam espalhadas em vários arquivos e lugares.</li>
+    <li>Toda pessoa nova exige o mesmo trabalho repetido: criar a pasta, criar as subpastas, criar o documento de anotações e anotar o link na planilha.</li>
+  </ul>
+</section>
+
+<section>
+  <h2>O que foi feito</h2>
+
+  <h3>1. A planilha</h3>
+  <p>Cada linha é um contrato, com: nome, área, gestor, data de início, data de fim, dias para vencer, status, link da pasta no Drive e link das anotações. Os <b>dias para vencer</b> e o <b>status</b> são calculados sozinhos, com estas regras:</p>
+  <div class="tabela"><table>
+    <tr><th>Dias para vencer</th><th>Status</th></tr>
+    <tr><td>Mais de 60</td><td>Em dia</td></tr>
+    <tr><td>De 31 a 60</td><td>Alerta</td></tr>
+    <tr><td>De 8 a 30</td><td>Atenção</td></tr>
+    <tr><td>De 0 a 7</td><td>Crítico</td></tr>
+    <tr><td>Menos de 0</td><td>Vencido</td></tr>
+  </table></div>
+  <p>Para a demonstração não ficar desatualizada com o tempo, as datas de fim são calculadas a partir do dia de hoje.</p>
+
+  <h3>2. Fluxo de alerta de vencimento</h3>
+  <div class="fluxo"><span>Planilha</span><b>→</b><span>Make lê as linhas</span><b>→</b><span>Filtra quem não está "Em dia"</span><b>→</b><span>Monta a lista</span><b>→</b><span>E-mail</span></div>
+  <p>O Make lê a planilha, deixa passar só os contratos que precisam de atenção, junta tudo em uma lista (uma linha por pessoa, com os dias que faltam e o status) e envia <b>um único e-mail</b> com essa lista.</p>
+
+  <h3>3. Fluxo de pastas e anotações por pessoa</h3>
+  <div class="fluxo"><span>Planilha</span><b>→</b><span>Make lê as linhas</span><b>→</b><span>Filtra quem ainda não tem pasta</span><b>→</b><span>Cria pasta + 3 subpastas</span><b>→</b><span>Cria documento de anotações</span><b>→</b><span>Grava os links na planilha</span></div>
+  <p>Para cada pessoa que ainda não tem pasta, o fluxo cria, dentro da pasta geral do projeto, uma pasta com o nome dela e três subpastas: <i>Avaliação de desempenho</i>, <i>Pesquisa de clima</i> e <i>Observações</i>. Cria também um documento de <i>Anotações</i> e grava os dois links na própria planilha. Quem já tem pasta é ignorado, então dá para rodar de novo sem duplicar nada.</p>
+</section>
+
+<section>
+  <h2>Como ficou (prints)</h2>
+
+  <h3>Fluxo de alerta</h3>
+  <figure><a href="01-alerta-cenario-make.png" target="_blank" rel="noopener"><img src="01-alerta-cenario-make.png" alt="Cenário do alerta no Make" loading="lazy"></a><figcaption>O cenário no Make: lê a planilha, filtra, monta a lista e envia o e-mail.</figcaption></figure>
+  <figure><a href="02-alerta-email.png" target="_blank" rel="noopener"><img src="02-alerta-email.png" alt="E-mail de alerta recebido" loading="lazy"></a><figcaption>O e-mail recebido, com um contrato por linha.</figcaption></figure>
+  <figure><a href="03-alerta-planilha.png" target="_blank" rel="noopener"><img src="03-alerta-planilha.png" alt="Planilha com os status" loading="lazy"></a><figcaption>A planilha com os dias para vencer e o status de cada contrato.</figcaption></figure>
+
+  <h3>Fluxo de pastas e anotações</h3>
+  <figure><a href="04-pastas-cenario-make.png" target="_blank" rel="noopener"><img src="04-pastas-cenario-make.png" alt="Cenário das pastas no Make" loading="lazy"></a><figcaption>O cenário que cria as pastas, o documento e grava os links.</figcaption></figure>
+  <figure><a href="05-pastas-drive.png" target="_blank" rel="noopener"><img src="05-pastas-drive.png" alt="Pastas criadas no Drive" loading="lazy"></a><figcaption>Uma pasta por pessoa, criada automaticamente no Drive.</figcaption></figure>
+  <figure><a href="06-subpastas-pessoa.png" target="_blank" rel="noopener"><img src="06-subpastas-pessoa.png" alt="Subpastas e anotações de uma pessoa" loading="lazy"></a><figcaption>Dentro de cada pasta: três subpastas e o documento de anotações.</figcaption></figure>
+
+  <h3>Resultado final</h3>
+  <figure><a href="07-planilha-final.png" target="_blank" rel="noopener"><img src="07-planilha-final.png" alt="Planilha completa com os links preenchidos" loading="lazy"></a><figcaption>A planilha completa, com os links da pasta e das anotações preenchidos.</figcaption></figure>
+</section>
+
+<section>
+  <h2>Horas ganhas <small style="color:var(--suave);font-weight:400">(medido em cenário simulado)</small></h2>
+  <p>Tarefa medida: criar a pasta, as 3 subpastas e o documento de anotações de uma pessoa e registrar os links na planilha.</p>
+  <div class="destaque">
+    <div><strong>15 min</strong><small>por pessoa, à mão</small></div>
+    <div><strong>1 min</strong><small>por pessoa, com o fluxo</small></div>
+    <div><strong>14 min</strong><small>economizados por pessoa</small></div>
+  </div>
+  <div class="tabela"><table>
+    <tr><th>Item</th><th>Valor</th></tr>
+    <tr><td>Pessoas novas por mês</td><td>10 (estimativa, para simplificar a conta)</td></tr>
+    <tr><td>Economia por mês</td><td>cerca de 2,3 horas</td></tr>
+    <tr><td>Economia por ano</td><td>cerca de 28 horas</td></tr>
+  </table></div>
+  <p>Conta: (15 − 1) minutos × 10 pessoas = 140 minutos por mês, ou 2,3 horas. Multiplicando por 12, chega-se a cerca de 28 horas por ano. O tempo com o fluxo inclui rodar e conferir o resultado.</p>
+</section>
+
+<section>
+  <h2>Decisões e aprendizados</h2>
+  <ul>
+    <li><b>Plano gratuito do Make:</b> tem limite mensal de créditos e poucos cenários ativos. Por isso os fluxos rodam sob demanda, sem agendamento, e foram montados com poucos módulos.</li>
+    <li><b>Filtros:</b> o alerta só deixa passar quem precisa de atenção, e a criação de pastas pula quem já tem pasta. Isso evita e-mails inúteis e pastas duplicadas.</li>
+    <li><b>Ligar módulos entre si:</b> cada subpasta e o documento precisam apontar para a pasta da pessoa. Aprendi na prática como um módulo passa informação para o seguinte, e como erros desse tipo (pasta não encontrada, subpastas uma dentro da outra) aparecem e se corrigem.</li>
+    <li><b>Autorização com Google:</b> o Make só mexe na minha conta depois que eu autorizo, sem nunca receber minha senha.</li>
+  </ul>
+</section>
+
+<section>
+  <h2>Limites desta demonstração</h2>
+  <ul>
+    <li>São 8 pessoas fictícias. Nada aqui é de uma empresa ou de uma pessoa real.</li>
+    <li>O fluxo roda manualmente e não está agendado.</li>
+    <li>O tempo gasto para montar o fluxo não entra na conta de horas ganhas. A economia aparece depois de usar várias vezes.</li>
+    <li>Em uso real, avaliações de desempenho e pesquisas de clima são dados sensíveis e precisam ficar em pastas privadas, com acesso restrito.</li>
+  </ul>
+</section>
+</main>
+
+<footer>
+  <a href="../">← Voltar ao portfólio</a> ·
+  <a href="https://github.com/liandraconstantino/portfolio/tree/main/central-de-contratos">Ver arquivos no GitHub</a>
+</footer>
+</body>
+</html>
