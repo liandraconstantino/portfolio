@@ -25,7 +25,7 @@ cria pastas e documentos → grava os links de volta na planilha.
 - Manual: 15 minutos por pessoa em média
 - Com o fluxo: 1 minuto por pessoa (rodar no Make e conferir)
 - Economia: 14 minutos por pessoa
-- Estimativa: 10 pessoas novas por mês (valor estimado reduzido, usado para simplificar o cálculo)
+- Estimativa: 10 pessoas novas por mês (valor estimado, usado para simplificar o cálculo)
 - Economia estimada: cerca de 2,3 h/mês e 28 h/ano
 
 ## Prints
