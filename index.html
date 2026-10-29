@@ -1,3 +1,90 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Liandra Constantino | Projetos de IA e automação</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root{--bg:#070b16;--card:rgba(255,255,255,.05);--borda:rgba(255,255,255,.12);--texto:#e8ecf5;--suave:#9aa6c2;--ciano:#22d3ee;--violeta:#8b5cf6;--rosa:#ec4899}
+  *{box-sizing:border-box}
+  html{scroll-behavior:smooth}
+  body{margin:0;font-family:Inter,system-ui,sans-serif;background:var(--bg);color:var(--texto);line-height:1.55;overflow-x:hidden;min-height:100vh}
+  body::before{content:"";position:fixed;inset:0;z-index:-2;
+    background:radial-gradient(600px 400px at 15% 10%,rgba(139,92,246,.30),transparent 60%),
+               radial-gradient(700px 500px at 85% 20%,rgba(34,211,238,.22),transparent 60%),
+               radial-gradient(600px 500px at 50% 100%,rgba(236,72,153,.16),transparent 60%)}
+  body::after{content:"";position:fixed;inset:0;z-index:-1;opacity:.5;
+    background-image:linear-gradient(rgba(255,255,255,.04) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,.04) 1px,transparent 1px);
+    background-size:48px 48px;mask-image:radial-gradient(ellipse at 50% 30%,#000 30%,transparent 75%)}
+  header{text-align:center;padding:90px 20px 40px;max-width:860px;margin:0 auto}
+  .etiqueta{display:inline-block;font-size:13px;letter-spacing:.12em;text-transform:uppercase;color:var(--ciano);border:1px solid rgba(34,211,238,.4);padding:6px 14px;border-radius:999px;background:rgba(34,211,238,.08)}
+  h1{font-family:"Space Grotesk",sans-serif;font-size:clamp(38px,7vw,68px);margin:22px 0 10px;line-height:1.05;
+     background:linear-gradient(90deg,#fff,var(--ciano) 55%,var(--violeta));-webkit-background-clip:text;background-clip:text;color:transparent}
+  .sub{font-size:clamp(16px,2.4vw,20px);color:var(--suave);max-width:640px;margin:0 auto}
+  .selos{display:flex;flex-wrap:wrap;gap:10px;justify-content:center;margin-top:26px}
+  .selos span{font-size:13px;color:var(--texto);background:var(--card);border:1px solid var(--borda);padding:6px 12px;border-radius:999px;backdrop-filter:blur(8px)}
+  main{max-width:1040px;margin:0 auto;padding:10px 20px 60px}
+  .dica{text-align:center;color:var(--suave);font-size:14px;margin:0 0 18px}
+  .filtros{display:flex;flex-wrap:wrap;gap:10px;justify-content:center;margin-bottom:28px}
+  .filtros button{font:inherit;font-size:14px;color:var(--texto);background:var(--card);border:1px solid var(--borda);padding:10px 18px;border-radius:999px;cursor:pointer;transition:.2s;backdrop-filter:blur(8px)}
+  .filtros button:hover{border-color:var(--ciano)}
+  .filtros button.ativo{background:linear-gradient(90deg,var(--violeta),var(--ciano));border-color:transparent;color:#06101c;font-weight:600}
+  .grade{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:20px}
+  .card{position:relative;background:var(--card);border:1px solid var(--borda);border-radius:20px;padding:24px;cursor:pointer;backdrop-filter:blur(12px);
+        transition:transform .25s,border-color .25s,box-shadow .25s;animation:entra .5s both;overflow:hidden}
+  .card::before{content:"";position:absolute;inset:0;background:radial-gradient(300px 160px at var(--x,50%) var(--y,0%),rgba(34,211,238,.18),transparent 70%);opacity:0;transition:.3s}
+  .card:hover,.card:focus{transform:translateY(-6px);border-color:rgba(34,211,238,.6);box-shadow:0 18px 40px rgba(34,211,238,.12);outline:0}
+  .card:hover::before,.card:focus::before{opacity:1}
+  .card>*{position:relative}
+  .icone{width:48px;height:48px;border-radius:14px;display:grid;place-items:center;font-size:24px;background:linear-gradient(135deg,rgba(139,92,246,.35),rgba(34,211,238,.25));border:1px solid var(--borda)}
+  .setor{font-size:12px;letter-spacing:.1em;text-transform:uppercase;color:var(--ciano);margin:16px 0 4px}
+  .card h3{font-family:"Space Grotesk",sans-serif;font-size:20px;margin:0 0 8px}
+  .card p{margin:0 0 14px;color:var(--suave);font-size:15px}
+  .tags{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:14px}
+  .tags span{font-size:12px;padding:3px 10px;border-radius:6px;background:rgba(139,92,246,.18);color:#cdbbff}
+  .status{font-size:13px;font-weight:600;display:flex;align-items:center;gap:8px}
+  .status i{width:8px;height:8px;border-radius:50%;display:inline-block}
+  .noar{color:#4ade80}.noar i{background:#4ade80;box-shadow:0 0 10px #4ade80;animation:pulsa 1.8s infinite}
+  .breve{color:#fbbf24}.breve i{background:#fbbf24}
+  @keyframes pulsa{50%{opacity:.35}}
+  @keyframes entra{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:none}}
+  .fundo-modal{position:fixed;inset:0;background:rgba(3,6,14,.8);backdrop-filter:blur(6px);display:none;align-items:center;justify-content:center;padding:16px;z-index:10}
+  .fundo-modal.aberto{display:flex}
+  .modal{background:#0d1324;border:1px solid var(--borda);border-radius:22px;max-width:920px;width:100%;max-height:92vh;overflow:auto;padding:30px;position:relative;box-shadow:0 30px 80px rgba(0,0,0,.6);animation:entra .3s}
+  .fechar{position:absolute;top:14px;right:16px;border:1px solid var(--borda);background:var(--card);color:var(--texto);border-radius:50%;width:38px;height:38px;font-size:20px;cursor:pointer}
+  .modal h2{font-family:"Space Grotesk",sans-serif;margin:0 0 6px;padding-right:44px;font-size:28px}
+  .modal h4{margin:22px 0 4px;color:var(--ciano);font-size:13px;letter-spacing:.1em;text-transform:uppercase}
+  .modal p{margin:0;color:var(--texto)}
+  .modal iframe{width:100%;height:540px;border:1px solid var(--borda);border-radius:14px;margin-top:10px;background:#fff}
+  .botao{display:inline-block;margin-top:14px;background:linear-gradient(90deg,var(--violeta),var(--ciano));color:#06101c;text-decoration:none;padding:11px 20px;border-radius:12px;font-weight:600}
+  footer{text-align:center;color:var(--suave);padding:20px 20px 50px;font-size:14px;border-top:1px solid var(--borda);max-width:1040px;margin:0 auto}
+  footer a{color:var(--ciano);text-decoration:none;font-weight:600}
+</style>
+</head>
+<body>
+<header>
+  <span class="etiqueta">Portfólio · IA e automação</span>
+  <h1>Liandra Constantino</h1>
+  <p class="sub">Projetos que criei com IA e automação em diferentes setores: gestão de pessoas, produtividade e saúde.</p>
+  <div class="selos"><span>Make</span><span>Bolt</span><span>Claude</span><span>APIs</span><span>GitHub</span></div>
+</header>
+
+<main>
+  <p class="dica">Escolha um setor e clique em um projeto para ver como funciona</p>
+  <div class="filtros" id="filtros"></div>
+  <div class="grade" id="grade"></div>
+</main>
+
+<div class="fundo-modal" id="fundo"><div class="modal" id="modal"></div></div>
+
+<footer>
+  Dados 100% fictícios. Economia de tempo sempre marcada como <b>"medido em cenário simulado"</b>.<br><br>
+  <a href="https://github.com/liandraconstantino">GitHub</a>
+</footer>
+
+<script>
 const projetos = [
   { tema:"Produtividade", icone:"🗂️", status:"no ar",
     titulo:"Plataforma única de organização",
@@ -17,7 +104,7 @@ const projetos = [
   { tema:"Gestão de pessoas", icone:"⏰", status:"no ar",
     titulo:"Central de contratos de estágio",
     resumo:"Alertas de vencimento, pastas e anotações por pessoa.",
-    ferramentas:["Make","Integração de APIs (Google Planilhas, Gmail, Drive e Docs)"],
+    ferramentas:[“Prompt engineering”, "Make", “Integração de APIs ("Google Planilhas", "Gmail", "Google Drive" e "Google Docs")"],
     problema:"Contratos de estágio vencem, e as informações de cada pessoa ficam espalhadas em vários lugares.",
     como:"Um fluxo no Make lê a planilha e envia por e-mail a lista dos contratos perto do vencimento. Outro fluxo cria, para cada pessoa, uma pasta no Drive com subpastas de avaliação de desempenho, pesquisa de clima e observações, mais um documento de anotações. Os links voltam para a planilha.",
     horas:"15 minutos por pessoa à mão contra 1 minuto com o fluxo. Com 10 pessoas novas por mês (estimativa), são cerca de 2,3 h/mês e 28 h/ano.",
@@ -25,7 +112,7 @@ const projetos = [
   { tema:"Gestão de pessoas", icone:"🏅", status:"no ar",
     titulo:"Agente de ranking - Processos seletivos",
     resumo:"Ranking por critérios e justificativas escritas por dois agentes de IA.",
-    ferramentas:["Make","Prompt engineering","Orquestração de agentes (Gemini)","API do Google AI Studio","Google Planilhas"],
+    ferramentas:["Make","Prompt engineering","Orquestração de agentes ("Gemini e Claude")","API do Google AI Studio","Integração de APIs ("Google Planilhas"],
     problema:"Comparar candidatos e escrever a justificativa de cada um toma muito tempo e muda de pessoa para pessoa.",
     como:"A planilha calcula a nota final e o ranking por fórmula, com pesos definidos pela pessoa recrutadora. No Make, um primeiro agente de IA escreve a justificativa de cada candidato e um segundo agente revisa o texto, tirando frases vagas e afirmações sem base. O resultado vai para a planilha, que pode ser enviada em PDF ao gestor. A decisão final é sempre humana.",
     horas:"Estimativa de 15 minutos por candidato à mão. Em uma rodada de 8 candidatos, são cerca de 2 horas contra 1 minuto para rodar o fluxo (a leitura e a revisão dos textos continuam necessárias).",
@@ -45,3 +132,60 @@ const projetos = [
     como:"O profissional escolhe o recurso, o público (criança, adolescente, adulto ou pessoa idosa) e o tema. Há registros e técnicas, escalas de acompanhamento, relaxamento guiado, baralhos, jogos e um gerador de dever de casa. Dá para preencher na tela ou imprimir. Nenhum dado de paciente é usado, nada é salvo, e a ferramenta apoia o psicólogo sem substituir o acompanhamento.",
     link:"gerador-tcc/", embed:true }
 ];
+
+const temas = ["Todos","Gestão de pessoas","Produtividade","Saúde e bem-estar"];
+let filtroAtual = "Todos";
+const grade = document.getElementById("grade");
+const filtros = document.getElementById("filtros");
+const fundo = document.getElementById("fundo");
+const modal = document.getElementById("modal");
+
+function desenharFiltros(){
+  filtros.innerHTML = "";
+  temas.forEach(t=>{
+    const b = document.createElement("button");
+    b.textContent = t;
+    if(t===filtroAtual) b.className = "ativo";
+    b.onclick = ()=>{ filtroAtual=t; desenharFiltros(); desenharCards(); };
+    filtros.appendChild(b);
+  });
+}
+
+function desenharCards(){
+  grade.innerHTML = "";
+  projetos.filter(p=>filtroAtual==="Todos"||p.tema===filtroAtual).forEach((p,i)=>{
+    const c = document.createElement("div");
+    c.className = "card"; c.tabIndex = 0;
+    c.style.animationDelay = (i*0.07)+"s";
+    c.innerHTML = `<div class="icone">${p.icone}</div>
+      <div class="setor">${p.tema}</div>
+      <h3>${p.titulo}</h3><p>${p.resumo}</p>
+      <div class="tags">${p.ferramentas.map(f=>`<span>${f}</span>`).join("")}</div>
+      <div class="status ${p.status==="no ar"?"noar":"breve"}"><i></i>${p.status==="no ar"?"No ar":"Em breve"}</div>`;
+    c.onmousemove = e=>{ const r=c.getBoundingClientRect(); c.style.setProperty("--x",(e.clientX-r.left)+"px"); c.style.setProperty("--y",(e.clientY-r.top)+"px"); };
+    c.onclick = ()=>abrir(p);
+    c.onkeydown = e=>{ if(e.key==="Enter") abrir(p); };
+    grade.appendChild(c);
+  });
+}
+
+function abrir(p){
+  modal.innerHTML = `<button class="fechar" aria-label="Fechar">×</button>
+    <h2>${p.icone} ${p.titulo}</h2>
+    <h4>Qual problema resolve</h4><p>${p.problema}</p>
+    <h4>Como funciona</h4><p>${p.como}</p>
+    ${p.horas?`<h4>Horas ganhas (medido em cenário simulado)</h4><p>${p.horas}</p>`:""}
+    ${p.embed?`<h4>Teste aqui mesmo</h4><iframe src="${p.link}" title="${p.titulo}"></iframe>
+    <a class="botao" href="${p.link}" target="_blank" rel="noopener">Abrir em tela cheia</a>`:""}
+    ${(p.link&&!p.embed)?`<a class="botao" href="${p.link}" target="_blank" rel="noopener">Abrir projeto</a>`:""}`;
+  modal.querySelector(".fechar").onclick = fechar;
+  fundo.classList.add("aberto");
+}
+function fechar(){ fundo.classList.remove("aberto"); modal.innerHTML=""; }
+fundo.onclick = e=>{ if(e.target===fundo) fechar(); };
+document.onkeydown = e=>{ if(e.key==="Escape") fechar(); };
+
+desenharFiltros(); desenharCards();
+</script>
+</body>
+</html>
