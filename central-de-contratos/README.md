@@ -31,12 +31,12 @@ cria pastas e documentos → grava os links de volta na planilha.
 ## Prints
 
 ### Fluxo 1: alerta de vencimento
-![Cenário do alerta no Make](01-alerta-cenario.png)
+![Cenário do alerta no Make](01-alerta-cenario-make.png)
 ![E-mail de alerta recebido](02-alerta-email.png)
 ![Planilha com os status](03-alerta-planilha.png)
 
 ### Fluxo 2: pastas e anotações por pessoa
-![Cenário das pastas no Make](04-pastas-cenario.png)
+![Cenário das pastas no Make](04-pastas-cenario-make.png)
 ![Pastas criadas no Drive](05-pastas-drive.png)
 ![Subpastas e anotações de uma pessoa](06-subpastas-pessoa.png)
 
