@@ -1,1 +1,3324 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Gerador de recursos terapêuticos (TCC)</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700&family=Space+Grotesk:wght@500;700&display=swap" rel="stylesheet" />
+  <style>
+    /* Cores e fontes do tema escuro */
+    :root {
+      --bg: #070b16;
+      --surface: #0d1528;
+      --surface-2: #121c33;
+      --campo: #070b16;
+      --borda: rgba(34, 211, 238, 0.25);
+      --borda-suave: rgba(148, 163, 184, 0.2);
+      --texto: #e6edf7;
+      --texto-2: #a9b8cf;
+      --ciano: #22d3ee;
+      --violeta: #8b5cf6;
+      --fonte-corpo: 'Inter', system-ui, sans-serif;
+      --fonte-titulo: 'Space Grotesk', 'Inter', sans-serif;
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      font-family: var(--fonte-corpo);
+      font-size: 16px;
+      line-height: 1.5;
+      color: var(--texto);
+      background:
+        radial-gradient(circle at 12% 0%, rgba(34, 211, 238, 0.12), transparent 40%),
+        radial-gradient(circle at 90% 8%, rgba(139, 92, 246, 0.14), transparent 40%),
+        var(--bg);
+      background-attachment: fixed;
+    }
+
+    /* Pessoa idosa: letra maior e mais espaço */
+    body.publico-idoso { font-size: 20px; }
+
+    .oculta { display: none !important; }
+
+    .app {
+      max-width: 960px;
+      margin: 0 auto;
+      padding: 32px 20px 48px;
+    }
+
+    h1, h2, h3 {
+      font-family: var(--fonte-titulo);
+      line-height: 1.2;
+      margin: 0;
+      font-weight: 700;
+    }
+
+    h1 { font-size: clamp(1.7rem, 4vw, 2.5rem); }
+
+    .topo { text-align: center; margin-bottom: 40px; }
+
+    .selo {
+      display: inline-block;
+      margin: 0 0 16px;
+      padding: 4px 12px;
+      border: 1px solid var(--borda);
+      border-radius: 999px;
+      color: var(--ciano);
+      font-size: 0.8rem;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+    }
+
+    .topo h1 {
+      background: linear-gradient(90deg, var(--ciano), #a78bfa);
+      -webkit-background-clip: text;
+      background-clip: text;
+      color: transparent;
+    }
+
+    .subtitulo { color: var(--texto-2); max-width: 620px; margin: 16px auto 0; }
+
+    /* Tela de escolhas */
+    .grupo {
+      background: var(--surface);
+      border: 1px solid var(--borda-suave);
+      border-radius: 16px;
+      padding: 24px;
+      margin-bottom: 16px;
+    }
+
+    .grupo h2 {
+      font-size: 1.15rem;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 16px;
+    }
+
+    .num {
+      display: inline-grid;
+      place-items: center;
+      width: 28px;
+      height: 28px;
+      border-radius: 50%;
+      background: rgba(34, 211, 238, 0.15);
+      color: var(--ciano);
+      font-size: 0.9rem;
+    }
+
+    .opcoes {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(170px, 1fr));
+      gap: 12px;
+    }
+
+    .opcao {
+      font: inherit;
+      color: var(--texto);
+      background: var(--surface-2);
+      border: 1px solid var(--borda-suave);
+      border-radius: 12px;
+      padding: 14px 16px;
+      text-align: left;
+      cursor: pointer;
+      transition: border-color 0.2s, background 0.2s, transform 0.15s, box-shadow 0.2s;
+    }
+
+    .opcao:hover {
+      border-color: var(--borda);
+      transform: translateY(-2px);
+    }
+
+    .opcao[aria-pressed="true"] {
+      border-color: var(--ciano);
+      background: rgba(34, 211, 238, 0.12);
+      box-shadow: 0 0 0 1px var(--ciano), 0 8px 24px rgba(34, 211, 238, 0.15);
+    }
+
+    .acao {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 12px;
+      margin-top: 32px;
+    }
+
+    .dica { color: var(--texto-2); margin: 0; font-size: 0.95rem; }
+
+    /* Botões */
+    .btn-primario,
+    .btn-sec,
+    .btn-pequeno {
+      font: inherit;
+      font-weight: 500;
+      border-radius: 999px;
+      cursor: pointer;
+      transition: background 0.2s, border-color 0.2s, transform 0.15s, opacity 0.2s;
+    }
+
+    .btn-primario {
+      background: var(--ciano);
+      color: #04111d;
+      border: 1px solid var(--ciano);
+      padding: 14px 32px;
+      font-size: 1.05rem;
+      box-shadow: 0 8px 24px rgba(34, 211, 238, 0.25);
+    }
+
+    .btn-primario:hover:not(:disabled) { background: #67e8f9; transform: translateY(-1px); }
+
+    .btn-primario:disabled {
+      opacity: 0.4;
+      cursor: not-allowed;
+      box-shadow: none;
+    }
+
+    .btn-sec {
+      background: transparent;
+      color: var(--texto);
+      border: 1px solid var(--borda-suave);
+      padding: 10px 20px;
+    }
+
+    .btn-sec:hover { border-color: var(--ciano); color: var(--ciano); }
+
+    .btn-pequeno {
+      background: transparent;
+      color: var(--texto-2);
+      border: 1px solid var(--borda-suave);
+      padding: 6px 14px;
+      font-size: 0.85rem;
+    }
+
+    .btn-pequeno:hover { border-color: #f87171; color: #f87171; }
+
+    .btn-primario:focus-visible,
+    .btn-sec:focus-visible,
+    .btn-pequeno:focus-visible,
+    .opcao:focus-visible {
+      outline: 2px solid var(--violeta);
+      outline-offset: 2px;
+    }
+
+    /* Barra de ações da folha */
+    .barra {
+      position: sticky;
+      top: 0;
+      z-index: 10;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+      justify-content: space-between;
+      padding: 12px 0;
+      margin-bottom: 16px;
+      background: rgba(7, 11, 22, 0.9);
+      backdrop-filter: blur(8px);
+    }
+
+    .barra .grupo-botoes { display: flex; flex-wrap: wrap; gap: 12px; }
+
+    /* Folha de trabalho */
+    .folha {
+      background: var(--surface);
+      border: 1px solid var(--borda-suave);
+      border-radius: 20px;
+      padding: 32px;
+      box-shadow: 0 24px 60px rgba(0, 0, 0, 0.35);
+    }
+
+    .folha-topo {
+      border-bottom: 1px solid var(--borda-suave);
+      padding-bottom: 16px;
+      margin-bottom: 24px;
+    }
+
+    .folha-meta {
+      margin: 0 0 8px;
+      color: var(--ciano);
+      font-size: 0.9rem;
+      letter-spacing: 0.04em;
+    }
+
+    .folha-topo h2 { font-size: clamp(1.5rem, 3.5vw, 2rem); }
+
+    .bloco { margin-bottom: 24px; }
+
+    .bloco h3 {
+      font-size: 1.05rem;
+      color: var(--violeta);
+      margin-bottom: 8px;
+    }
+
+    .bloco p { margin: 0; color: var(--texto-2); }
+
+    .exemplo {
+      border: 1px dashed var(--borda);
+      border-radius: 14px;
+      padding: 16px 20px;
+      margin-bottom: 28px;
+      background: rgba(34, 211, 238, 0.04);
+    }
+
+    .exemplo summary {
+      cursor: pointer;
+      color: var(--ciano);
+      font-weight: 500;
+    }
+
+    .exemplo dl { margin: 16px 0 0; display: grid; gap: 12px; }
+    .exemplo dt { font-weight: 700; color: var(--texto); }
+    .exemplo dd { margin: 2px 0 0; color: var(--texto-2); }
+
+    .corpo-recurso { display: grid; gap: 20px; }
+
+    /* Campos de preenchimento */
+    .campo { display: grid; gap: 8px; }
+
+    .campo > label,
+    .campo > .rotulo {
+      font-weight: 500;
+      color: var(--texto);
+    }
+
+    input[type="text"],
+    input[type="number"],
+    textarea {
+      font: inherit;
+      color: var(--texto);
+      background: var(--campo);
+      border: 1px solid var(--borda-suave);
+      border-radius: 10px;
+      padding: 10px 12px;
+      width: 100%;
+      transition: border-color 0.2s, box-shadow 0.2s;
+    }
+
+    textarea { resize: vertical; min-height: 56px; }
+
+    input[type="text"]:focus,
+    input[type="number"]:focus,
+    textarea:focus {
+      outline: none;
+      border-color: var(--ciano);
+      box-shadow: 0 0 0 3px rgba(34, 211, 238, 0.18);
+    }
+
+    input[type="range"] {
+      width: 100%;
+      accent-color: var(--ciano);
+      cursor: pointer;
+    }
+
+    .faixa,
+    .termo-faixa {
+      display: grid;
+      grid-template-columns: 1fr 64px;
+      align-items: center;
+      gap: 16px;
+    }
+
+    .faixa output,
+    .termo-faixa output {
+      font-family: var(--fonte-titulo);
+      font-size: 1.4rem;
+      font-weight: 700;
+      text-align: center;
+      color: var(--ciano);
+    }
+
+    /* Termômetro: trilha do verde ao vermelho */
+    .termo-faixa input[type="range"] {
+      -webkit-appearance: none;
+      appearance: none;
+      height: 14px;
+      border-radius: 999px;
+      background: linear-gradient(90deg, #22c55e, #facc15 50%, #ef4444);
+      outline: none;
+    }
+
+    .termo-faixa input[type="range"]::-webkit-slider-thumb {
+      -webkit-appearance: none;
+      width: 28px;
+      height: 28px;
+      border-radius: 50%;
+      background: var(--cor, var(--ciano));
+      border: 3px solid #f8fafc;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.5);
+      cursor: pointer;
+    }
+
+    .termo-faixa input[type="range"]::-moz-range-thumb {
+      width: 28px;
+      height: 28px;
+      border-radius: 50%;
+      background: var(--cor, var(--ciano));
+      border: 3px solid #f8fafc;
+      cursor: pointer;
+    }
+
+    .estrategias {
+      border: 1px solid var(--borda-suave);
+      border-radius: 14px;
+      padding: 16px 20px;
+      display: grid;
+      gap: 12px;
+      margin: 0;
+    }
+
+    .estrategias legend {
+      font-weight: 500;
+      padding: 0 8px;
+      color: var(--texto);
+    }
+
+    .check {
+      display: flex;
+      align-items: flex-start;
+      gap: 10px;
+      cursor: pointer;
+    }
+
+    .check input { margin-top: 5px; accent-color: var(--ciano); width: 18px; height: 18px; flex-shrink: 0; }
+
+    .destaque {
+      margin: 0;
+      padding: 12px 16px;
+      border-left: 3px solid var(--violeta);
+      background: rgba(139, 92, 246, 0.1);
+      border-radius: 8px;
+      font-weight: 500;
+    }
+
+    /* Agenda */
+    .tabela-wrap { overflow-x: auto; border-radius: 12px; border: 1px solid var(--borda-suave); }
+
+    .agenda {
+      width: 100%;
+      min-width: 680px;
+      border-collapse: collapse;
+    }
+
+    .agenda th,
+    .agenda td {
+      border: 1px solid var(--borda-suave);
+      padding: 8px;
+      vertical-align: top;
+    }
+
+    .agenda thead th {
+      background: var(--surface-2);
+      font-family: var(--fonte-titulo);
+      color: var(--ciano);
+      font-weight: 700;
+    }
+
+    .agenda tbody th {
+      background: var(--surface-2);
+      text-align: left;
+      white-space: nowrap;
+      width: 110px;
+    }
+
+    .notas {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 6px;
+      margin-top: 6px;
+    }
+
+    .notas label {
+      display: grid;
+      gap: 2px;
+      font-size: 0.78rem;
+      color: var(--texto-2);
+    }
+
+    .notas input { padding: 6px 8px; }
+
+    .medias {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 16px;
+      margin: 0;
+    }
+
+    .medias p {
+      margin: 0;
+      padding: 12px 16px;
+      border-radius: 12px;
+      background: var(--surface-2);
+      border: 1px solid var(--borda-suave);
+    }
+
+    .medias strong { color: var(--ciano); font-family: var(--fonte-titulo); font-size: 1.2rem; }
+
+    /* Hierarquia de exposição */
+    .aviso-psi {
+      margin: 0;
+      padding: 14px 18px;
+      border: 1px solid var(--borda);
+      border-radius: 12px;
+      background: rgba(34, 211, 238, 0.07);
+      color: var(--texto);
+      font-weight: 500;
+    }
+
+    .lista-exp {
+      list-style: none;
+      margin: 0;
+      padding: 0;
+      display: grid;
+      gap: 12px;
+    }
+
+    .item-exp {
+      border: 1px solid var(--borda-suave);
+      border-radius: 14px;
+      padding: 16px;
+      background: var(--surface-2);
+      display: grid;
+      gap: 12px;
+      animation: entrada 0.3s ease;
+    }
+
+    .exp-topo {
+      display: grid;
+      grid-template-columns: 1fr auto;
+      gap: 12px;
+      align-items: center;
+    }
+
+    .item-exp .check { align-items: center; }
+    .item-exp .check input { margin-top: 0; }
+
+    .adicionar-linha { justify-self: start; }
+
+    @keyframes entrada {
+      from { opacity: 0; transform: translateY(6px); }
+      to { opacity: 1; transform: none; }
+    }
+
+    /* Cartão de enfrentamento */
+    .cartao-wrap {
+      display: flex;
+      justify-content: center;
+    }
+
+    .cartao {
+      width: 85mm;
+      min-height: 54mm;
+      padding: 12px 14px;
+      background: #f8fafc;
+      color: #0f172a;
+      border: 2px dashed #0e7490;
+      border-radius: 10px;
+      font-size: 11px;
+      line-height: 1.4;
+      display: grid;
+      gap: 6px;
+      max-width: 100%;
+      word-break: break-word;
+    }
+
+    .cartao-titulo {
+      margin: 0;
+      font-family: var(--fonte-titulo);
+      font-weight: 700;
+      font-size: 13px;
+      color: #0e7490;
+    }
+
+    .cartao p { margin: 0; }
+    .cartao strong { color: #0f172a; }
+
+    .sub {
+      font-size: 1rem;
+      color: var(--texto);
+      margin-top: 8px;
+    }
+
+    /* Rodapé com avisos fixos */
+    .rodape {
+      margin-top: 40px;
+      padding-top: 20px;
+      border-top: 1px solid var(--borda-suave);
+      display: grid;
+      gap: 6px;
+      color: var(--texto-2);
+      font-size: 0.9rem;
+      text-align: center;
+    }
+
+    .rodape p { margin: 0; }
+
+    /* Celular */
+    @media (max-width: 640px) {
+      .app { padding: 20px 14px 36px; }
+      .grupo { padding: 18px; }
+      .folha { padding: 20px; border-radius: 16px; }
+      .barra { flex-direction: column; align-items: stretch; }
+      .barra .grupo-botoes { width: 100%; }
+      .barra .grupo-botoes .btn-sec,
+      .barra .grupo-botoes .btn-primario { flex: 1 1 100%; }
+      .acao .btn-primario { width: 100%; }
+    }
+
+    /* Impressão em A4: fundo branco, texto preto, sem botões */
+    @page { size: A4; margin: 14mm; }
+
+    @media print {
+      html, body {
+        background: #fff !important;
+        color: #000 !important;
+        font-size: 11pt;
+      }
+
+      .no-print,
+      #tela-escolhas,
+      .topo { display: none !important; }
+
+      .app { max-width: none; padding: 0; }
+      .barra { display: none !important; }
+
+      .folha {
+        background: none;
+        border: none;
+        box-shadow: none;
+        border-radius: 0;
+        padding: 0;
+        color: #000;
+      }
+
+      .folha-topo, .bloco, .exemplo, .campo, .item-exp, .cartao-wrap {
+        break-inside: avoid;
+      }
+
+      .folha-meta, .bloco h3, .folha-topo h2, .cartao-titulo, .medias strong, .faixa output, .termo-faixa output {
+        color: #000 !important;
+      }
+
+      .folha-topo, .exemplo { border-color: #000; }
+      .exemplo { background: none; }
+      .exemplo dt, .exemplo dd, .bloco p, .campo > label, .estrategias legend, .check span, .dica {
+        color: #000 !important;
+      }
+
+      .destaque, .aviso-psi, .medias p {
+        background: none !important;
+        color: #000 !important;
+        border: 1px solid #000 !important;
+      }
+
+      input[type="text"], input[type="number"], textarea {
+        background: #fff !important;
+        color: #000 !important;
+        border: 1px solid #555 !important;
+        box-shadow: none !important;
+      }
+
+      input[type="range"] { accent-color: #000; }
+      .termo-faixa input[type="range"] { background: #ccc !important; }
+
+      .item-exp, .estrategias, .tabela-wrap {
+        background: #fff !important;
+        border-color: #555 !important;
+      }
+
+      .item-exp { animation: none; }
+      .agenda th, .agenda td { border-color: #555 !important; }
+      .agenda thead th, .agenda tbody th { background: #fff !important; color: #000 !important; }
+
+      .cartao { border-color: #000; background: #fff; color: #000; }
+      .cartao-titulo, .cartao strong { color: #000 !important; }
+
+      .rodape {
+        border-top: 1px solid #000;
+        color: #000;
+        break-inside: avoid;
+      }
+
+      .check input { accent-color: #000; }
+    }
+
+    /* Categorias da tela inicial */
+    .categorias {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 12px;
+    }
+
+    .cat-cartao {
+      font: inherit;
+      display: grid;
+      gap: 6px;
+      align-content: start;
+      text-align: left;
+      color: var(--texto);
+      background: var(--surface-2);
+      border: 1px solid var(--borda-suave);
+      border-radius: 14px;
+      padding: 18px;
+      cursor: pointer;
+      transition: border-color 0.2s, background 0.2s, transform 0.15s, box-shadow 0.2s;
+    }
+
+    .cat-cartao:hover:not(:disabled) { border-color: var(--borda); transform: translateY(-2px); }
+
+    .cat-cartao[aria-pressed="true"] {
+      border-color: var(--ciano);
+      background: rgba(34, 211, 238, 0.12);
+      box-shadow: 0 0 0 1px var(--ciano);
+    }
+
+    .cat-cartao:disabled { cursor: not-allowed; opacity: 0.6; }
+
+    .cat-nome { font-family: var(--fonte-titulo); font-weight: 700; font-size: 1.05rem; }
+    .cat-desc { color: var(--texto-2); font-size: 0.9rem; }
+
+    .grade-2 { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 20px; }
+    .grade-checks { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 10px; }
+    .grade-checks .check,
+    .emocao-item {
+      padding: 12px;
+      border: 1px solid var(--borda-suave);
+      border-radius: 12px;
+      background: var(--surface-2);
+    }
+    .emocao-item { display: grid; gap: 8px; }
+
+    .dias-lista { display: grid; gap: 10px; }
+    .dia-linha { display: grid; grid-template-columns: 80px 1fr; gap: 12px; align-items: center; }
+    .dias-grade { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 12px; }
+    .dia-bloco {
+      display: grid;
+      gap: 8px;
+      padding: 14px;
+      border: 1px solid var(--borda-suave);
+      border-radius: 12px;
+      background: var(--surface-2);
+    }
+    .dia-bloco h4 { margin: 0; font-family: var(--fonte-titulo); color: var(--ciano); }
+
+    .faixa-mini { display: flex; align-items: center; gap: 8px; }
+    .faixa-mini input[type="range"] { min-width: 80px; }
+    .faixa-mini output { color: var(--ciano); font-weight: 700; min-width: 24px; }
+
+    input[type="time"] {
+      font: inherit;
+      color: var(--texto);
+      background: var(--campo);
+      border: 1px solid var(--borda-suave);
+      border-radius: 10px;
+      padding: 8px 10px;
+      width: 100%;
+      color-scheme: dark;
+    }
+
+    .agenda.sono { min-width: 820px; }
+
+    .ref { margin: 0; color: var(--texto-2); font-style: italic; font-size: 0.9rem; }
+
+    /* Gráficos simples */
+    .grafico {
+      width: 100%;
+      height: auto;
+      display: block;
+      background: var(--surface-2);
+      border: 1px solid var(--borda-suave);
+      border-radius: 14px;
+    }
+    .grafico text { fill: var(--texto-2); font-size: 12px; font-family: var(--fonte-corpo); }
+    .grafico .linha { fill: none; stroke: var(--ciano); stroke-width: 3; stroke-linejoin: round; }
+    .grafico .ponto { fill: var(--ciano); }
+    .grafico .grade { stroke: var(--borda-suave); stroke-width: 1; }
+
+    .barras { display: grid; gap: 10px; }
+    .barra-linha { display: grid; grid-template-columns: 110px 1fr 32px; gap: 12px; align-items: center; }
+    .barra-trilha {
+      height: 14px;
+      background: var(--surface-2);
+      border: 1px solid var(--borda-suave);
+      border-radius: 999px;
+      overflow: hidden;
+    }
+    .barra-preench {
+      height: 100%;
+      background: linear-gradient(90deg, var(--ciano), var(--violeta));
+      border-radius: 999px;
+      transition: width 0.3s ease;
+    }
+    .barra-valor { font-family: var(--fonte-titulo); color: var(--ciano); font-weight: 700; text-align: right; }
+
+    /* Relaxamento e cronômetros */
+    .respiracao,
+    .passo-atual { display: grid; justify-items: center; gap: 12px; }
+
+    .passo-atual {
+      text-align: center;
+      padding: 20px;
+      border: 1px solid var(--borda);
+      border-radius: 14px;
+      background: rgba(34, 211, 238, 0.06);
+    }
+
+    .palco { width: 220px; height: 220px; display: grid; place-items: center; }
+
+    .circulo {
+      width: 120px;
+      height: 120px;
+      border-radius: 50%;
+      background: radial-gradient(circle, #22d3ee, #8b5cf6);
+      box-shadow: 0 0 40px rgba(34, 211, 238, 0.3);
+      transform: scale(1);
+      transition: transform 4s ease-in-out;
+    }
+    .circulo.expande { transform: scale(1.7); transition-duration: 4s; }
+    .circulo.contrai { transform: scale(1); transition-duration: 6s; }
+
+    .fase {
+      margin: 0;
+      font-family: var(--fonte-titulo);
+      font-size: 1.4rem;
+      color: var(--ciano);
+      text-align: center;
+    }
+
+    .rotulo-grupo { margin: 0; font-weight: 500; min-height: 3em; }
+
+    .cronometro {
+      margin: 0;
+      font-family: var(--fonte-titulo);
+      font-size: clamp(2.5rem, 8vw, 4rem);
+      font-weight: 700;
+      color: var(--ciano);
+      font-variant-numeric: tabular-nums;
+    }
+
+    .controles { display: flex; flex-wrap: wrap; gap: 12px; justify-content: center; }
+
+    .lista-passos { margin: 0; padding-left: 1.4em; color: var(--texto-2); display: grid; gap: 6px; }
+    .lista-passos li.atual { color: var(--ciano); font-weight: 500; }
+    .lista-passos li.feito { text-decoration: line-through; opacity: 0.6; }
+
+    /* Dever de casa */
+    .cabecalho-dever {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 12px 20px;
+    }
+
+    .linha-preencher { display: flex; align-items: baseline; gap: 8px; font-weight: 500; }
+
+    .linha-preencher input {
+      flex: 1;
+      min-width: 0;
+      background: transparent;
+      border: none;
+      border-bottom: 1px solid var(--borda);
+      border-radius: 0;
+      padding: 6px 4px;
+    }
+
+    .dever-item {
+      display: grid;
+      gap: 10px;
+      padding: 20px;
+      border: 1px solid var(--borda-suave);
+      border-radius: 14px;
+      background: var(--surface-2);
+      break-inside: avoid;
+    }
+    .dever-item h3 { color: var(--ciano); font-size: 1.1rem; }
+    .dever-item p { margin: 0; color: var(--texto-2); }
+
+    .linhas {
+      min-height: 140px;
+      border: 1px solid var(--borda-suave);
+      border-radius: 12px;
+      background: repeating-linear-gradient(to bottom, transparent 0, transparent 35px, var(--borda-suave) 35px, var(--borda-suave) 36px);
+    }
+
+    .combinado {
+      display: grid;
+      gap: 16px;
+      padding: 20px;
+      border: 1px dashed var(--borda);
+      border-radius: 14px;
+    }
+    .combinado h3 { color: var(--violeta); }
+
+    @media print {
+      .palco, .controles { display: none !important; }
+      .passo-atual { border-color: #000; background: none; }
+      .fase, .rotulo-grupo, .cronometro, .lista-passos li, .dever-item p, .dever-item h3,
+      .combinado h3, .ref, .barra-valor, .faixa-mini output, .dia-bloco h4 {
+        color: #000 !important;
+      }
+      .grafico { background: #fff; border-color: #555; }
+      .grafico text { fill: #000; }
+      .grafico .linha { stroke: #000; }
+      .grafico .ponto { fill: #000; }
+      .grafico .grade { stroke: #999; }
+      .barra-trilha,
+      .linhas,
+      .dever-item,
+      .combinado,
+      .emocao-item,
+      .grade-checks .check,
+      .dia-bloco {
+        background: #fff !important;
+        border-color: #555 !important;
+      }
+      .barra-preench { background: #000 !important; }
+      .linhas {
+        background-image: repeating-linear-gradient(to bottom, transparent 0, transparent 35px, #999 35px, #999 36px) !important;
+      }
+      .linha-preencher input { border-bottom-color: #000; color: #000; }
+      .lista-passos li.atual { font-weight: 700; }
+    }
+
+    /* Jogos e baralhos */
+    .area-baralho { display: grid; gap: 20px; justify-items: center; width: 100%; }
+    .carta-cena { perspective: 1000px; width: min(100%, 300px); }
+    .carta-flip {
+      position: relative;
+      width: 100%;
+      aspect-ratio: 6 / 8.5;
+      transform-style: preserve-3d;
+      transition: transform 0.7s ease;
+    }
+    .carta-flip.virada { transform: rotateY(180deg); }
+    .carta-verso,
+    .carta-frente {
+      position: absolute;
+      inset: 0;
+      border-radius: 16px;
+      backface-visibility: hidden;
+      -webkit-backface-visibility: hidden;
+    }
+    .carta-verso {
+      display: grid;
+      place-items: center;
+      font-family: var(--fonte-titulo);
+      font-size: 3rem;
+      color: var(--ciano);
+      background: linear-gradient(145deg, #0f2a3a, #151b33);
+      border: 1px solid var(--ciano);
+    }
+    .carta-frente {
+      transform: rotateY(180deg);
+      padding: 20px;
+      overflow: auto;
+      background: var(--surface-2);
+      border: 1px solid var(--borda);
+    }
+    .carta-corpo h4 { font-family: var(--fonte-titulo); color: var(--ciano); font-size: 1.15rem; margin: 8px 0; }
+    .carta-corpo p { margin: 6px 0; font-size: 0.9rem; color: var(--texto-2); }
+    .carta-corpo strong { color: var(--texto); font-weight: 500; }
+    .carta-emoji { font-size: 2.6rem; line-height: 1; }
+    .carta-selo {
+      display: inline-block;
+      font-size: 0.75rem;
+      color: #c4b5fd;
+      border: 1px solid var(--violeta);
+      border-radius: 999px;
+      padding: 2px 10px;
+    }
+    .grade-cartas { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 16px; width: 100%; }
+    .carta-estatica {
+      padding: 16px;
+      border-radius: 14px;
+      background: var(--surface-2);
+      border: 1px solid var(--borda-suave);
+    }
+    .folhas-cartas { display: grid; gap: 16px; width: 100%; }
+    .pagina-cartas { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); }
+    .carta-impressa {
+      aspect-ratio: 6 / 8.5;
+      padding: 12px;
+      overflow: hidden;
+      border: 1px dashed var(--borda);
+      background: var(--surface-2);
+      color: var(--texto);
+    }
+    .carta-impressa.vazia { border-color: transparent; background: transparent; }
+
+    .placar { display: flex; gap: 24px; justify-content: center; flex-wrap: wrap; color: var(--texto-2); margin: 0; }
+    .placar p { margin: 0; }
+    .placar strong { color: var(--ciano); font-family: var(--fonte-titulo); font-size: 1.4rem; }
+    .feedback { margin: 0; min-height: 1.5em; font-weight: 500; text-align: center; }
+    .pensamento {
+      margin: 0;
+      padding: 16px 20px;
+      border-left: 3px solid var(--violeta);
+      border-radius: 12px;
+      background: var(--surface-2);
+      font-family: var(--fonte-titulo);
+      font-size: clamp(1.05rem, 2.6vw, 1.25rem);
+    }
+    .opcoes-jogo { display: grid; gap: 10px; }
+    .opcao-jogo {
+      font: inherit;
+      text-align: left;
+      padding: 12px 16px;
+      border-radius: 12px;
+      color: var(--texto);
+      background: var(--surface-2);
+      border: 1px solid var(--borda-suave);
+      cursor: pointer;
+      transition: border-color 0.2s, background 0.2s;
+    }
+    .opcao-jogo:hover:not(:disabled) { border-color: var(--ciano); }
+    .opcao-jogo:disabled { cursor: default; }
+    .opcao-jogo.acerto { border-color: #4ade80; background: rgba(74, 222, 128, 0.15); }
+    .opcao-jogo.erro { border-color: #f87171; background: rgba(248, 113, 113, 0.15); }
+
+    .grade-memoria { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 10px; }
+    .carta-memoria {
+      display: grid;
+      place-items: center;
+      aspect-ratio: 1 / 1.1;
+      padding: 6px;
+      font: inherit;
+      font-size: clamp(0.8rem, 3vw, 1.05rem);
+      text-align: center;
+      color: var(--texto);
+      background: var(--surface-2);
+      border: 1px solid var(--borda);
+      border-radius: 14px;
+      cursor: pointer;
+      transition: transform 0.2s, border-color 0.2s, background 0.2s;
+    }
+    .carta-memoria:hover:not(:disabled) { transform: translateY(-2px); }
+    .carta-memoria.aberta { background: rgba(34, 211, 238, 0.12); border-color: var(--ciano); }
+    .carta-memoria.achada { background: rgba(139, 92, 246, 0.15); border-color: var(--violeta); }
+    .carta-memoria:disabled { cursor: default; }
+    .emoji-grande { font-size: 2rem; line-height: 1; }
+
+    .roleta-painel {
+      display: grid;
+      gap: 12px;
+      justify-items: center;
+      text-align: center;
+      padding: 28px;
+      border-radius: 18px;
+      border: 1px solid var(--borda);
+      background: radial-gradient(circle at center, rgba(34, 211, 238, 0.12), transparent 70%);
+    }
+    .roleta-rotulo { margin: 0; font-size: 0.85rem; color: var(--texto-2); text-transform: uppercase; letter-spacing: 0.08em; }
+    .roleta-resultado {
+      margin: 0;
+      min-height: 3em;
+      max-width: 36ch;
+      font-family: var(--fonte-titulo);
+      font-size: clamp(1.1rem, 3vw, 1.4rem);
+      color: var(--ciano);
+    }
+    .roleta-painel.girando .roleta-resultado { animation: pisca 0.15s ease-in-out infinite alternate; }
+    @keyframes pisca { to { opacity: 0.45; } }
+
+    @media print {
+      #folha.imprimir-cartas .folha-topo,
+      #folha.imprimir-cartas .bloco,
+      #folha.imprimir-cartas .exemplo,
+      #folha.imprimir-cartas .dica { display: none !important; }
+      .pagina-cartas { grid-template-columns: repeat(3, 60mm); grid-auto-rows: 85mm; break-after: page; }
+      .pagina-cartas:last-child { break-after: auto; }
+      .carta-impressa {
+        width: 60mm;
+        height: 85mm;
+        padding: 4mm;
+        background: #fff !important;
+        color: #000 !important;
+        border: 1px dashed #777 !important;
+      }
+      .carta-impressa h4, .carta-impressa p, .carta-impressa strong, .carta-impressa .carta-selo { color: #000 !important; }
+      .carta-impressa .carta-corpo p { font-size: 8pt; margin: 3px 0; }
+      .carta-impressa .carta-emoji { font-size: 18pt; }
+      .carta-impressa .carta-selo { border-color: #000; }
+    }
+
+    /* Pessoa idosa: mais espaço entre os campos */
+    body.publico-idoso .corpo-recurso { gap: 28px; }
+    body.publico-idoso textarea,
+    body.publico-idoso input[type="text"],
+    body.publico-idoso input[type="number"] { font-size: 1.05rem; }
+    body.publico-idoso .check { gap: 14px; }
+  </style>
+  <meta property="og:image" content="https://bolt.new/static/og_default.png">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:image" content="https://bolt.new/static/og_default.png">
+</head>
+<body>
+  <main class="app">
+    <header class="topo">
+      <p class="selo">Material de apoio em TCC</p>
+      <h1>Gerador de recursos terapêuticos (TCC)</h1>
+      <p class="subtitulo">Escolha o recurso, o público e o tema. Depois preencha a folha de trabalho em poucos minutos.</p>
+    </header>
+
+    <!-- Tela 1: escolhas -->
+    <section id="tela-escolhas">
+      <div id="grupos"></div>
+      <div class="acao">
+        <p id="dica-escolha" class="dica">Escolha uma opção em cada etapa.</p>
+        <button id="btn-gerar" class="btn-primario" type="button" disabled>Gerar recurso</button>
+      </div>
+    </section>
+
+    <!-- Tela 2: folha de trabalho -->
+    <section id="tela-folha" class="oculta">
+      <div class="barra no-print">
+        <button id="btn-voltar" class="btn-sec" type="button">Voltar</button>
+        <div class="grupo-botoes">
+          <button id="btn-limpar" class="btn-sec" type="button">Limpar</button>
+          <button id="btn-imprimir" class="btn-primario" type="button">Imprimir ou salvar em PDF</button>
+        </div>
+      </div>
+      <article id="folha" class="folha"></article>
+    </section>
+
+    <footer class="rodape">
+      <p>Material de apoio para uso com acompanhamento de psicólogo(a). Não substitui avaliação nem tratamento.</p>
+      <p>Nada que você escreve é salvo ou enviado: fica só nesta tela.</p>
+      <p>Em momentos de muito sofrimento, ligue 188 (CVV, 24 horas).</p>
+    </footer>
+  </main>
+
+  <script>
+    // Públicos e temas exibidos nas telas
+    const PUBLICOS = {
+      crianca: 'Criança (6 a 11)',
+      adolescente: 'Adolescente (12 a 17)',
+      adulto: 'Adulto',
+      idoso: 'Pessoa idosa'
+    };
+
+    const TEMAS = {
+      ansiedade: 'Ansiedade',
+      humor: 'Humor e tristeza',
+      estresse: 'Estresse',
+      sono: 'Sono'
+    };
+
+    // Categorias da tela inicial e os recursos de cada uma
+    const CATEGORIAS = {
+      registros: {
+        nome: 'Registros e técnicas',
+        descricao: 'Escreva, analise e experimente pensamentos e situações.',
+        recursos: ['registro', 'abc', 'vantagens', 'seta', 'experimento', 'resolucao', 'preocupacoes', 'exposicao', 'conquistas', 'agenda']
+      },
+      escalas: {
+        nome: 'Escalas e termômetros',
+        descricao: 'Acompanhe humor, desconforto, sono e emoções.',
+        recursos: ['termometro', 'humor7', 'desconforto', 'sono', 'roda']
+      },
+      relaxamento: {
+        nome: 'Relaxamento e regulação',
+        descricao: 'Respiração, cronômetros e exercícios para acalmar o corpo.',
+        recursos: ['respiracao', 'muscular', 'aterramento', 'atencao', 'cartao']
+      },
+      jogos: {
+        nome: 'Jogos e baralhos',
+        descricao: 'Atividades em formato de jogo.',
+        recursos: ['baralhoEmocoes', 'baralhoDistorcoes', 'baralhoEstrategias', 'detetive', 'memoria', 'roleta']
+      },
+      dever: {
+        nome: 'Dever de casa',
+        descricao: 'Uma folha única com até 3 recursos para levar para casa.',
+        recursos: []
+      }
+    };
+
+    // Passos do relaxamento muscular progressivo, em ordem
+    const PASSOS_MUSCULARES = [
+      'Mãos e braços: feche as mãos e dobre os braços',
+      'Ombros: levante os ombros em direção às orelhas',
+      'Rosto e testa: franza a testa e feche os olhos com força',
+      'Mandíbula e boca: aperte os dentes de leve',
+      'Pescoço: encoste o queixo no peito, com cuidado',
+      'Barriga: contraia a barriga',
+      'Pernas e pés: estique as pernas e dobre os pés'
+    ];
+
+    // Sentidos do exercício 5-4-3-2-1: quantidade e o que escrever
+    const SENTIDOS = [
+      [5, 'coisas que eu vejo'],
+      [4, 'coisas que eu consigo tocar'],
+      [3, 'sons que eu ouço'],
+      [2, 'cheiros que eu percebo'],
+      [1, 'gosto ou sensação na boca']
+    ];
+
+    const EMOCOES_DIA = ['Alegria', 'Calma', 'Tristeza', 'Medo', 'Ansiedade', 'Raiva', 'Cansaço', 'Culpa'];
+
+    // Estratégias sugeridas no termômetro, de acordo com o tema
+    const ESTRATEGIAS = {
+      ansiedade: [
+        'Respiração lenta: inspire em 4 tempos e solte em 6, por 2 minutos',
+        'Sentir os pés no chão e nomear 5 coisas que consigo ver',
+        'Anotar a preocupação e separar o que posso fazer agora'
+      ],
+      humor: [
+        'Uma atividade pequena e agradável (uma música, um banho, um lanche gostoso)',
+        'Caminhar 5 minutos ao ar livre',
+        'Mandar uma mensagem para alguém de confiança'
+      ],
+      estresse: [
+        'Pausa curta de 3 minutos, longe das telas',
+        'Beber um copo de água e alongar ombros e pescoço',
+        'Listar o que é urgente e o que pode esperar'
+      ],
+      sono: [
+        'Desligar as telas 1 hora antes de dormir',
+        'Manter horário fixo para deitar e acordar',
+        'Deixar o quarto escuro, silencioso e fresco'
+      ]
+    };
+
+    const DIAS = ['Segunda', 'Terça', 'Quarta', 'Quinta', 'Sexta', 'Sábado', 'Domingo'];
+    const PERIODOS = ['Manhã', 'Tarde', 'Noite'];
+
+    // Escolhas feitas pela pessoa na primeira tela
+    const escolha = { categoria: null, recurso: null, recursosDever: [], publico: null, tema: null };
+
+    // Textos de cada recurso: como usar, exemplo preenchido (fictício) e a montagem dos campos
+    const RECURSOS = {
+      registro: {
+        titulo: 'Registro de pensamentos',
+        comoUsar: {
+          crianca: 'Quando um sentimento ficar muito grande, conte o que aconteceu e o que você pensou. Depois, pense em outro jeito de ver a situação. 🌈',
+          adolescente: 'Anote a situação, o que você sentiu e o pensamento que apareceu. Depois, compare as provas a favor e contra e escreva uma versão mais equilibrada.',
+          adulto: 'Preencha logo após uma situação difícil, enquanto ela ainda está clara. Registre o pensamento automático, examine as evidências e escreva uma alternativa mais realista.',
+          idoso: 'Escreva o que aconteceu e o que sentiu. Depois, pense nas coisas que confirmam e nas que não confirmam o pensamento. Ao final, escreva uma frase mais equilibrada.'
+        },
+        exemplo: {
+          ansiedade: [
+            ['Situação', 'Vou apresentar um trabalho na escola amanhã.'],
+            ['Emoção e intensidade', 'Medo, 80 de 100'],
+            ['Pensamento automático', 'Vou esquecer tudo e todos vão rir de mim.'],
+            ['Evidências a favor', 'Já errei antes e não foi o fim do mundo.'],
+            ['Evidências contra', 'Preparei os slides e conheço o assunto. Quem trava um pouco não vira motivo de piada.'],
+            ['Pensamento alternativo', 'Posso ficar nervoso e mesmo assim falar. Se travar, respiro e continuo.'],
+            ['Intensidade depois', '45 de 100']
+          ],
+          humor: [
+            ['Situação', 'Meu amigo não respondeu minha mensagem.'],
+            ['Emoção e intensidade', 'Tristeza, 70 de 100'],
+            ['Pensamento automático', 'Ele não gosta mais de mim.'],
+            ['Evidências a favor', 'Ele demorou para responder duas vezes esta semana.'],
+            ['Evidências contra', 'Ele mandou uma figurinha ontem e está com a rotina corrida. Eu também já demorei para responder.'],
+            ['Pensamento alternativo', 'Ele pode estar ocupado. Vou esperar um pouco e, se quiser, perguntar como ele está.'],
+            ['Intensidade depois', '40 de 100']
+          ],
+          estresse: [
+            ['Situação', 'Muitas tarefas acumuladas no trabalho.'],
+            ['Emoção e intensidade', 'Sobrecarga, 85 de 100'],
+            ['Pensamento automático', 'Não vou dar conta de nada.'],
+            ['Evidências a favor', 'Tenho prazos curtos e pouco tempo.'],
+            ['Evidências contra', 'Concluí várias tarefas nesta semana.'],
+            ['Pensamento alternativo', 'Tenho muitas tarefas, mas posso escolher a mais urgente e fazer uma de cada vez.'],
+            ['Intensidade depois', '50 de 100']
+          ],
+          sono: [
+            ['Situação', 'Deitei às 23h e não consegui dormir.'],
+            ['Emoção e intensidade', 'Frustração, 75 de 100'],
+            ['Pensamento automático', 'Nunca consigo dormir, amanhã será um desastre.'],
+            ['Evidências a favor', 'Às vezes eu durmo mal mesmo.'],
+            ['Evidências contra', 'Em outras noites dormi bem. Cansaço ajuda a dormir.'],
+            ['Pensamento alternativo', 'Dormir mal às vezes acontece. Posso relaxar e, mesmo cansado, dar conta do dia.'],
+            ['Intensidade depois', '40 de 100']
+          ]
+        },
+        montar: montarRegistro
+      },
+
+      termometro: {
+        titulo: 'Termômetro de emoções',
+        comoUsar: {
+          crianca: 'Marque no termômetro como você está, do 0 (calminho) ao 10 (muito forte). Conte o que sente e escolha uma ideia para tentar. 🌡️',
+          adolescente: 'Marque o quanto você está sentindo, de 0 a 10, e descreva o que está acontecendo. Depois, escolha uma ou duas estratégias para testar hoje.',
+          adulto: 'Marque seu nível atual de 0 a 10 e descreva o que está sentindo. Em seguida, escolha as estratégias que quer experimentar e registre o que ajudou.',
+          idoso: 'Marque como você está, de 0 a 10. Escreva o que sente e escolha uma ou duas ideias para tentar com calma.'
+        },
+        exemplo: {
+          ansiedade: [
+            ['Nível', '7 de 10'],
+            ['O que estou sentindo', 'Coração acelerado e pensamentos rápidos antes da prova.'],
+            ['O que ajudou', 'Respirar devagar por 2 minutos e lembrar que a sensação passa.'],
+            ['Estratégias marcadas', 'Respiração lenta e sentir os pés no chão.']
+          ],
+          humor: [
+            ['Nível', '6 de 10'],
+            ['O que estou sentindo', 'Triste e sem vontade de sair de casa.'],
+            ['O que ajudou', 'Ouvir uma música que gosto e caminhar até a esquina.'],
+            ['Estratégias marcadas', 'Uma atividade pequena e agradável.']
+          ],
+          estresse: [
+            ['Nível', '8 de 10'],
+            ['O que estou sentindo', 'Cansaço e irritação com o barulho do trabalho.'],
+            ['O que ajudou', 'Fazer uma pausa de 3 minutos e beber água.'],
+            ['Estratégias marcadas', 'Pausa curta e listar o que é urgente.']
+          ],
+          sono: [
+            ['Nível', '5 de 10'],
+            ['O que estou sentindo', 'Inquieto e preocupado com a noite.'],
+            ['O que ajudou', 'Desligar o celular e ler uma página de um livro.'],
+            ['Estratégias marcadas', 'Desligar as telas 1 hora antes de dormir.']
+          ]
+        },
+        montar: montarTermometro
+      },
+
+      agenda: {
+        titulo: 'Agenda de atividades',
+        comoUsar: {
+          crianca: 'Escreva uma atividade em cada espaço da semana. Depois, dê notas de 0 a 10 para quanto gostou e para quanto se sentiu orgulhoso(a). 🎈',
+          adolescente: 'Preencha os espaços com atividades reais da semana. Dê notas de 0 a 10 para o prazer e para a sensação de conquista e veja as médias no final.',
+          adulto: 'Planeje ou registre as atividades de cada período. Avalie o prazer e a sensação de conquista de 0 a 10. As médias mostram o que vale a pena repetir.',
+          idoso: 'Escreva uma atividade em cada espaço da semana. Dê notas de 0 a 10 para o quanto gostou e para o quanto se sentiu realizado(a).'
+        },
+        exemplo: {
+          ansiedade: [
+            ['Terça, manhã', 'Caminhada leve (prazer 6, conquista 7)'],
+            ['Quinta, tarde', 'Estudar matéria difícil em blocos de 25 minutos (prazer 3, conquista 8)'],
+            ['Sábado, noite', 'Jantar com a família (prazer 8, conquista 5)']
+          ],
+          humor: [
+            ['Segunda, manhã', 'Tomar café sem pressa (prazer 5, conquista 3)'],
+            ['Quarta, tarde', 'Ligar para uma prima e conversar (prazer 8, conquista 6)'],
+            ['Domingo, noite', 'Assistir a um filme leve (prazer 7, conquista 2)']
+          ],
+          estresse: [
+            ['Segunda, manhã', 'Organizar a lista de tarefas (prazer 2, conquista 7)'],
+            ['Quarta, tarde', 'Pausa de 15 minutos com uma caminhada (prazer 6, conquista 4)'],
+            ['Sexta, noite', 'Cozinhar algo simples (prazer 7, conquista 6)']
+          ],
+          sono: [
+            ['Segunda, noite', 'Banho morno antes de deitar (prazer 7, conquista 5)'],
+            ['Quarta, noite', 'Desligar o celular às 22h (prazer 3, conquista 8)'],
+            ['Sábado, manhã', 'Acordar no mesmo horário de sempre (prazer 4, conquista 7)']
+          ]
+        },
+        montar: montarAgenda
+      },
+
+      exposicao: {
+        titulo: 'Hierarquia de exposição',
+        comoUsar: {
+          crianca: 'Escreva as situações que dão um pouquinho de medo. Quanto mais difícil, maior o número. Vamos começar pelas mais fáceis. 🪜',
+          adolescente: 'Liste situações que você evita por causa do desconforto. Dê uma nota de 0 a 100 para cada uma. A lista se organiza sozinha, do menor para o maior.',
+          adulto: 'Liste as situações evitadas e dê a cada uma um nível de desconforto de 0 a 100. A lista fica ordenada do menor para o maior, para começar pelos passos possíveis.',
+          idoso: 'Liste as situações que você evita por causa do desconforto. Dê uma nota de 0 a 100 para cada uma. Comece pelas que causam menos desconforto.'
+        },
+        exemplo: {
+          ansiedade: [
+            ['Pedir ajuda ao professor', '30 de 100, já tentei'],
+            ['Entrar em uma sala cheia', '60 de 100'],
+            ['Falar em público na aula', '85 de 100']
+          ],
+          humor: [
+            ['Sair para caminhar sozinho', '25 de 100, já tentei'],
+            ['Ir a uma festa com amigos', '60 de 100'],
+            ['Retomar um hobby abandonado', '75 de 100']
+          ],
+          estresse: [
+            ['Dizer não a um pedido extra', '40 de 100'],
+            ['Delegar uma tarefa para a equipe', '65 de 100, já tentei'],
+            ['Reunião longa sem pausa', '90 de 100']
+          ],
+          sono: [
+            ['Ficar sem celular na cama por 15 minutos', '35 de 100'],
+            ['Deitar no mesmo horário por uma semana', '60 de 100'],
+            ['Tirar cochilo longo à tarde', '80 de 100']
+          ]
+        },
+        montar: montarExposicao
+      },
+
+      cartao: {
+        titulo: 'Cartão de enfrentamento',
+        comoUsar: {
+          crianca: 'Escreva o que acontece quando você fica com medo ou bravo. Depois, escreva uma frase de coragem e um jeito de ajudar a si mesmo. Recorte o cartão e leve com você. ✂️',
+          adolescente: 'Use este cartão quando a situação ficar difícil. Escreva o pensamento que costuma aparecer, uma frase para você mesmo e um passo possível. Imprima e leve no bolso.',
+          adulto: 'Preencha o cartão com antecedência, para usar na hora difícil. Inclua o pensamento que costuma surgir, uma fala de apoio, um passo concreto e uma pessoa de confiança.',
+          idoso: 'Preencha o cartão com calma. Escreva a situação difícil, o pensamento que costuma vir, uma frase de apoio, um passo possível e uma pessoa para pedir ajuda.'
+        },
+        exemplo: {
+          ansiedade: [
+            ['Situação difícil', 'Sinto que vou passar mal durante uma prova.'],
+            ['Pensamento que costuma vir', 'Vou errar tudo e todos vão perceber.'],
+            ['O que posso me dizer', 'Ansiedade é desconfortável, mas passa. Já passei por isso antes.'],
+            ['O que posso fazer', 'Respirar devagar 4 vezes e começar pela primeira questão.'],
+            ['Pessoa para pedir ajuda', 'Minha mãe ou a professora Helena.']
+          ],
+          humor: [
+            ['Situação difícil', 'Fico sozinho(a) em casa no fim de semana.'],
+            ['Pensamento que costuma vir', 'Ninguém se lembra de mim.'],
+            ['O que posso me dizer', 'Sentir saudade é normal. Eu também posso lembrar dos outros.'],
+            ['O que posso fazer', 'Mandar uma mensagem para uma amiga e sair 10 minutos.'],
+            ['Pessoa para pedir ajuda', 'Meu irmão Lucas.']
+          ],
+          estresse: [
+            ['Situação difícil', 'Chefe pede resultado para amanhã.'],
+            ['Pensamento que costuma vir', 'Não vou conseguir e vou decepcionar todo mundo.'],
+            ['O que posso me dizer', 'Eu já resolvi problemas parecidos. Um passo de cada vez.'],
+            ['O que posso fazer', 'Fazer uma pausa de 3 minutos e escolher a primeira tarefa.'],
+            ['Pessoa para pedir ajuda', 'Colega Ana, da minha equipe.']
+          ],
+          sono: [
+            ['Situação difícil', 'Acordei no meio da noite e não consigo voltar a dormir.'],
+            ['Pensamento que costuma vir', 'Vou ficar exausto e não vou aguentar o dia.'],
+            ['O que posso me dizer', 'Descansar já ajuda, mesmo sem dormir. Não preciso ser perfeito.'],
+            ['O que posso fazer', 'Levantar, beber um pouco de água e voltar para a cama com a luz apagada.'],
+            ['Pessoa para pedir ajuda', 'Minha médica da família, na próxima consulta.']
+          ]
+        },
+        montar: montarCartao
+      },
+
+      abc: {
+        titulo: 'Modelo ABC',
+        comoUsar: {
+          crianca: 'Conte o que aconteceu (A), o que você pensou (B) e como isso fez você sentir e agir (C). Assim fica mais fácil entender os sentimentos. 🧩',
+          adolescente: 'Preencha A (a situação), B (o que você pensou sobre ela) e C (o que sentiu e o que fez em seguida). Veja como o pensamento influenciou a reação.',
+          adulto: 'Descreva a situação (A), a crença ou pensamento que surgiu (B) e as consequências emocionais e de comportamento (C). Use para perceber a ligação entre pensar, sentir e agir.',
+          idoso: 'Escreva o que aconteceu (A), o que pensou sobre isso (B) e como se sentiu e agiu depois (C). Assim fica claro como o pensamento influenciou a reação.'
+        },
+        exemplo: {
+          ansiedade: [
+            ['Situação (A)', 'Recebi uma mensagem do chefe com o assunto "reunião urgente".'],
+            ['Crença (B)', 'Algo ruim vai acontecer e vou ser demitido.'],
+            ['Consequência emocional (C)', 'Medo, 90 de 100'],
+            ['Consequência no comportamento (C)', 'Não consegui dormir e fiquei verificando o e-mail a noite toda.']
+          ],
+          humor: [
+            ['Situação (A)', 'Passei o domingo sozinho em casa.'],
+            ['Crença (B)', 'Ninguém se importa comigo.'],
+            ['Consequência emocional (C)', 'Tristeza, 75 de 100'],
+            ['Consequência no comportamento (C)', 'Fiquei deitado o dia inteiro e não respondi às mensagens.']
+          ],
+          estresse: [
+            ['Situação (A)', 'Errei um número em uma planilha na frente da equipe.'],
+            ['Crença (B)', 'Sou incompetente e todos vão perceber.'],
+            ['Consequência emocional (C)', 'Vergonha, 80 de 100'],
+            ['Consequência no comportamento (C)', 'Fiquei em silêncio o resto da reunião e não pedi ajuda.']
+          ],
+          sono: [
+            ['Situação (A)', 'Acordei às 3h e olhei as horas.'],
+            ['Crença (B)', 'Se eu não dormir agora, amanhã vai ser um desastre.'],
+            ['Consequência emocional (C)', 'Angústia, 70 de 100'],
+            ['Consequência no comportamento (C)', 'Peguei o celular e fiquei rolando a tela até amanhecer.']
+          ]
+        },
+        montar: montarAbc
+      },
+
+      vantagens: {
+        titulo: 'Vantagens e desvantagens',
+        comoUsar: {
+          crianca: 'Pense em um hábito ou em um jeito de agir que você quer mudar. Escreva o que você ganha e o que você perde agora e depois. ⚖️',
+          adolescente: 'Escolha um comportamento que quer avaliar, como ficar no celular até tarde. Anote vantagens e desvantagens no curto e no longo prazo e depois decida o que fazer.',
+          adulto: 'Escolha um comportamento ou pensamento para avaliar. Compare vantagens e desvantagens no curto e no longo prazo antes de decidir.',
+          idoso: 'Escolha um hábito ou pensamento que quer avaliar. Escreva o que ganha e o que perde, agora e mais para frente, e depois decida com calma.'
+        },
+        exemplo: {
+          ansiedade: [
+            ['Comportamento avaliado', 'Evitar sair de casa quando estou nervoso.'],
+            ['Curto prazo: vantagens', 'Fico livre do desconforto por um tempo.'],
+            ['Curto prazo: desvantagens', 'Perco oportunidades e o medo aumenta.'],
+            ['Longo prazo: vantagens', 'Um alívio mais duradouro, se eu conseguir sair aos poucos.'],
+            ['Longo prazo: desvantagens', 'Vou ficando cada vez mais preso às evitações.'],
+            ['Decisão', 'Sair por 10 minutos hoje, mesmo nervoso.']
+          ],
+          humor: [
+            ['Comportamento avaliado', 'Ficar na cama até tarde quando estou triste.'],
+            ['Curto prazo: vantagens', 'Menos esforço no momento.'],
+            ['Curto prazo: desvantagens', 'Sinto-me mais pesado e sem energia.'],
+            ['Longo prazo: vantagens', 'Nenhuma vantagem relevante.'],
+            ['Longo prazo: desvantagens', 'Perco a rotina e a sensação de conquista.'],
+            ['Decisão', 'Levantar no horário e fazer uma coisa pequena.']
+          ],
+          estresse: [
+            ['Comportamento avaliado', 'Trabalhar sem parar, sem pausas.'],
+            ['Curto prazo: vantagens', 'Sensação de produtividade imediata.'],
+            ['Curto prazo: desvantagens', 'Dor de cabeça e irritação no fim do dia.'],
+            ['Longo prazo: vantagens', 'Nenhuma vantagem relevante.'],
+            ['Longo prazo: desvantagens', 'Cansaço extremo e mais erros.'],
+            ['Decisão', 'Fazer pausas de 5 minutos a cada hora.']
+          ],
+          sono: [
+            ['Comportamento avaliado', 'Usar o celular na cama até tarde.'],
+            ['Curto prazo: vantagens', 'Diversão e relaxamento rápidos.'],
+            ['Curto prazo: desvantagens', 'Demoro mais para dormir e acordo cansado.'],
+            ['Longo prazo: vantagens', 'Nenhuma vantagem relevante.'],
+            ['Longo prazo: desvantagens', 'Cansaço acumulado e menos concentração.'],
+            ['Decisão', 'Deixar o celular fora do quarto depois das 22h.']
+          ]
+        },
+        montar: montarVantagens
+      },
+
+      seta: {
+        titulo: 'Seta descendente',
+        comoUsar: {
+          crianca: 'Escreva um pensamento que te deixa preocupado. Depois pergunte: "E se isso fosse verdade, o que significaria?". Repita a pergunta algumas vezes. 🏹',
+          adolescente: 'Parta de um pensamento que te incomoda e pergunte, de novo, "se isso fosse verdade, o que significaria?". Repita até chegar a um significado mais profundo.',
+          adulto: 'Parta de um pensamento incômodo e responda à pergunta "se isso fosse verdade, o que significaria?" em cada nível. Ao final, observe o significado que mais pesa.',
+          idoso: 'Escreva um pensamento que incomoda. Depois, pergunte com calma: "Se isso fosse verdade, o que significaria?". Repita a pergunta algumas vezes, uma resposta de cada vez.'
+        },
+        exemplo: {
+          ansiedade: [
+            ['Pensamento inicial', 'Vou passar mal na apresentação.'],
+            ['Nível 1', 'Vou ficar sem palavras e todos vão perceber.'],
+            ['Nível 2', 'Vão achar que não sei o assunto.'],
+            ['Nível 3', 'Vou perder a credibilidade com a turma.'],
+            ['Nível 4', 'Não vou ter valor para ninguém.'],
+            ['Nível 5', 'Preciso ser perfeito para ser aceito.']
+          ],
+          humor: [
+            ['Pensamento inicial', 'Ninguém me procurou esta semana.'],
+            ['Nível 1', 'Não sou importante para as pessoas.'],
+            ['Nível 2', 'Vou ficar sozinho para sempre.'],
+            ['Nível 3', 'Nunca vou ser amado.'],
+            ['Nível 4', 'Tem algo de errado comigo.'],
+            ['Nível 5', 'Não mereço carinho.']
+          ],
+          estresse: [
+            ['Pensamento inicial', 'Vou ser demitido se eu errar.'],
+            ['Nível 1', 'Meu trabalho não é bom o suficiente.'],
+            ['Nível 2', 'Vou perder o respeito da equipe.'],
+            ['Nível 3', 'Não vou conseguir me manter.'],
+            ['Nível 4', 'Vou depender dos outros.'],
+            ['Nível 5', 'Preciso dar conta de tudo sozinho para não falhar.']
+          ],
+          sono: [
+            ['Pensamento inicial', 'Se eu não dormir hoje, vou fracassar amanhã.'],
+            ['Nível 1', 'Vou ficar cansado e errar no trabalho.'],
+            ['Nível 2', 'Vou perder a confiança do chefe.'],
+            ['Nível 3', 'Vou ficar sem reconhecimento.'],
+            ['Nível 4', 'Vou ter que recomeçar do zero.'],
+            ['Nível 5', 'Preciso descansar para pensar com mais calma.']
+          ]
+        },
+        montar: montarSeta
+      },
+
+      experimento: {
+        titulo: 'Experimento comportamental',
+        comoUsar: {
+          crianca: 'Pense no que você acha que vai acontecer se tentar algo novo. Depois faça o teste e veja o que realmente aconteceu. 🔬',
+          adolescente: 'Escreva uma previsão sobre algo que você teme ou evita. Planeje um teste simples, faça e compare o resultado com o que você imaginava.',
+          adulto: 'Transforme uma crença em uma hipótese a ser testada. Escreva a previsão, planeje o teste, registre o que aconteceu e o que aprendeu.',
+          idoso: 'Escreva o que acha que vai acontecer se fizer algo diferente. Faça o teste com calma e veja o resultado real.'
+        },
+        exemplo: {
+          ansiedade: [
+            ['Previsão', 'Se eu pedir ajuda na aula, todos vão rir de mim.'],
+            ['Como vou testar', 'Pedir ajuda uma vez ao professor, depois da aula.'],
+            ['O que aconteceu', 'O professor explicou com calma e disse que a dúvida era comum.'],
+            ['O que aprendi', 'A previsão de rejeição não se confirmou desta vez.']
+          ],
+          humor: [
+            ['Previsão', 'Se eu convidar um amigo para caminhar, ele vai recusar.'],
+            ['Como vou testar', 'Convidar a Carla para uma caminhada no parque.'],
+            ['O que aconteceu', 'Ela aceitou e conversamos por uma hora.'],
+            ['O que aprendi', 'Algumas pessoas gostam de ser convidadas.']
+          ],
+          estresse: [
+            ['Previsão', 'Se eu disser não ao pedido extra, vou ser mal visto.'],
+            ['Como vou testar', 'Responder dizendo que hoje não consigo pegar mais tarefas.'],
+            ['O que aconteceu', 'Meu gestor entendeu e remanejou o prazo.'],
+            ['O que aprendi', 'Posso dizer não de forma respeitosa.']
+          ],
+          sono: [
+            ['Previsão', 'Se eu desligar o celular às 22h, não vou conseguir dormir.'],
+            ['Como vou testar', 'Desligar o celular às 22h por três noites.'],
+            ['O que aconteceu', 'Demorei uns 15 minutos para dormir, menos do que antes.'],
+            ['O que aprendi', 'Desligar as telas ajudou a relaxar.']
+          ]
+        },
+        montar: montarExperimento
+      },
+
+      resolucao: {
+        titulo: 'Resolução de problemas',
+        comoUsar: {
+          crianca: 'Diga qual é o problema. Pense em várias ideias, até as engraçadas, e escolha uma para tentar. Depois, veja se deu certo. 🧠',
+          adolescente: 'Descreva o problema e liste ideias sem julgar nenhuma. Compare prós e contras da melhor ideia, escolha, faça um plano e avalie depois.',
+          adulto: 'Defina o problema com clareza e gere várias ideias sem julgá-las. Avalie prós e contras da escolhida, monte um plano e avalie o resultado.',
+          idoso: 'Descreva o problema com calma. Escreva algumas ideias, escolha uma, planeje os passos e, depois, veja o que funcionou.'
+        },
+        exemplo: {
+          ansiedade: [
+            ['Problema', 'Tenho medo de falar na reunião do grupo de estudos.'],
+            ['Ideias', 'Ler o roteiro em voz alta; falar só dois pontos; começar em dupla.'],
+            ['Prós da ideia escolhida', 'Falar dois pontos é curto e controlável.'],
+            ['Contras da ideia escolhida', 'Ainda posso sentir ansiedade.'],
+            ['Ideia escolhida', 'Falar só dois pontos.'],
+            ['Plano', 'Ensaiar em voz alta hoje à noite e levar um cartão com as palavras-chave.'],
+            ['Avaliação', 'Funcionou: me senti menos nervoso. Da próxima vez posso tentar três pontos.']
+          ],
+          humor: [
+            ['Problema', 'Não tenho vontade de fazer nada no fim de semana.'],
+            ['Ideias', 'Caminhar com o cachorro; ligar para um amigo; ver um filme.'],
+            ['Prós da ideia escolhida', 'Caminhar é leve e me tira de casa.'],
+            ['Contras da ideia escolhida', 'Pode dar preguiça na hora de sair.'],
+            ['Ideia escolhida', 'Caminhar 15 minutos com o cachorro no sábado.'],
+            ['Plano', 'Sábado às 9h, deixar o tênis na porta e sair.'],
+            ['Avaliação', 'Foi bom. Vou repetir e aumentar para 20 minutos.']
+          ],
+          estresse: [
+            ['Problema', 'Tenho muitas tarefas e não sei por onde começar.'],
+            ['Ideias', 'Escolher a tarefa mais urgente; pedir ajuda; dividir em partes.'],
+            ['Prós da ideia escolhida', 'Clareza sobre a prioridade do dia.'],
+            ['Contras da ideia escolhida', 'Algumas tarefas vão continuar esperando.'],
+            ['Ideia escolhida', 'Escolher a tarefa mais urgente.'],
+            ['Plano', 'Anotar as três tarefas da manhã e começar pela primeira às 9h.'],
+            ['Avaliação', 'Consegui terminar a primeira. Amanhã vou separar a lista logo cedo.']
+          ],
+          sono: [
+            ['Problema', 'Demoro muito para dormir quando penso no trabalho.'],
+            ['Ideias', 'Anotar as pendências antes de deitar; ler um livro; respiração lenta.'],
+            ['Prós da ideia escolhida', 'Tirar as preocupações da cabeça.'],
+            ['Contras da ideia escolhida', 'Preciso de 10 minutos antes de deitar.'],
+            ['Ideia escolhida', 'Anotar as pendências antes de deitar.'],
+            ['Plano', 'Todo dia, às 21h30, anotar três pendências do dia seguinte.'],
+            ['Avaliação', 'Demorei menos para dormir nos últimos dias.']
+          ]
+        },
+        montar: montarResolucao
+      },
+
+      preocupacoes: {
+        titulo: 'Quadro de preocupações',
+        comoUsar: {
+          crianca: 'Escreva a preocupação. Se dá para fazer algo agora, faça um plano. Se não dá, guarde a preocupação para o horário da preocupação. 🕑',
+          adolescente: 'Anote a preocupação e responda: posso agir sobre isso agora? Se sim, faça um plano. Se não, marque um horário para pensar nisso depois.',
+          adulto: 'Registre a preocupação e avalie se ela pode ser resolvida agora. Se sim, planeje a ação; se não, adie para um horário marcado do dia.',
+          idoso: 'Escreva a preocupação. Pergunte: posso fazer algo agora? Se sim, faça um plano. Se não, deixe para um horário certo do dia.'
+        },
+        exemplo: {
+          ansiedade: [
+            ['Preocupação', 'E se eu não passar no exame de direção?'],
+            ['Posso agir agora?', 'Não'],
+            ['Horário da preocupação', 'Quinta, 19h, por 15 minutos']
+          ],
+          humor: [
+            ['Preocupação', 'Meu amigo está distante e não sei por quê.'],
+            ['Posso agir agora?', 'Sim'],
+            ['Plano de ação', 'Mandar uma mensagem perguntando como ele está, hoje à tarde.']
+          ],
+          estresse: [
+            ['Preocupação', 'A conta de luz pode vir alta este mês.'],
+            ['Posso agir agora?', 'Sim'],
+            ['Plano de ação', 'No sábado, olhar a conta e separar o valor no orçamento.']
+          ],
+          sono: [
+            ['Preocupação', 'Se eu não dormir bem, nada vai dar certo.'],
+            ['Posso agir agora?', 'Não'],
+            ['Horário da preocupação', 'Amanhã, 18h, durante 10 minutos.']
+          ]
+        },
+        montar: montarPreocupacoes
+      },
+
+      conquistas: {
+        titulo: 'Diário de conquistas e gratidão',
+        comoUsar: {
+          crianca: 'Todo dia, escreva 3 coisas boas: algo que você fez bem ou algo de que gostou. Depois de 7 dias, veja o que mais apareceu. 🌟',
+          adolescente: 'Todo dia, escreva três conquistas ou coisas pelas quais você é grato. Mesmo as pequenas ajudam a perceber o que está dando certo.',
+          adulto: 'Registre diariamente três itens: conquistas ou coisas pelas quais é grato. Após 7 dias, observe o que se repete.',
+          idoso: 'Todos os dias, escreva três coisas: conquistas ou coisas pelas quais é grato. Ao final de 7 dias, releia a lista com calma.'
+        },
+        exemplo: {
+          ansiedade: [
+            ['Dia 1', 'Consegui sair de casa; respirei devagar na fila; terminei um trabalho.'],
+            ['Dia 2', 'Caminhei 15 minutos; minha irmã me ligou; dormi cedo.'],
+            ['Dia 3', 'Falei com a equipe sem travar; tomei café com calma; fui grato pelo sol.']
+          ],
+          humor: [
+            ['Dia 1', 'Fiz a cama; tomei banho; um vizinho me cumprimentou.'],
+            ['Dia 2', 'Ouvi uma música que gosto; cozinhei algo gostoso; liguei para a mãe.'],
+            ['Dia 3', 'Saí para caminhar; respondi uma mensagem; agradeci pelo cafezinho.']
+          ],
+          estresse: [
+            ['Dia 1', 'Organizei a mesa; fiz uma pausa; terminei a tarefa mais urgente.'],
+            ['Dia 2', 'Disse não a um pedido extra; bebi água; saí no horário.'],
+            ['Dia 3', 'Almocei sem o celular; a equipe me ajudou; dormi bem.']
+          ],
+          sono: [
+            ['Dia 1', 'Desliguei o celular cedo; tomei banho morno; levantei no horário.'],
+            ['Dia 2', 'Fiz um chá sem cafeína; li duas páginas; apaguei a luz às 23h.'],
+            ['Dia 3', 'Anotei as pendências; fui para a cama sem pressa; acordei descansado.']
+          ]
+        },
+        montar: montarConquistas
+      },
+
+      humor7: {
+        titulo: 'Escala de humor diário',
+        comoUsar: {
+          crianca: 'Todo dia, marque como você se sentiu, de 0 (muito triste) a 10 (muito feliz). Depois de 7 dias, veja o desenho da semana. 📈',
+          adolescente: 'Marque, de 0 a 10, como foi o seu humor em cada dia de uma semana. O gráfico mostra a linha do humor, para você observar as oscilações.',
+          adulto: 'Registre diariamente o seu humor de 0 a 10 por 7 dias. O gráfico mostra o movimento da semana, apenas para acompanhamento.',
+          idoso: 'Todo dia, marque como esteve o seu humor, de 0 a 10. Ao final de 7 dias, o gráfico mostra a linha da semana.'
+        },
+        exemplo: {
+          ansiedade: [
+            ['Dias 1 a 7', '5, 4, 4, 3, 5, 6, 6 (de 0 a 10)'],
+            ['Observação', 'Humor mais baixo no meio da semana, com melhora no fim.']
+          ],
+          humor: [
+            ['Dias 1 a 7', '4, 3, 3, 2, 4, 5, 5 (de 0 a 10)'],
+            ['Observação', 'Dias mais difíceis no começo, com sinais de melhora a partir do quinto dia.']
+          ],
+          estresse: [
+            ['Dias 1 a 7', '3, 4, 5, 5, 6, 7, 6 (de 0 a 10)'],
+            ['Observação', 'Humor caiu com o acúmulo de tarefas e melhorou no fim de semana.']
+          ],
+          sono: [
+            ['Dias 1 a 7', '4, 4, 5, 3, 4, 5, 6 (de 0 a 10)'],
+            ['Observação', 'Os dias com menos horas de sono coincidiram com humor mais baixo.']
+          ]
+        },
+        montar: montarHumorSemana
+      },
+
+      desconforto: {
+        titulo: 'Escala de desconforto',
+        comoUsar: {
+          crianca: 'Antes de uma atividade que dá um pouco de medo, marque o quanto você se sente, de 0 a 10. Depois dela, marque de novo e veja a diferença. 🎯',
+          adolescente: 'Marque de 0 a 10 o seu desconforto antes de uma atividade difícil e de novo depois. A diferença mostra o que mudou.',
+          adulto: 'Registre o nível de desconforto de 0 a 10 antes e depois de uma atividade. A diferença mostra o que mudou na prática.',
+          idoso: 'Antes de uma atividade que incomoda, marque de 0 a 10 como se sente. Depois, marque de novo e compare.'
+        },
+        exemplo: {
+          ansiedade: [
+            ['Atividade', 'Falar com o atendente do banco pelo telefone.'],
+            ['Antes', '7 de 10'],
+            ['Depois', '4 de 10'],
+            ['Observação', 'Foi mais tranquilo do que eu esperava.']
+          ],
+          humor: [
+            ['Atividade', 'Sair para almoçar com um colega.'],
+            ['Antes', '6 de 10'],
+            ['Depois', '3 de 10'],
+            ['Observação', 'Conversar me animou.']
+          ],
+          estresse: [
+            ['Atividade', 'Apresentar o relatório na reunião.'],
+            ['Antes', '8 de 10'],
+            ['Depois', '5 de 10'],
+            ['Observação', 'Ajudou ter preparado os pontos principais.']
+          ],
+          sono: [
+            ['Atividade', 'Deitar sem o celular na mão.'],
+            ['Antes', '6 de 10'],
+            ['Depois', '4 de 10'],
+            ['Observação', 'Demorei um pouco, mas fiquei mais calmo.']
+          ]
+        },
+        montar: montarDesconforto
+      },
+
+      sono: {
+        titulo: 'Diário do sono',
+        comoUsar: {
+          crianca: 'Todo dia, anote a hora que foi para a cama e a hora que acordou. Conte também quanto tempo demorou para pegar no sono. 🌙',
+          adolescente: 'Anote por 7 dias a hora de deitar, o tempo para dormir, as vezes que acordou e a hora de acordar. Dê uma nota de 0 a 10 para a qualidade do sono.',
+          adulto: 'Registre por 7 dias o horário de deitar e de acordar, o tempo para pegar no sono e os despertares. As horas são estimativas, para observar a rotina.',
+          idoso: 'Por 7 dias, anote a hora de deitar, quanto tempo demorou para dormir, quantas vezes acordou e a hora de acordar. Dê uma nota de 0 a 10 para a qualidade do sono.'
+        },
+        exemplo: {
+          ansiedade: [
+            ['Noite 1', 'Deitei 23h; demorei 20 min; acordei 2 vezes; acordei 6h30; qualidade 4 de 10; estimativa de 7,2 h'],
+            ['Noite 2', 'Deitei 23h30; demorei 40 min; acordei 3 vezes; acordei 6h30; qualidade 3 de 10; estimativa de 6,3 h'],
+            ['Observação', 'Noites com pensamentos sobre a prova foram as de sono mais leve.']
+          ],
+          humor: [
+            ['Noite 1', 'Deitei 22h30; demorei 15 min; acordei 1 vez; acordei 7h; qualidade 5 de 10; estimativa de 8 h'],
+            ['Noite 2', 'Deitei 1h; demorei 30 min; acordei 0 vez; acordei 8h; qualidade 6 de 10; estimativa de 6,5 h'],
+            ['Observação', 'Dormi melhor quando conversei com alguém antes de deitar.']
+          ],
+          estresse: [
+            ['Noite 1', 'Deitei 23h; demorei 25 min; acordei 1 vez; acordei 6h45; qualidade 4 de 10; estimativa de 7,3 h'],
+            ['Noite 2', 'Deitei 0h; demorei 45 min; acordei 2 vezes; acordei 6h30; qualidade 3 de 10; estimativa de 5,75 h'],
+            ['Observação', 'Nos dias de muito trabalho, demorei mais para desligar a mente.']
+          ],
+          sono: [
+            ['Noite 1', 'Deitei 22h; demorei 10 min; acordei 0 vez; acordei 6h; qualidade 7 de 10; estimativa de 7,8 h'],
+            ['Noite 2', 'Deitei 22h30; demorei 20 min; acordei 1 vez; acordei 6h30; qualidade 6 de 10; estimativa de 7,7 h'],
+            ['Observação', 'Desligar o celular às 22h ajudou a dormir mais rápido.']
+          ]
+        },
+        montar: montarSono
+      },
+
+      roda: {
+        titulo: 'Roda das emoções do dia',
+        comoUsar: {
+          crianca: 'Marque as emoções que apareceram hoje e diga, de 0 a 10, como cada uma foi forte. O gráfico mostra o seu dia. 🎨',
+          adolescente: 'Marque as emoções que sentiu hoje e a força de cada uma, de 0 a 10. O gráfico de barras mostra o que mais apareceu.',
+          adulto: 'Ao fim do dia, marque as emoções que apareceram e a força de cada uma, de 0 a 10. O gráfico mostra o padrão do dia.',
+          idoso: 'No fim do dia, marque as emoções que sentiu e diga, de 0 a 10, a força de cada uma. O gráfico mostra o que mais apareceu.'
+        },
+        exemplo: {
+          ansiedade: [
+            ['Emoções marcadas', 'Ansiedade 7; Medo 5; Cansaço 4'],
+            ['Observação', 'A ansiedade apareceu mais no fim da tarde.']
+          ],
+          humor: [
+            ['Emoções marcadas', 'Tristeza 6; Cansaço 5; Alegria 2'],
+            ['Observação', 'A alegria apareceu quando saí para caminhar.']
+          ],
+          estresse: [
+            ['Emoções marcadas', 'Cansaço 8; Raiva 6; Calma 2'],
+            ['Observação', 'A raiva veio nos horários de maior cobrança.']
+          ],
+          sono: [
+            ['Emoções marcadas', 'Cansaço 8; Ansiedade 4; Calma 3'],
+            ['Observação', 'O cansaço foi a emoção mais forte do dia.']
+          ]
+        },
+        montar: montarRoda
+      },
+
+      respiracao: {
+        titulo: 'Respiração guiada',
+        comoUsar: {
+          crianca: 'Aperte Iniciar e acompanhe o círculo: ele cresce enquanto você puxa o ar e diminui enquanto você solta. Faça com calma. 🎈',
+          adolescente: 'Acompanhe o círculo: ele cresce ao inspirar (4 segundos) e diminui ao soltar o ar (6 segundos). Repita por alguns minutos.',
+          adulto: 'Siga o ritmo do círculo: inspire por 4 segundos enquanto ele cresce e solte por 6 segundos enquanto ele diminui. Pare quando quiser.',
+          idoso: 'Acompanhe o círculo. Ele cresce enquanto você puxa o ar, por 4 segundos, e diminui enquanto você solta, por 6 segundos. Respire no seu ritmo.'
+        },
+        exemplo: {
+          ansiedade: [
+            ['Quando usar', 'Antes de uma prova ou apresentação.'],
+            ['Ciclos feitos', 'Cerca de 5 ciclos, o que dá uns 2 minutos.']
+          ],
+          humor: [
+            ['Quando usar', 'Ao acordar, antes de começar o dia.'],
+            ['Ciclos feitos', 'Cerca de 4 ciclos, com a sensação de começar mais leve.']
+          ],
+          estresse: [
+            ['Quando usar', 'Entre duas tarefas, para desacelerar.'],
+            ['Ciclos feitos', 'Cerca de 6 ciclos, antes de voltar ao trabalho.']
+          ],
+          sono: [
+            ['Quando usar', 'Deitado na cama, antes de tentar dormir.'],
+            ['Ciclos feitos', 'Cerca de 5 ciclos, até o corpo ficar mais pesado.']
+          ]
+        },
+        montar: montarRespiracao
+      },
+
+      muscular: {
+        titulo: 'Relaxamento muscular progressivo',
+        comoUsar: {
+          crianca: 'Aperte um grupo de músculos por 5 segundos, depois solte devagar por 10 segundos. Sinta a diferença entre o aperto e o solto. 💪',
+          adolescente: 'Tensione cada grupo de músculos por 5 segundos e solte por 10. Preste atenção na diferença entre a tensão e o relaxamento.',
+          adulto: 'Siga os grupos musculares. Tensione por 5 segundos, solte por 10 e observe a sensação. Use o cronômetro para acompanhar cada etapa.',
+          idoso: 'Siga os grupos musculares, um de cada vez. Aperte de leve por 5 segundos e solte por 10. Observe a sensação de alívio.'
+        },
+        exemplo: {
+          ansiedade: [
+            ['Grupo', 'Ombros'],
+            ['Como foi', 'Senti os ombros mais leves depois de soltar.']
+          ],
+          humor: [
+            ['Grupo', 'Mandíbula e boca'],
+            ['Como foi', 'Percebi que estava com a mandíbula apertada sem notar.']
+          ],
+          estresse: [
+            ['Grupo', 'Rosto e testa'],
+            ['Como foi', 'Relaxei a testa e o pescoço no meio do dia.']
+          ],
+          sono: [
+            ['Grupo', 'Pernas e pés'],
+            ['Como foi', 'Relaxei as pernas e fiquei com sono mais cedo.']
+          ]
+        },
+        montar: montarMuscular
+      },
+
+      aterramento: {
+        titulo: 'Aterramento 5-4-3-2-1',
+        comoUsar: {
+          crianca: 'Olhe ao redor e encontre 5 coisas que consegue ver. Depois, 4 que pode tocar, 3 sons, 2 cheiros e 1 gosto. Escreva cada uma. 🌳',
+          adolescente: 'Quando a ansiedade ou a angústia subir, nomeie 5 coisas que vê, 4 que toca, 3 sons, 2 cheiros e 1 gosto. Isso traz a atenção para o presente.',
+          adulto: 'Use nos momentos de tensão para voltar ao presente. Nomeie 5 coisas que vê, 4 que toca, 3 sons, 2 cheiros e 1 gosto, escrevendo cada uma.',
+          idoso: 'Quando sentir muita inquietação, observe com calma: 5 coisas que vê, 4 que toca, 3 sons, 2 cheiros e 1 gosto. Escreva cada uma.'
+        },
+        exemplo: {
+          ansiedade: [
+            ['Quando usei', 'Na sala de espera do médico, com o coração acelerado.'],
+            ['Como me senti', 'Mais presente e menos agitado.']
+          ],
+          humor: [
+            ['Quando usei', 'Na cama, pela manhã, sem vontade de levantar.'],
+            ['Como me senti', 'Um pouco mais desperto e com menos peso no peito.']
+          ],
+          estresse: [
+            ['Quando usei', 'Depois de uma reunião difícil.'],
+            ['Como me senti', 'Mais calmo para voltar ao trabalho.']
+          ],
+          sono: [
+            ['Quando usei', 'No meio da noite, quando a cabeça não parava.'],
+            ['Como me senti', 'Mais tranquilo, com a mente menos acelerada.']
+          ]
+        },
+        montar: montarAterramento
+      },
+
+      atencao: {
+        titulo: 'Pausa de atenção plena',
+        comoUsar: {
+          crianca: 'Por 1 minuto, fique quietinho e preste atenção na respiração. Quando a cabeça se distrair, volte para o ar que entra e sai. 🌬️',
+          adolescente: 'Por 1 minuto, observe a respiração sem tentar mudar nada. Quando a mente se distrair, perceba e volte à respiração, sem se cobrar.',
+          adulto: 'Faça uma pausa de 1 minuto. Observe a respiração e os sons sem julgar. Quando a atenção se dispersar, volte gentilmente ao foco.',
+          idoso: 'Sente-se com calma e, por 1 minuto, observe a respiração. Quando a mente se distrair, volte gentilmente à respiração.'
+        },
+        exemplo: {
+          ansiedade: [
+            ['Quando usei', 'Antes de entrar em uma prova.'],
+            ['O que notei', 'Pensamentos rápidos, mas consegui voltar à respiração.']
+          ],
+          humor: [
+            ['Quando usei', 'Depois do almoço, quando bateu a tristeza.'],
+            ['O que notei', 'O corpo ficou um pouco mais leve no fim do minuto.']
+          ],
+          estresse: [
+            ['Quando usei', 'No meio de um dia com muitas tarefas.'],
+            ['O que notei', 'A cabeça estava cheia, mas ficou mais organizada.']
+          ],
+          sono: [
+            ['Quando usei', 'Deitado, antes de dormir.'],
+            ['O que notei', 'Senti o ar entrando e saindo e a mente desacelerou.']
+          ]
+        },
+        montar: montarAtencao
+      }
+    };
+
+    /* ---------- Helpers ---------- */
+
+    // Protege o texto digitado antes de colocá-lo no HTML
+    function esc(texto) {
+      return String(texto)
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;')
+        .replace(/'/g, '&#39;');
+    }
+
+    function campoTexto(id, rotulo, dica, linhas = 3) {
+      return `<div class="campo"><label for="${id}">${rotulo}</label><textarea id="${id}" rows="${linhas}" placeholder="${dica}"></textarea></div>`;
+    }
+
+    function campoLinha(id, rotulo, dica) {
+      return `<div class="campo"><label for="${id}">${rotulo}</label><input type="text" id="${id}" placeholder="${dica}" /></div>`;
+    }
+
+    // Controle deslizante de 0 a 100 com o número ao lado
+    function campoIntensidade(id, rotulo, valor, maximo = 100) {
+      return `<div class="campo"><label for="${id}">${rotulo}</label><div class="faixa"><input type="range" id="${id}" min="0" max="${maximo}" step="1" value="${valor}" /><output for="${id}" id="${id}-valor">${valor}</output></div></div>`;
+    }
+
+    // Mostra o número ao lado de cada controle deslizante dentro do bloco
+    function ligarSaidas(bloco) {
+      bloco.querySelectorAll('input[type="range"]').forEach((faixa) => {
+        const saida = bloco.querySelector(`output[for="${faixa.id}"]`);
+        faixa.addEventListener('input', () => { saida.textContent = faixa.value; });
+      });
+    }
+
+    /* ---------- Recursos ---------- */
+
+    // 1. Registro de pensamentos
+    function montarRegistro(bloco) {
+      bloco.innerHTML = [
+        campoTexto('reg-situacao', '1. Situação', 'O que aconteceu? Onde e com quem?', 2),
+        campoLinha('reg-emocao', '2. Emoção', 'Ex.: tristeza, medo, raiva'),
+        campoIntensidade('reg-antes', '3. Intensidade dessa emoção agora (0 a 100)', 50),
+        campoTexto('reg-automatico', '4. Pensamento automático', 'O que passou pela sua cabeça?', 2),
+        campoTexto('reg-favor', '5. Evidências a favor do pensamento', 'O que mostra que ele é verdadeiro?'),
+        campoTexto('reg-contra', '6. Evidências contra o pensamento', 'O que mostra que ele pode não ser totalmente verdadeiro?'),
+        campoTexto('reg-alternativo', '7. Pensamento alternativo mais equilibrado', 'Uma forma mais realista e gentil de ver a situação', 2),
+        campoIntensidade('reg-depois', '8. Intensidade da emoção depois (0 a 100)', 50),
+        '<p id="reg-mudanca" class="destaque" aria-live="polite"></p>'
+      ].join('');
+
+      ligarSaidas(bloco);
+
+      ligarMudanca(bloco, 'reg-antes', 'reg-depois', 'reg-mudanca', 'a intensidade');
+    }
+
+    // 2. Termômetro de emoções
+    function montarTermometro(bloco, tema) {
+      const estrategias = ESTRATEGIAS[tema]
+        .map((texto) => `<label class="check"><input type="checkbox" /><span>${texto}</span></label>`)
+        .join('');
+
+      bloco.innerHTML = `
+        <div class="campo">
+          <label for="term-nivel">Como estou agora (0 = calmo, 10 = muito intenso)</label>
+          <div class="termo-faixa">
+            <input type="range" id="term-nivel" min="0" max="10" step="1" value="5" />
+            <output for="term-nivel" id="term-nivel-valor">5</output>
+          </div>
+        </div>
+        ${campoTexto('term-sentindo', 'O que estou sentindo', 'Escreva com suas palavras')}
+        ${campoTexto('term-ajudou', 'O que ajudou', 'O que ajudou antes ou pode ajudar agora?')}
+        <fieldset class="estrategias">
+          <legend>Estratégias para tentar (marque as que quer tentar)</legend>
+          ${estrategias}
+        </fieldset>`;
+
+      const faixa = bloco.querySelector('#term-nivel');
+      const saida = bloco.querySelector('#term-nivel-valor');
+
+      // Verde no 0, amarelo no meio e vermelho no 10
+      const pintaTermometro = () => {
+        const cor = `hsl(${120 - faixa.value * 12}, 80%, 55%)`;
+        faixa.style.setProperty('--cor', cor);
+        saida.style.color = cor;
+        saida.textContent = faixa.value;
+      };
+
+      faixa.addEventListener('input', pintaTermometro);
+      pintaTermometro();
+    }
+
+    // 3. Agenda de atividades
+    function montarAgenda(bloco) {
+      const celula = (dia, periodo) => `
+        <td>
+          <input type="text" class="ag-atividade" placeholder="Atividade" aria-label="${DIAS[dia]}, ${PERIODOS[periodo]}: atividade" />
+          <div class="notas">
+            <label>Prazer
+              <input type="number" class="ag-nota ag-prazer" min="0" max="10" step="1" aria-label="${DIAS[dia]}, ${PERIODOS[periodo]}: prazer de 0 a 10" />
+            </label>
+            <label>Conquista
+              <input type="number" class="ag-nota ag-conquista" min="0" max="10" step="1" aria-label="${DIAS[dia]}, ${PERIODOS[periodo]}: conquista de 0 a 10" />
+            </label>
+          </div>
+        </td>`;
+
+      const linhas = DIAS.map((dia, d) => `
+        <tr>
+          <th scope="row">${dia}</th>
+          ${PERIODOS.map((_, p) => celula(d, p)).join('')}
+        </tr>`).join('');
+
+      bloco.innerHTML = `
+        <div class="tabela-wrap">
+          <table class="agenda">
+            <thead>
+              <tr><th scope="col"></th>${PERIODOS.map((p) => `<th scope="col">${p}</th>`).join('')}</tr>
+            </thead>
+            <tbody>${linhas}</tbody>
+          </table>
+        </div>
+        <div class="medias">
+          <p>Média de prazer: <strong id="media-prazer">–</strong></p>
+          <p>Média de conquista: <strong id="media-conquista">–</strong></p>
+        </div>`;
+
+      // Média só considera notas válidas, de 0 a 10
+      const media = (seletor) => {
+        const notas = [...bloco.querySelectorAll(seletor)]
+          .map((campo) => parseFloat(campo.value))
+          .filter((n) => !isNaN(n) && n >= 0 && n <= 10);
+        if (notas.length === 0) return '–';
+        const soma = notas.reduce((total, n) => total + n, 0);
+        return (soma / notas.length).toFixed(1).replace('.', ',');
+      };
+
+      const atualizaMedias = () => {
+        bloco.querySelector('#media-prazer').textContent = media('.ag-prazer');
+        bloco.querySelector('#media-conquista').textContent = media('.ag-conquista');
+      };
+
+      bloco.addEventListener('input', atualizaMedias);
+    }
+
+    // 4. Hierarquia de exposição
+    function montarExposicao(bloco) {
+      let itens = [1, 2, 3].map((id) => ({ id, situacao: '', nivel: 0, tentei: false }));
+      let proximoId = 4;
+
+      const ordenados = () => [...itens].sort((a, b) => a.nivel - b.nivel || a.id - b.id);
+
+      const acharItem = (alvo) => {
+        const linha = alvo.closest('.item-exp');
+        return linha && itens.find((item) => item.id === Number(linha.dataset.id));
+      };
+
+      const desenha = () => {
+        bloco.innerHTML = `
+          <p class="aviso-psi">Use este recurso junto com seu psicólogo ou sua psicóloga.</p>
+          <p class="dica">Ordenado automaticamente do menor para o maior desconforto.</p>
+          <ol class="lista-exp">
+            ${ordenados().map((item) => `
+              <li class="item-exp" data-id="${item.id}">
+                <div class="exp-topo">
+                  <input type="text" class="exp-situacao" value="${esc(item.situacao)}" placeholder="Situação" aria-label="Situação" />
+                  <button type="button" class="btn-pequeno no-print exp-remover">Remover</button>
+                </div>
+                <div class="faixa">
+                  <input type="range" class="exp-nivel" min="0" max="100" step="1" value="${item.nivel}" aria-label="Nível de desconforto de 0 a 100" />
+                  <output>${item.nivel}</output>
+                </div>
+                <label class="check">
+                  <input type="checkbox" class="exp-tentei" ${item.tentei ? 'checked' : ''} />
+                  <span>Já tentei</span>
+                </label>
+              </li>`).join('')}
+          </ol>
+          <button type="button" class="btn-sec no-print exp-adicionar adicionar-linha">+ Adicionar situação</button>`;
+      };
+
+      bloco.addEventListener('input', (evento) => {
+        const alvo = evento.target;
+        const item = acharItem(alvo);
+        if (!item) return;
+        if (alvo.classList.contains('exp-situacao')) item.situacao = alvo.value;
+        if (alvo.classList.contains('exp-nivel')) {
+          item.nivel = Number(alvo.value);
+          alvo.closest('.item-exp').querySelector('output').textContent = item.nivel;
+        }
+      });
+
+      bloco.addEventListener('change', (evento) => {
+        const alvo = evento.target;
+        if (alvo.classList.contains('exp-nivel')) {
+          // Reordena só ao soltar o controle
+          desenha();
+        } else if (alvo.classList.contains('exp-tentei')) {
+          acharItem(alvo).tentei = alvo.checked;
+        }
+      });
+
+      bloco.addEventListener('click', (evento) => {
+        if (evento.target.closest('.exp-adicionar')) {
+          itens.push({ id: proximoId++, situacao: '', nivel: 0, tentei: false });
+          desenha();
+        }
+        const remover = evento.target.closest('.exp-remover');
+        if (remover) {
+          const id = Number(remover.closest('.item-exp').dataset.id);
+          itens = itens.filter((item) => item.id !== id);
+          desenha();
+        }
+      });
+
+      desenha();
+    }
+
+    // 5. Cartão de enfrentamento
+    function montarCartao(bloco) {
+      const campos = [
+        ['car-situacao', 'Situação difícil'],
+        ['car-pensamento', 'Pensamento que costuma vir'],
+        ['car-dizer', 'O que posso me dizer'],
+        ['car-fazer', 'O que posso fazer'],
+        ['car-ajuda', 'Pessoa a quem posso pedir ajuda']
+      ];
+
+      bloco.innerHTML = `
+        ${campoTexto('car-situacao', '1. Situação difícil', 'Ex.: uma prova, uma discussão, uma noite sem sono', 2)}
+        ${campoTexto('car-pensamento', '2. Pensamento que costuma vir', 'Ex.: "Vou falhar"', 2)}
+        ${campoTexto('car-dizer', '3. O que posso me dizer', 'Uma frase de apoio, com carinho', 2)}
+        ${campoTexto('car-fazer', '4. O que posso fazer', 'Um passo pequeno e possível', 2)}
+        ${campoLinha('car-ajuda', '5. Pessoa a quem posso pedir ajuda', 'Nome e como posso contatar')}
+        <h3 class="sub">Versão para imprimir (tamanho de cartão)</h3>
+        <div class="cartao-wrap">
+          <div class="cartao">
+            <p class="cartao-titulo">Meu cartão de enfrentamento</p>
+            ${campos.map(([id, rotulo]) => `<p><strong>${rotulo}:</strong> <span data-espelho="${id}"></span></p>`).join('')}
+          </div>
+        </div>`;
+
+      // Atualiza a versão do cartão enquanto a pessoa digita
+      const espelha = () => {
+        bloco.querySelectorAll('[data-espelho]').forEach((espelho) => {
+          const valor = bloco.querySelector(`#${espelho.dataset.espelho}`).value.trim();
+          espelho.textContent = valor || '________';
+        });
+      };
+
+      bloco.addEventListener('input', espelha);
+      espelha();
+    }
+
+    /* ---------- Recursos interativos e de acompanhamento ---------- */
+
+    // Mostra quanto a nota mudou entre o antes e o depois
+    function ligarMudanca(bloco, idAntes, idDepois, idSaida, nome) {
+      const antes = bloco.querySelector(`#${idAntes}`);
+      const depois = bloco.querySelector(`#${idDepois}`);
+      const saida = bloco.querySelector(`#${idSaida}`);
+
+      const atualiza = () => {
+        const diferenca = Number(depois.value) - Number(antes.value);
+        if (diferenca < 0) saida.textContent = `Mudança: ${nome} diminuiu ${-diferenca} ponto(s).`;
+        else if (diferenca > 0) saida.textContent = `Mudança: ${nome} aumentou ${diferenca} ponto(s).`;
+        else saida.textContent = `Mudança: ${nome} não mudou.`;
+      };
+
+      antes.addEventListener('input', atualiza);
+      depois.addEventListener('input', atualiza);
+      atualiza();
+    }
+
+    // Formata um número com vírgula, como no português do Brasil
+    function formataNumero(valor) {
+      return valor.toFixed(1).replace('.', ',');
+    }
+
+    // Converte "HH:MM" em minutos e considera o caso de passar da meia-noite
+    function minutosEntre(deitar, acordar) {
+      if (!deitar || !acordar) return null;
+      const [horaDeitar, minDeitar] = deitar.split(':').map(Number);
+      const [horaAcordar, minAcordar] = acordar.split(':').map(Number);
+      let total = (horaAcordar * 60 + minAcordar) - (horaDeitar * 60 + minDeitar);
+      if (total < 0) total += 24 * 60;
+      return total;
+    }
+
+    // Mostra segundos como MM:SS
+    function formatarTempo(segundos) {
+      const minutos = Math.floor(segundos / 60);
+      const resto = segundos % 60;
+      return `${String(minutos).padStart(2, '0')}:${String(resto).padStart(2, '0')}`;
+    }
+
+    // 1. Modelo ABC
+    function montarAbc(bloco) {
+      bloco.innerHTML = [
+        campoTexto('abc-a', 'A. Situação: o que aconteceu?', 'Onde, quando e com quem?', 2),
+        campoTexto('abc-b', 'B. Crença: o que eu pensei sobre isso?', 'O pensamento ou crença que apareceu', 2),
+        '<div class="grade-2">',
+        campoLinha('abc-c-emocao', 'C. Consequência emocional', 'Ex.: vergonha, tristeza'),
+        campoIntensidade('abc-c-intensidade', 'Intensidade da emoção (0 a 100)', 50),
+        '</div>',
+        campoTexto('abc-c-comportamento', 'C. Consequência no comportamento', 'O que eu fiz ou deixei de fazer?', 2)
+      ].join('');
+      ligarSaidas(bloco);
+    }
+
+    // 2. Vantagens e desvantagens
+    function montarVantagens(bloco) {
+      bloco.innerHTML = [
+        campoLinha('van-alvo', 'Comportamento ou pensamento que quero avaliar', 'Ex.: ficar no celular até tarde'),
+        '<div class="grade-2">',
+        campoTexto('van-cv', 'Curto prazo: vantagens', 'O que ganho agora?'),
+        campoTexto('van-cd', 'Curto prazo: desvantagens', 'O que perco agora?'),
+        campoTexto('van-lv', 'Longo prazo: vantagens', 'O que ganho depois?'),
+        campoTexto('van-ld', 'Longo prazo: desvantagens', 'O que perco depois?'),
+        '</div>',
+        campoTexto('van-decisao', 'Decisão', 'Depois de pensar nisso, o que quero fazer?', 2)
+      ].join('');
+    }
+
+    // 3. Seta descendente: cada nível usa a resposta anterior como ponto de partida
+    function montarSeta(bloco) {
+      const niveis = [1, 2, 3, 4, 5].map((n) => `
+        <div class="campo seta-nivel">
+          <label for="seta-${n}">Nível ${n}: se isso fosse verdade, o que significaria?</label>
+          <p class="ref"></p>
+          <textarea id="seta-${n}" rows="2" placeholder="Sua resposta"></textarea>
+        </div>`).join('');
+
+      bloco.innerHTML = campoTexto('seta-inicial', 'Pensamento inicial', 'Ex.: "Eu errei na prova"', 2) + niveis;
+
+      const atualiza = () => {
+        bloco.querySelectorAll('.seta-nivel').forEach((nivel, i) => {
+          const origem = i === 0
+            ? bloco.querySelector('#seta-inicial').value
+            : bloco.querySelector(`#seta-${i}`).value;
+          nivel.querySelector('.ref').textContent = origem.trim()
+            ? `Sobre: "${origem.trim()}"`
+            : 'Sobre: escreva a resposta anterior';
+        });
+      };
+
+      bloco.addEventListener('input', atualiza);
+      atualiza();
+    }
+
+    // 4. Experimento comportamental
+    function montarExperimento(bloco) {
+      bloco.innerHTML = [
+        campoTexto('exp-previsao', '1. Previsão', 'O que eu acho que vai acontecer?', 2),
+        campoIntensidade('exp-antes', 'Quanto eu acreditava na previsão (0 a 100)', 50),
+        campoTexto('exp-teste', '2. Como vou testar', 'Que teste simples posso fazer?', 2),
+        campoTexto('exp-ocorreu', '3. O que aconteceu de verdade', 'Descreva o resultado do teste', 2),
+        campoTexto('exp-aprendi', '4. O que aprendi', 'O que este teste me ensinou?', 2),
+        campoIntensidade('exp-depois', 'Quanto acredito na previsão agora (0 a 100)', 50),
+        '<p id="exp-mudanca" class="destaque" aria-live="polite"></p>'
+      ].join('');
+      ligarSaidas(bloco);
+      ligarMudanca(bloco, 'exp-antes', 'exp-depois', 'exp-mudanca', 'a crença na previsão');
+    }
+
+    // 5. Resolução de problemas
+    function montarResolucao(bloco) {
+      bloco.innerHTML = [
+        campoTexto('res-problema', '1. Problema', 'Descreva o problema com clareza', 2),
+        campoTexto('res-ideias', '2. Ideias (sem julgar)', 'Escreva todas as ideias que vierem, mesmo as estranhas', 4),
+        '<div class="grade-2">',
+        campoTexto('res-pros', '3. Prós da ideia escolhida', 'Vantagens possíveis'),
+        campoTexto('res-contras', '3. Contras da ideia escolhida', 'Desvantagens possíveis'),
+        '</div>',
+        campoLinha('res-escolha', '4. Ideia escolhida', 'Qual ideia vou tentar?'),
+        campoTexto('res-plano', '5. Plano: o que, quando e onde', 'Passo 1, passo 2...'),
+        campoTexto('res-avaliacao', '6. Avaliação: o que funcionou? O que mudaria?', 'Depois de tentar, escreva o que aconteceu', 2)
+      ].join('');
+    }
+
+    // 6. Quadro de preocupações: agir agora ou marcar um horário
+    function montarPreocupacoes(bloco) {
+      bloco.innerHTML = [
+        campoTexto('pre-texto', 'Minha preocupação', 'O que está me preocupando?', 2),
+        '<fieldset class="estrategias"><legend>Posso agir sobre isso agora?</legend>',
+        '<label class="check"><input type="radio" name="pre-agir" value="sim" /><span>Sim: vou fazer um plano</span></label>',
+        '<label class="check"><input type="radio" name="pre-agir" value="nao" /><span>Não: vou deixar para o horário da preocupação</span></label>',
+        '</fieldset>',
+        '<div id="pre-sim" class="oculta">' + campoTexto('pre-plano', 'Plano de ação', 'Qual é o próximo passo? Quando vou fazer?', 3) + '</div>',
+        '<div id="pre-nao" class="oculta"><p class="destaque">Tudo bem deixar para depois. Escolha um horário para pensar nisso com calma.</p>' + campoLinha('pre-horario', 'Meu horário da preocupação', 'Ex.: terça, 19h, por 15 minutos') + '</div>'
+      ].join('');
+
+      bloco.addEventListener('change', (evento) => {
+        if (evento.target.name !== 'pre-agir') return;
+        bloco.querySelector('#pre-sim').classList.toggle('oculta', evento.target.value !== 'sim');
+        bloco.querySelector('#pre-nao').classList.toggle('oculta', evento.target.value !== 'nao');
+      });
+    }
+
+    // 7. Diário de conquistas e gratidão: 3 itens por dia, 7 dias
+    function montarConquistas(bloco) {
+      const dias = [1, 2, 3, 4, 5, 6, 7].map((n) => `
+        <div class="dia-bloco">
+          <h4>Dia ${n}</h4>
+          ${[1, 2, 3].map((k) => `<input type="text" class="conq" placeholder="Item ${k}" aria-label="Dia ${n}, item ${k}" />`).join('')}
+        </div>`).join('');
+
+      bloco.innerHTML = `
+        <p class="dica">Escreva 3 itens por dia: conquistas ou coisas pelas quais você é grato(a).</p>
+        <div class="dias-grade">${dias}</div>
+        <div class="medias"><p>Itens preenchidos: <strong id="conq-total">0 de 21</strong></p></div>`;
+
+      bloco.addEventListener('input', () => {
+        const preenchidos = [...bloco.querySelectorAll('.conq')].filter((campo) => campo.value.trim()).length;
+        bloco.querySelector('#conq-total').textContent = `${preenchidos} de 21`;
+      });
+    }
+
+    // Gráfico de linha com os valores de humor dos 7 dias (escala de 0 a 10)
+    function desenhaLinhaHumor(valores) {
+      const x = (i) => 50 + i * (340 / 6);
+      const y = (v) => 180 - v * 16;
+      const grades = [0, 5, 10]
+        .map((v) => `<line class="grade" x1="50" x2="390" y1="${y(v)}" y2="${y(v)}" /><text x="12" y="${y(v) + 4}">${v}</text>`)
+        .join('');
+      const dias = valores.map((_, i) => `<text x="${x(i)}" y="206" text-anchor="middle">D${i + 1}</text>`).join('');
+      const linha = valores.map((v, i) => `${x(i)},${y(v)}`).join(' ');
+      const pontos = valores.map((v, i) => `<circle class="ponto" cx="${x(i)}" cy="${y(v)}" r="5" />`).join('');
+      return `${grades}${dias}<polyline class="linha" points="${linha}" />${pontos}`;
+    }
+
+    // Escala de humor diário com gráfico de linha
+    function montarHumorSemana(bloco) {
+      const dias = [1, 2, 3, 4, 5, 6, 7].map((n) => `
+        <div class="dia-linha">
+          <span>Dia ${n}</span>
+          <div class="faixa">
+            <input type="range" class="hum" min="0" max="10" step="1" value="5" aria-label="Dia ${n}: humor de 0 a 10" />
+            <output>5</output>
+          </div>
+        </div>`).join('');
+
+      bloco.innerHTML = `
+        <div class="dias-lista">${dias}</div>
+        <h3 class="sub">Humor da semana</h3>
+        <svg class="grafico" viewBox="0 0 420 220" role="img" aria-label="Gráfico de linha do humor de 0 a 10 nos sete dias"></svg>`;
+
+      const grafico = bloco.querySelector('.grafico');
+      const atualiza = () => {
+        const controles = [...bloco.querySelectorAll('.hum')];
+        controles.forEach((controle) => {
+          controle.closest('.dia-linha').querySelector('output').textContent = controle.value;
+        });
+        grafico.innerHTML = desenhaLinhaHumor(controles.map((controle) => Number(controle.value)));
+      };
+
+      bloco.addEventListener('input', atualiza);
+      atualiza();
+    }
+
+    // Escala de desconforto antes e depois de uma atividade (0 a 10)
+    function montarDesconforto(bloco) {
+      bloco.innerHTML = [
+        campoLinha('des-atividade', 'Atividade', 'Ex.: pedir informação em uma loja'),
+        campoIntensidade('des-antes', 'Desconforto antes (0 a 10)', 5, 10),
+        campoIntensidade('des-depois', 'Desconforto depois (0 a 10)', 5, 10),
+        '<p id="des-mudanca" class="destaque" aria-live="polite"></p>'
+      ].join('');
+      ligarSaidas(bloco);
+      ligarMudanca(bloco, 'des-antes', 'des-depois', 'des-mudanca', 'o desconforto');
+    }
+
+    // Diário do sono de 7 noites, com horas estimadas e médias
+    function montarSono(bloco) {
+      const linhas = [1, 2, 3, 4, 5, 6, 7].map((n) => `
+        <tr class="sono-linha">
+          <th scope="row">Noite ${n}</th>
+          <td><input type="time" class="s-deitar" aria-label="Noite ${n}: hora de deitar" /></td>
+          <td><input type="number" class="s-latencia" min="0" max="600" step="5" placeholder="min" aria-label="Noite ${n}: minutos para pegar no sono" /></td>
+          <td><input type="number" class="s-despertar" min="0" max="20" step="1" placeholder="nº" aria-label="Noite ${n}: quantas vezes acordei" /></td>
+          <td><input type="time" class="s-acordar" aria-label="Noite ${n}: hora de acordar" /></td>
+          <td>
+            <div class="faixa-mini">
+              <input type="range" class="s-qualidade" min="0" max="10" step="1" value="5" aria-label="Noite ${n}: qualidade de 0 a 10" />
+              <output>5</output>
+            </div>
+          </td>
+          <td class="s-horas">–</td>
+        </tr>`).join('');
+
+      bloco.innerHTML = `
+        <div class="tabela-wrap">
+          <table class="agenda sono">
+            <thead>
+              <tr>
+                <th scope="col">Dia</th>
+                <th scope="col">Hora de deitar</th>
+                <th scope="col">Min. para pegar no sono</th>
+                <th scope="col">Vezes que acordei</th>
+                <th scope="col">Hora de acordar</th>
+                <th scope="col">Qualidade (0 a 10)</th>
+                <th scope="col">Horas dormidas (estimativa)</th>
+              </tr>
+            </thead>
+            <tbody>${linhas}</tbody>
+          </table>
+        </div>
+        <div class="medias">
+          <p>Média de horas dormidas: <strong id="sono-media-horas">–</strong></p>
+          <p>Média de qualidade: <strong id="sono-media-qualidade">–</strong></p>
+        </div>
+        <p class="dica">As horas são uma estimativa: tempo na cama menos o tempo para pegar no sono. As médias consideram só as noites com horários preenchidos.</p>`;
+
+      const atualiza = () => {
+        let somaHoras = 0;
+        let somaQualidade = 0;
+        let noites = 0;
+
+        bloco.querySelectorAll('.sono-linha').forEach((linha) => {
+          const qualidade = linha.querySelector('.s-qualidade');
+          linha.querySelector('output').textContent = qualidade.value;
+
+          const minutos = minutosEntre(linha.querySelector('.s-deitar').value, linha.querySelector('.s-acordar').value);
+          const celulaHoras = linha.querySelector('.s-horas');
+          if (minutos === null) {
+            celulaHoras.textContent = '–';
+            return;
+          }
+
+          const latencia = Number(linha.querySelector('.s-latencia').value) || 0;
+          const horas = Math.max(0, minutos - latencia) / 60;
+          celulaHoras.textContent = `${formataNumero(horas)} h`;
+          somaHoras += horas;
+          somaQualidade += Number(qualidade.value);
+          noites++;
+        });
+
+        bloco.querySelector('#sono-media-horas').textContent = noites ? `${formataNumero(somaHoras / noites)} h` : '–';
+        bloco.querySelector('#sono-media-qualidade').textContent = noites ? formataNumero(somaQualidade / noites) : '–';
+      };
+
+      bloco.addEventListener('input', atualiza);
+      atualiza();
+    }
+
+    // Roda das emoções do dia com gráfico de barras
+    function montarRoda(bloco) {
+      bloco.innerHTML = `
+        <p class="dica">Marque as emoções que apareceram hoje e indique a força de cada uma, de 0 a 10.</p>
+        <div class="grade-checks">
+          ${EMOCOES_DIA.map((emocao) => `
+            <div class="emocao-item">
+              <label class="check"><input type="checkbox" class="em-marca" /><span>${emocao}</span></label>
+              <div class="faixa">
+                <input type="range" class="em-forca" min="0" max="10" step="1" value="5" aria-label="Força de ${emocao}, de 0 a 10" />
+                <output>5</output>
+              </div>
+            </div>`).join('')}
+        </div>
+        <h3 class="sub">Gráfico do dia</h3>
+        <div class="barras" id="roda-barras"></div>`;
+
+      const desenhaBarras = () => {
+        const marcadas = [...bloco.querySelectorAll('.emocao-item')].filter((item) => item.querySelector('.em-marca').checked);
+        const barras = marcadas.map((item) => {
+          const nome = item.querySelector('.check span').textContent;
+          const forca = Number(item.querySelector('.em-forca').value);
+          return `<div class="barra-linha"><span>${nome}</span><div class="barra-trilha"><div class="barra-preench" style="width: ${forca * 10}%"></div></div><span class="barra-valor">${forca}</span></div>`;
+        }).join('');
+        bloco.querySelector('#roda-barras').innerHTML = barras || '<p class="dica">Marque uma emoção para ver o gráfico.</p>';
+      };
+
+      bloco.addEventListener('input', (evento) => {
+        const item = evento.target.closest('.emocao-item');
+        if (item && evento.target.classList.contains('em-forca')) {
+          item.querySelector('output').textContent = evento.target.value;
+        }
+        desenhaBarras();
+      });
+      bloco.addEventListener('change', desenhaBarras);
+      desenhaBarras();
+    }
+
+    // Respiração guiada: inspirar 4 s, soltar 6 s
+    function montarRespiracao(bloco) {
+      bloco.innerHTML = `
+        <div class="respiracao">
+          <div class="palco no-print"><div class="circulo" id="resp-circulo"></div></div>
+          <p id="resp-fase" class="fase">Pronto(a) para começar?</p>
+          <p class="dica">Ciclos completos: <strong id="resp-ciclos">0</strong></p>
+          <div class="controles no-print">
+            <button type="button" class="btn-primario" id="resp-iniciar">Iniciar</button>
+          </div>
+        </div>`;
+
+      const circulo = bloco.querySelector('#resp-circulo');
+      const fase = bloco.querySelector('#resp-fase');
+      const ciclos = bloco.querySelector('#resp-ciclos');
+      const botao = bloco.querySelector('#resp-iniciar');
+      let rodando = false;
+      let total = 0;
+      let temporizador = null;
+
+      // Os tempos ficam em um único lugar; se a folha for trocada, o ciclo para
+      const inspira = () => {
+        if (!rodando || !bloco.isConnected) return;
+        circulo.classList.remove('contrai');
+        circulo.classList.add('expande');
+        fase.textContent = 'Inspire devagar (4 segundos)';
+        temporizador = setTimeout(solta, 4000);
+      };
+
+      const solta = () => {
+        if (!rodando || !bloco.isConnected) return;
+        circulo.classList.remove('expande');
+        circulo.classList.add('contrai');
+        fase.textContent = 'Solte o ar devagar (6 segundos)';
+        temporizador = setTimeout(() => {
+          total++;
+          ciclos.textContent = total;
+          inspira();
+        }, 6000);
+      };
+
+      botao.addEventListener('click', () => {
+        rodando = !rodando;
+        botao.textContent = rodando ? 'Pausar' : 'Continuar';
+        if (rodando) {
+          inspira();
+          return;
+        }
+        clearTimeout(temporizador);
+        fase.textContent = 'Pausado';
+      });
+    }
+
+    // Relaxamento muscular: tensionar 5 s e soltar 10 s em cada grupo
+    function montarMuscular(bloco) {
+      bloco.innerHTML = `
+        <div class="passo-atual">
+          <p id="mr-fase" class="fase">Pronto(a) para começar?</p>
+          <p id="mr-grupo" class="rotulo-grupo"></p>
+          <p id="mr-tempo" class="cronometro">5s</p>
+        </div>
+        <div class="controles no-print">
+          <button type="button" class="btn-primario" id="mr-iniciar">Iniciar</button>
+          <button type="button" class="btn-sec" id="mr-proximo">Próximo grupo</button>
+          <button type="button" class="btn-sec" id="mr-recomecar">Recomeçar</button>
+        </div>
+        <ol class="lista-passos">
+          ${PASSOS_MUSCULARES.map((passo) => `<li>${passo}</li>`).join('')}
+        </ol>`;
+
+      const fase = bloco.querySelector('#mr-fase');
+      const grupo = bloco.querySelector('#mr-grupo');
+      const tempo = bloco.querySelector('#mr-tempo');
+      const iniciar = bloco.querySelector('#mr-iniciar');
+      const proximo = bloco.querySelector('#mr-proximo');
+      const recomecar = bloco.querySelector('#mr-recomecar');
+      const itens = bloco.querySelectorAll('.lista-passos li');
+      let indice = 0;
+      let etapa = 0; // 0 = tensionar, 1 = soltar
+      let restante = 5;
+      let relogio = null;
+
+      const atualiza = () => {
+        fase.textContent = etapa === 0 ? 'Tensione por 5 segundos' : 'Solte devagar por 10 segundos';
+        grupo.textContent = PASSOS_MUSCULARES[indice];
+        tempo.textContent = `${restante}s`;
+        itens.forEach((item, i) => {
+          item.className = i < indice ? 'feito' : i === indice ? 'atual' : '';
+        });
+      };
+
+      const pausar = () => {
+        clearInterval(relogio);
+        relogio = null;
+        iniciar.textContent = 'Continuar';
+      };
+
+      const concluir = () => {
+        pausar();
+        fase.textContent = 'Exercício concluído. Como você está agora?';
+        grupo.textContent = '';
+        tempo.textContent = '';
+        itens.forEach((item) => { item.className = 'feito'; });
+        iniciar.disabled = true;
+        proximo.disabled = true;
+      };
+
+      const avancaGrupo = () => {
+        indice++;
+        etapa = 0;
+        restante = 5;
+        if (indice >= PASSOS_MUSCULARES.length) concluir();
+        else atualiza();
+      };
+
+      const tique = () => {
+        if (!bloco.isConnected) {
+          clearInterval(relogio);
+          return;
+        }
+        restante--;
+        if (restante === 0) {
+          if (etapa === 0) {
+            etapa = 1;
+            restante = 10;
+          } else {
+            avancaGrupo();
+            return;
+          }
+        }
+        atualiza();
+      };
+
+      iniciar.addEventListener('click', () => {
+        if (relogio) {
+          pausar();
+          return;
+        }
+        relogio = setInterval(tique, 1000);
+        iniciar.textContent = 'Pausar';
+        atualiza();
+      });
+
+      proximo.addEventListener('click', avancaGrupo);
+
+      recomecar.addEventListener('click', () => {
+        pausar();
+        indice = 0;
+        etapa = 0;
+        restante = 5;
+        iniciar.disabled = false;
+        proximo.disabled = false;
+        iniciar.textContent = 'Iniciar';
+        fase.textContent = 'Pronto(a) para começar?';
+        grupo.textContent = '';
+        tempo.textContent = '5s';
+        itens.forEach((item) => { item.className = ''; });
+      });
+    }
+
+    // Aterramento 5-4-3-2-1 com campos para preencher
+    function montarAterramento(bloco) {
+      bloco.innerHTML = [
+        ...SENTIDOS.map(([quantidade, descricao]) => `
+          <div class="campo">
+            <span class="rotulo">${quantidade} ${descricao}</span>
+            ${Array.from({ length: quantidade }, (_, i) => `<input type="text" placeholder="${i + 1}" aria-label="${quantidade} ${descricao}, item ${i + 1}" />`).join('')}
+          </div>`),
+        campoTexto('aterr-como', 'Como me sinto agora?', 'Escreva com suas palavras', 2)
+      ].join('');
+    }
+
+    // Pausa de atenção plena: 1 minuto com cronômetro
+    function montarAtencao(bloco) {
+      bloco.innerHTML = `
+        <ol class="lista-passos">
+          <li>Sente-se com as costas apoiadas e as mãos relaxadas.</li>
+          <li>Feche os olhos ou fixe o olhar em um ponto.</li>
+          <li>Perceba o ar entrando e saindo, sem mudar nada.</li>
+          <li>Quando a mente se distrair, perceba isso sem se julgar e volte à respiração.</li>
+        </ol>
+        <div class="passo-atual">
+          <p id="at-tempo" class="cronometro">01:00</p>
+          <p id="at-fim" class="fase oculta">Pausa concluída. Como você está agora?</p>
+        </div>
+        <div class="controles no-print">
+          <button type="button" class="btn-primario" id="at-iniciar">Iniciar</button>
+          <button type="button" class="btn-sec" id="at-reiniciar">Reiniciar</button>
+        </div>
+        ${campoTexto('at-como', 'Como estou depois da pausa', 'Escreva com suas palavras', 2)}`;
+
+      const tempo = bloco.querySelector('#at-tempo');
+      const fim = bloco.querySelector('#at-fim');
+      const iniciar = bloco.querySelector('#at-iniciar');
+      const reiniciar = bloco.querySelector('#at-reiniciar');
+      let restante = 60;
+      let relogio = null;
+
+      const pausar = () => {
+        clearInterval(relogio);
+        relogio = null;
+        iniciar.textContent = 'Continuar';
+      };
+
+      iniciar.addEventListener('click', () => {
+        if (relogio) {
+          pausar();
+          return;
+        }
+        iniciar.textContent = 'Pausar';
+        relogio = setInterval(() => {
+          if (!bloco.isConnected) {
+            clearInterval(relogio);
+            return;
+          }
+          restante--;
+          tempo.textContent = formatarTempo(restante);
+          if (restante === 0) {
+            pausar();
+            iniciar.disabled = true;
+            fim.classList.remove('oculta');
+          }
+        }, 1000);
+      });
+
+      reiniciar.addEventListener('click', () => {
+        pausar();
+        restante = 60;
+        tempo.textContent = formatarTempo(restante);
+        fim.classList.add('oculta');
+        iniciar.disabled = false;
+        iniciar.textContent = 'Iniciar';
+      });
+    }
+
+    /* ---------- Jogos e baralhos ---------- */
+
+    const CARTAS_EMOCOES = [
+      ['😊', 'Alegria', 'Peito leve, sorriso, vontade de se mexer', 'O que aconteceu hoje que te deixou feliz?', 'Dividir essa alegria com alguém'],
+      ['😢', 'Tristeza', 'Peso no peito, vontade de ficar quieto, olhos cheios', 'O que você perdeu ou sentiu falta?', 'Um abraço, um chá quente ou falar com alguém de confiança'],
+      ['😨', 'Medo', 'Coração acelerado, mãos suadas, corpo tenso', 'O que você imagina que pode acontecer?', 'Respirar devagar e lembrar de algo que te deixa seguro'],
+      ['😠', 'Raiva', 'Calor no rosto, mandíbula apertada, punhos fechados', 'O que aconteceu que foi injusto ou te magoou?', 'Contar até 10, sair um pouco do lugar e falar com calma depois'],
+      ['😲', 'Surpresa', 'Olhos arregalados, coração disparado por um instante', 'O que você não esperava que acontecesse?', 'Respirar e dar um tempo para entender o que aconteceu'],
+      ['😌', 'Calma', 'Ombros soltos, respiração lenta, corpo leve', 'Em que momento você se sentiu assim?', 'Guardar essa sensação e voltar a ela quando precisar'],
+      ['😰', 'Ansiedade', 'Estômago apertado, inquietação, pensamentos acelerados', 'Qual pensamento sobre o futuro está te assustando?', 'Respiração lenta, aterramento e anotar a preocupação'],
+      ['😳', 'Vergonha', 'Rosto quente, vontade de se esconder', 'O que você acha que os outros pensaram de você?', 'Lembrar que todo mundo erra e conversar com alguém de confiança'],
+      ['😔', 'Culpa', 'Peso na barriga, lembranças do erro que voltam', 'O que você fez que gostaria de ter feito diferente?', 'Reparar o que for possível e aprender com a situação'],
+      ['😤', 'Frustração', 'Cansaço, aperto no peito, vontade de desistir', 'Qual objetivo ficou difícil de alcançar?', 'Dividir a tarefa em partes menores e pedir ajuda'],
+      ['🥺', 'Solidão', 'Vazio no peito, sensação de estar sozinho', 'Quem você sente falta de ver ou ouvir?', 'Mandar mensagem para alguém ou sair para um lugar com gente'],
+      ['😒', 'Ciúme', 'Aperto no estômago, pensamentos de comparação', 'O que você teme perder na relação?', 'Conversar sobre o que sente e reconhecer o que é seu'],
+      ['😮‍💨', 'Alívio', 'Ombros que descem, um suspiro longo', 'O que saiu do seu peito quando isso passou?', 'Aproveitar o momento e respirar fundo'],
+      ['🌱', 'Esperança', 'Olhar mais aberto, leveza no peito', 'O que você gostaria que acontecesse daqui para frente?', 'Dar um primeiro passo, mesmo pequeno, nessa direção'],
+      ['🌟', 'Orgulho', 'Peito aberto, sensação de conquista', 'Qual esforço seu merece ser celebrado?', 'Contar para alguém e registrar essa conquista'],
+      ['🙏', 'Gratidão', 'Calor no peito, vontade de agradecer', 'Por quem ou pelo quê você é grato hoje?', 'Agradecer em voz alta ou por escrito'],
+      ['😴', 'Cansaço', 'Corpo pesado, olhos pesados, pouca energia', 'O que tem drenado sua energia ultimamente?', 'Descansar, dormir melhor e pedir para aliviar a carga'],
+      ['🤔', 'Confusão', 'Cabeça cheia, dificuldade de decidir', 'Qual dúvida está te travando?', 'Escrever o problema e separar o que é urgente'],
+      ['🤩', 'Empolgação', 'Pernas inquietas, energia que sobe', 'O que você está ansioso para fazer?', 'Planejar o próximo passo e compartilhar a animação'],
+      ['🥰', 'Amor', 'Calor no peito, sorriso sem querer', 'Quem faz você se sentir cuidado e querido?', 'Demonstrar carinho e agradecer a essa pessoa'],
+      ['😟', 'Insegurança', 'Ombros encolhidos, vontade de se comparar', 'Em que você duvida de si mesmo?', 'Lembrar de conquistas passadas e pedir um retorno sincero'],
+      ['😞', 'Decepção', 'Peito apertado, desânimo na voz', 'O que você esperava que acontecesse e não aconteceu?', 'Permitir-se sentir e depois pensar nos próximos passos'],
+      ['😬', 'Nervosismo', 'Mãos inquietas, pernas balançando, respiração curta', 'O que vai acontecer em seguida que te deixa assim?', 'Respirar devagar e focar no que está ao alcance'],
+      ['💭', 'Saudade', 'Aperto suave no peito, lembrança quente', 'Qual lembrança você quer guardar hoje?', 'Ligar, escrever ou olhar fotos de quem você sente falta']
+    ];
+
+    const CARTAS_DISTORCOES = [
+      ['Tudo ou nada', 'Ver as coisas só em extremos: perfeito ou um fracasso, sem meio-termo.', 'Errei uma pergunta na prova, então sou péssimo em tudo.', 'Existe algo entre o perfeito e o fracasso? O que seria um resultado razoável?'],
+      ['Catastrofização', 'Pensar que o pior vai acontecer e que seria insuportável.', 'O cachorro não voltou para casa; tenho certeza de que algo terrível aconteceu.', 'Qual é a chance real disso acontecer? E, se acontecer, como eu lidaria?'],
+      ['Leitura mental', 'Achar que sabe o que o outro pensa, sem perguntar.', 'Minha amiga não respondeu; ela deve estar brava comigo.', 'Quais outras explicações são possíveis? Eu tenho como saber de verdade?'],
+      ['Adivinhação do futuro', 'Ter certeza de como algo vai acabar, sem evidências.', 'Essa entrevista vai dar errado, tenho certeza.', 'Já vi algo assim acontecer antes? Que outro desfecho também é possível?'],
+      ['Generalização', 'Tirar uma conclusão geral de um fato isolado.', 'Esse professor foi grosso comigo; todos os professores são assim.', 'Isso acontece sempre ou foi uma vez só?'],
+      ['Filtro mental', 'Focar só no detalhe negativo e ignorar o resto.', 'O dia foi bom, mas aquele comentário de manhã estragou tudo.', 'O que de bom também aconteceu hoje?'],
+      ['Desqualificar o positivo', 'Dizer que as coisas boas não contam.', 'Me elogiaram, mas foi só por educação.', 'Que provas eu teria de que isso é verdade?'],
+      ['Raciocínio emocional', 'Achar que algo é verdade porque a gente se sente assim.', 'Me sinto um fracasso, então devo ser um fracasso.', 'Este sentimento prova algo ou só mostra como estou agora?'],
+      ['Afirmações "deveria"', 'Cobrar-se ou cobrar os outros com regras rígidas e absolutas.', 'Eu deveria ser capaz de resolver tudo sozinho.', 'De onde vem essa regra? Ela é realista e gentil comigo?'],
+      ['Rotulação', 'Dar a si ou ao outro um rótulo geral por causa de um erro.', 'Esqueci o aniversário dela: sou um amigo horrível.', 'Esse erro define a pessoa inteira? Como eu descreveria o que aconteceu, sem rótulo?'],
+      ['Personalização', 'Achar que tudo o que acontece tem relação com você.', 'As pessoas riram; com certeza estavam rindo de mim.', 'Existem outros motivos para isso? Eu tinha controle sobre o que aconteceu?'],
+      ['Minimização ou maximização', 'Diminuir as próprias qualidades ou aumentar os problemas.', 'Apresentei bem o trabalho, mas foi sorte; meu erro no relatório é um desastre enorme.', 'Como eu veria essa situação se um amigo estivesse passando por ela?']
+    ];
+
+    const ESTRATEGIAS_CARTAS = {
+      ansiedade: [
+        'Respirar devagar por um minuto', 'Sentir os pés apoiados no chão', 'Dizer para mim mesmo: "isso passa"', 'Beber um copo de água com calma',
+        'Sair para caminhar cinco minutos', 'Nomear cinco coisas que vejo ao redor', 'Apertar e soltar as mãos três vezes', 'Anotar a preocupação e marcar um horário para ela',
+        'Mandar mensagem para alguém de confiança', 'Perguntar: "qual é a chance real disso?"', 'Alongar os ombros e o pescoço', 'Ouvir uma música calma',
+        'Tomar um chá quente sem pressa', 'Descrever um objeto por dentro, em detalhes', 'Dar um passo pequeno em direção ao que me assusta', 'Lembrar de uma vez em que passei por algo difícil',
+        'Afastar-me das telas por dez minutos', 'Contar de 10 até 1, devagar', 'Escrever o que está me incomodando, sem julgar', 'Pedir um abraço ou um carinho a alguém'
+      ],
+      humor: [
+        'Abrir a janela e olhar o céu', 'Tomar banho e trocar de roupa', 'Ouvir uma música que eu gosto', 'Caminhar até a esquina e voltar',
+        'Ligar para alguém que me faz bem', 'Fazer um lanche que eu gosto', 'Arrumar uma pequena parte do quarto', 'Escrever uma coisa boa que aconteceu hoje',
+        'Sair para tomar ar por cinco minutos', 'Fazer um alongamento leve', 'Ver fotos de um momento bom', 'Cuidar de uma planta ou de um animal',
+        'Assistir a um episódio de algo leve', 'Mandar uma mensagem carinhosa para alguém', 'Escolher uma atividade pequena e concluí-la', 'Desenhar ou rabiscar por dez minutos',
+        'Tomar um copo de água e respirar fundo', 'Pensar em algo que me deu prazer no passado', 'Pedir companhia para um lanche', 'Sair da cama no horário combinado'
+      ],
+      estresse: [
+        'Fazer uma pausa de cinco minutos', 'Escolher a tarefa mais urgente', 'Anotar tudo o que está pendente', 'Respirar devagar três vezes',
+        'Desligar as notificações por uma hora', 'Pedir ajuda para alguém', 'Dividir a tarefa em partes menores', 'Levantar e andar um pouco',
+        'Beber água e comer algo leve', 'Dizer não a um pedido extra, com respeito', 'Fechar os olhos por um minuto', 'Relaxar os ombros e a mandíbula',
+        'Organizar a mesa de trabalho', 'Definir um horário para encerrar o dia', 'Ouvir um som calmo', 'Olhar para longe por alguns segundos',
+        'Lembrar que nem tudo depende de mim', 'Fazer uma lista do que já foi feito', 'Combinar um prazo realista com quem pede', 'Sair para ar fresco no almoço'
+      ],
+      sono: [
+        'Desligar as telas 30 minutos antes de deitar', 'Diminuir a luz do quarto', 'Tomar um banho morno', 'Respirar devagar, soltando o ar mais longo',
+        'Anotar as pendências em um papel', 'Fazer um chá sem cafeína', 'Deixar o quarto fresco e silencioso', 'Ler algo leve por alguns minutos',
+        'Deitar no mesmo horário todos os dias', 'Relaxar os músculos do rosto e dos ombros', 'Não olhar as horas no meio da noite', 'Ouvir um som suave ou sons da natureza',
+        'Levantar e ir para outro cômodo se não conseguir dormir', 'Evitar cafeína depois do almoço', 'Fazer uma caminhada leve durante o dia', 'Lembrar que descansar deitado também ajuda',
+        'Colocar o celular longe da cama', 'Repetir uma palavra calma na mente', 'Acordar no mesmo horário, mesmo em dias de folga', 'Tomar um copo de água antes de deitar'
+      ]
+    };
+
+    const BANCO_DETETIVE = [
+      ['Se eu não for perfeito, sou um fracasso total.', 'Tudo ou nada', ['Catastrofização', 'Leitura mental'], 'Ser imperfeito não define você por completo.'],
+      ['Ela não respondeu logo; deve ter se cansado de mim.', 'Leitura mental', ['Adivinhação do futuro', 'Rotulação'], 'Não dá para saber o que a pessoa pensa sem perguntar.'],
+      ['Vai dar tudo errado na reunião, eu já sei.', 'Adivinhação do futuro', ['Catastrofização', 'Generalização'], 'Ninguém tem como saber o desfecho com certeza.'],
+      ['Errei uma vez; eu nunca faço nada direito.', 'Generalização', ['Filtro mental', 'Tudo ou nada'], 'Uma falha isolada não vale para tudo.'],
+      ['Só reparei no erro e não no resto do trabalho bem feito.', 'Filtro mental', ['Desqualificar o positivo', 'Minimização ou maximização'], 'O que deu certo também merece atenção.'],
+      ['Elogiaram, mas foi só por gentileza.', 'Desqualificar o positivo', ['Leitura mental', 'Personalização'], 'Um elogio pode ser sincero, mesmo que a gente não acredite.'],
+      ['Estou me sentindo um inútil, então deve ser verdade.', 'Raciocínio emocional', ['Rotulação', 'Afirmações "deveria"'], 'Sentimento não é prova de fato.'],
+      ['Eu devia dar conta de tudo sem nunca pedir ajuda.', 'Afirmações "deveria"', ['Tudo ou nada', 'Personalização'], 'Pedir ajuda também faz parte da vida.'],
+      ['Me atrasei hoje; sou um péssimo pai.', 'Rotulação', ['Generalização', 'Catastrofização'], 'Um atraso não define a pessoa inteira.'],
+      ['Todos riram; com certeza era de mim.', 'Personalização', ['Leitura mental', 'Adivinhação do futuro'], 'Pode haver outras razões para o riso.'],
+      ['A prova foi fácil, qualquer um passaria; não tem mérito nenhum.', 'Minimização ou maximização', ['Desqualificar o positivo', 'Generalização'], 'Suas conquistas merecem reconhecimento, mesmo quando parecem pequenas.'],
+      ['Se esse exame der errado, minha vida acaba.', 'Catastrofização', ['Adivinhação do futuro', 'Tudo ou nada'], 'Um resultado ruim é difícil, mas não é o fim de tudo.']
+    ];
+
+    const PARES_MEMORIA = [
+      ['😊', 'Alegria'], ['😢', 'Tristeza'], ['😨', 'Medo'], ['😠', 'Raiva'],
+      ['😌', 'Calma'], ['😲', 'Surpresa'], ['😰', 'Ansiedade'], ['🌱', 'Esperança']
+    ];
+
+    const DESAFIOS_ROLETA = [
+      'Respire 4 vezes devagar, soltando o ar mais lentamente do que puxou.',
+      'Estique os ombros e solte-os três vezes.',
+      'Beba um copo de água com calma.',
+      'Olhe ao redor e diga 3 cores que você vê.',
+      'Diga em voz alta uma coisa boa que aconteceu hoje.',
+      'Levante-se e ande 10 passos.',
+      'Conte de 10 até 1, devagar.',
+      'Escreva o nome de 3 pessoas de quem você gosta.'
+    ];
+
+    // Embaralha sem alterar a lista original
+    const embaralhar = (lista) => [...lista].sort(() => Math.random() - 0.5);
+
+    function cartaCorpo(topo, titulo, linhas) {
+      return `<div class="carta-corpo">${topo}<h4>${titulo}</h4>${linhas.map(([rotulo, texto]) => `<p><strong>${rotulo}:</strong> ${texto}</p>`).join('')}</div>`;
+    }
+
+    const cartaEmocao = ([emoji, nome, corpo, pergunta, ajuda]) => cartaCorpo(
+      `<span class="carta-emoji">${emoji}</span>`, nome,
+      [['Onde sinto no corpo', corpo], ['Pergunta para conversar', pergunta], ['O que pode ajudar', ajuda]]
+    );
+
+    const cartaDistorcao = ([nome, explica, exemplo, desafio]) => cartaCorpo(
+      '<span class="carta-selo">Distorção</span>', nome,
+      [['O que é', explica], ['Exemplo fictício', exemplo], ['Desafie com a pergunta', desafio]]
+    );
+
+    const cartaEstrategia = (texto) => cartaCorpo('<span class="carta-selo">Posso fazer agora</span>', texto, []);
+
+    // Modos comuns aos baralhos: sortear com efeito de virar, ver todas e preparar a impressão (9 por folha)
+    function montarBaralho(bloco, cartas, cartaHtml) {
+      bloco.innerHTML = `
+        <div class="controles no-print">
+          <button type="button" class="btn-primario" data-modo="sortear">Sortear uma carta</button>
+          <button type="button" class="btn-sec" data-modo="todas">Ver todas</button>
+          <button type="button" class="btn-sec" data-modo="imprimir">Preparar para imprimir</button>
+        </div>
+        <div class="area-baralho"></div>`;
+
+      const area = bloco.querySelector('.area-baralho');
+
+      const sortear = () => {
+        const carta = cartas[Math.floor(Math.random() * cartas.length)];
+        area.innerHTML = `
+          <div class="carta-cena">
+            <div class="carta-flip">
+              <div class="carta-verso" aria-hidden="true">?</div>
+              <div class="carta-frente">${cartaHtml(carta)}</div>
+            </div>
+          </div>
+          <div class="controles no-print"><button type="button" class="btn-sec" data-modo="sortear">Sortear outra</button></div>`;
+        const flip = area.querySelector('.carta-flip');
+        requestAnimationFrame(() => requestAnimationFrame(() => flip.classList.add('virada')));
+      };
+
+      const mostrar = (modo) => {
+        document.getElementById('folha').classList.toggle('imprimir-cartas', modo === 'imprimir');
+        if (modo === 'sortear') {
+          sortear();
+          return;
+        }
+        if (modo === 'todas') {
+          area.innerHTML = `<div class="grade-cartas">${cartas.map((carta) => `<article class="carta-estatica">${cartaHtml(carta)}</article>`).join('')}</div>`;
+          return;
+        }
+        const paginas = [];
+        for (let i = 0; i < cartas.length; i += 9) {
+          const grupo = cartas.slice(i, i + 9).map((carta) => `<div class="carta-impressa">${cartaHtml(carta)}</div>`);
+          const vazias = Array.from({ length: 9 - grupo.length }, () => '<div class="carta-impressa vazia"></div>');
+          paginas.push(`<div class="pagina-cartas">${[...grupo, ...vazias].join('')}</div>`);
+        }
+        area.innerHTML = `<p class="dica no-print">Cada folha A4 traz 9 cartas com linhas de corte. Use o botão "Imprimir ou salvar em PDF" no topo.</p><div class="folhas-cartas">${paginas.join('')}</div>`;
+      };
+
+      bloco.addEventListener('click', (evento) => {
+        const botao = evento.target.closest('[data-modo]');
+        if (botao) mostrar(botao.dataset.modo);
+      });
+    }
+
+    const montarBaralhoEmocoes = (bloco) => montarBaralho(bloco, CARTAS_EMOCOES, cartaEmocao);
+    const montarBaralhoDistorcoes = (bloco) => montarBaralho(bloco, CARTAS_DISTORCOES, cartaDistorcao);
+    const montarBaralhoEstrategias = (bloco, tema) => montarBaralho(bloco, ESTRATEGIAS_CARTAS[tema], cartaEstrategia);
+
+    // Detetive de pensamentos: 10 rodadas, escolha da distorção e retorno imediato
+    function montarDetetive(bloco) {
+      const TOTAL = 10;
+      let rodadas = [];
+      let atual = 0;
+      let pontos = 0;
+
+      const desenha = () => {
+        if (atual >= rodadas.length) {
+          bloco.innerHTML = `
+            <div class="placar"><p>Pontuação final</p><strong>${pontos} de ${rodadas.length}</strong></div>
+            <div class="controles"><button type="button" class="btn-primario" id="det-recomecar">Jogar de novo</button></div>`;
+          bloco.querySelector('#det-recomecar').addEventListener('click', comecar);
+          return;
+        }
+
+        const [pensamento, certa, erradas, dica] = rodadas[atual];
+        const opcoes = embaralhar([certa, ...erradas]);
+        bloco.innerHTML = `
+          <div class="placar"><p>Rodada <strong>${atual + 1}</strong> de ${rodadas.length}</p><p>Pontos <strong>${pontos}</strong></p></div>
+          <blockquote class="pensamento">“${pensamento}”</blockquote>
+          <p class="dica">Qual distorção aparece nesse pensamento?</p>
+          <div class="opcoes-jogo">${opcoes.map((opcao, i) => `<button type="button" class="opcao-jogo" data-indice="${i}">${opcao}</button>`).join('')}</div>
+          <p class="feedback" aria-live="polite"></p>
+          <div class="controles"><button type="button" class="btn-primario oculta" id="det-proxima">${atual === rodadas.length - 1 ? 'Ver pontuação' : 'Próxima rodada'}</button></div>`;
+
+        const botoes = bloco.querySelectorAll('.opcao-jogo');
+        const feedback = bloco.querySelector('.feedback');
+        const proxima = bloco.querySelector('#det-proxima');
+
+        botoes.forEach((botao) => botao.addEventListener('click', () => {
+          const acertou = opcoes[Number(botao.dataset.indice)] === certa;
+          if (acertou) pontos++;
+          botoes.forEach((item) => {
+            item.disabled = true;
+            if (opcoes[Number(item.dataset.indice)] === certa) item.classList.add('acerto');
+          });
+          if (!acertou) botao.classList.add('erro');
+          feedback.textContent = acertou ? `Isso mesmo! ${dica}` : `Quase. Esse pensamento é "${certa}". ${dica}`;
+          proxima.classList.remove('oculta');
+        }));
+
+        proxima.addEventListener('click', () => {
+          atual++;
+          desenha();
+        });
+      };
+
+      const comecar = () => {
+        rodadas = embaralhar(BANCO_DETETIVE).slice(0, TOTAL);
+        atual = 0;
+        pontos = 0;
+        desenha();
+      };
+
+      comecar();
+    }
+
+    // Jogo da memória: emoji e nome da emoção, com tentativas e cronômetro
+    function montarMemoria(bloco, tema, publico) {
+      const pares = PARES_MEMORIA.slice(0, publico === 'crianca' ? 6 : 8);
+      const cartas = embaralhar(pares.flatMap(([emoji, nome], par) => [
+        { par, conteudo: `<span class="emoji-grande">${emoji}</span>` },
+        { par, conteudo: nome }
+      ]));
+      const estado = cartas.map(() => ({ aberta: false, achada: false }));
+      let tentativas = 0;
+      let acertos = 0;
+      let segundos = 0;
+      let relogio = null;
+      let travado = false;
+
+      bloco.innerHTML = `
+        <div class="placar"><p>Tentativas <strong id="mem-tentativas">0</strong></p><p>Tempo <strong id="mem-tempo">00:00</strong></p></div>
+        <div class="grade-memoria"></div>
+        <p class="feedback" id="mem-fim" aria-live="polite"></p>
+        <div class="controles no-print"><button type="button" class="btn-sec" id="mem-novo">Novo jogo</button></div>`;
+      const grade = bloco.querySelector('.grade-memoria');
+
+      const desenha = () => {
+        grade.innerHTML = cartas.map((carta, i) => {
+          const visivel = estado[i].aberta || estado[i].achada;
+          return `<button type="button" class="carta-memoria${visivel ? ' aberta' : ''}${estado[i].achada ? ' achada' : ''}" data-i="${i}" ${estado[i].achada ? 'disabled' : ''}>${visivel ? carta.conteudo : '?'}</button>`;
+        }).join('');
+      };
+
+      const iniciaRelogio = () => {
+        relogio = setInterval(() => {
+          if (!bloco.isConnected) {
+            clearInterval(relogio);
+            return;
+          }
+          segundos++;
+          bloco.querySelector('#mem-tempo').textContent = formatarTempo(segundos);
+        }, 1000);
+      };
+
+      grade.addEventListener('click', (evento) => {
+        const botao = evento.target.closest('[data-i]');
+        if (!botao || travado) return;
+        const i = Number(botao.dataset.i);
+        if (estado[i].aberta || estado[i].achada) return;
+        if (!relogio) iniciaRelogio();
+
+        estado[i].aberta = true;
+        const abertas = estado.flatMap((item, k) => (item.aberta && !item.achada ? [k] : []));
+        if (abertas.length === 2) {
+          tentativas++;
+          bloco.querySelector('#mem-tentativas').textContent = tentativas;
+          const [a, b] = abertas;
+          if (cartas[a].par === cartas[b].par) {
+            estado[a].achada = true;
+            estado[b].achada = true;
+            acertos++;
+          } else {
+            travado = true;
+            setTimeout(() => {
+              estado[a].aberta = false;
+              estado[b].aberta = false;
+              travado = false;
+              desenha();
+            }, 900);
+          }
+        }
+
+        desenha();
+        if (acertos === pares.length) {
+          clearInterval(relogio);
+          bloco.querySelector('#mem-fim').textContent = `Você encontrou todos os pares em ${tentativas} tentativas e ${formatarTempo(segundos)}.`;
+        }
+      });
+
+      bloco.querySelector('#mem-novo').addEventListener('click', () => {
+        clearInterval(relogio);
+        montarMemoria(bloco, tema, publico);
+      });
+
+      desenha();
+    }
+
+    // Roleta: sorteia uma estratégia do tema e um desafio rápido
+    function montarRoleta(bloco, tema) {
+      bloco.innerHTML = `
+        <div class="roleta-painel" id="rol-painel">
+          <p class="roleta-rotulo">Estratégia</p>
+          <p class="roleta-resultado" id="rol-estrategia">Gire a roleta para começar</p>
+          <p class="roleta-rotulo">Desafio rápido</p>
+          <p class="roleta-resultado" id="rol-desafio">Um pequeno passo de cada vez</p>
+        </div>
+        <div class="controles no-print"><button type="button" class="btn-primario" id="rol-girar">Girar</button></div>`;
+
+      const painel = bloco.querySelector('#rol-painel');
+      const estrategia = bloco.querySelector('#rol-estrategia');
+      const desafio = bloco.querySelector('#rol-desafio');
+      const botao = bloco.querySelector('#rol-girar');
+      const sorteia = (lista) => lista[Math.floor(Math.random() * lista.length)];
+
+      botao.addEventListener('click', () => {
+        botao.disabled = true;
+        painel.classList.add('girando');
+        let passos = 0;
+        const gira = setInterval(() => {
+          if (!bloco.isConnected) {
+            clearInterval(gira);
+            return;
+          }
+          estrategia.textContent = sorteia(ESTRATEGIAS_CARTAS[tema]);
+          desafio.textContent = sorteia(DESAFIOS_ROLETA);
+          passos++;
+          if (passos === 12) {
+            clearInterval(gira);
+            painel.classList.remove('girando');
+            botao.disabled = false;
+            botao.textContent = 'Girar de novo';
+          }
+        }, 120);
+      });
+    }
+
+    const JOGOS = {
+      baralhoEmocoes: {
+        titulo: 'Baralho das emoções',
+        comoUsar: {
+          crianca: 'Vire uma carta e descubra uma emoção. Veja onde ela aparece no corpo e converse sobre ela com alguém. 🃏',
+          adolescente: 'Sorteie uma carta, observe onde a emoção aparece no corpo e responda à pergunta. Use "Ver todas" para conhecer as 24 emoções.',
+          adulto: 'Sorteie uma carta ou veja todas. Observe a pista do corpo, responda à pergunta e considere a ideia que pode ajudar.',
+          idoso: 'Sorteie uma carta com calma. Observe onde a emoção aparece no corpo, responda à pergunta e pense na ideia que pode ajudar.'
+        },
+        montar: montarBaralhoEmocoes
+      },
+      baralhoDistorcoes: {
+        titulo: 'Baralho das distorções cognitivas',
+        comoUsar: {
+          crianca: 'Cada carta mostra um jeito de pensar que engana a gente. Leia o exemplo e responda à pergunta da carta. 🧩',
+          adolescente: 'Leia a explicação e o exemplo fictício. Depois, use a pergunta da carta para testar um pensamento seu.',
+          adulto: 'Escolha uma carta, leia a explicação e o exemplo e use a pergunta para desafiar um pensamento seu.',
+          idoso: 'Leia a carta com calma, veja o exemplo e responda à pergunta. Pense se ela se aplica a você.'
+        },
+        montar: montarBaralhoDistorcoes
+      },
+      baralhoEstrategias: {
+        titulo: 'Baralho de estratégias de enfrentamento',
+        comoUsar: {
+          crianca: 'Sorteie uma carta com algo que você pode fazer agora para se sentir melhor. 🌈',
+          adolescente: 'Sorteie uma carta com uma ação simples e escolha uma para tentar ainda hoje.',
+          adulto: 'Sorteie uma carta ou veja todas. Escolha uma ação que caiba no seu momento de hoje.',
+          idoso: 'Sorteie uma carta e escolha uma ação simples, que caiba no seu dia.'
+        },
+        montar: montarBaralhoEstrategias
+      },
+      detetive: {
+        titulo: 'Detetive de pensamentos',
+        comoUsar: {
+          crianca: 'Leia o pensamento da história e escolha qual "truque" da mente está aparecendo. Ganhe pontos ao acertar! 🕵️',
+          adolescente: 'Leia o pensamento e escolha a distorção que melhor o descreve. Você recebe um retorno na hora.',
+          adulto: 'Leia o pensamento e escolha a distorção cognitiva que melhor se aplica. O retorno aparece logo após a resposta.',
+          idoso: 'Leia o pensamento com calma e escolha a alternativa que melhor o descreve. A explicação aparece logo depois.'
+        },
+        montar: montarDetetive
+      },
+      memoria: {
+        titulo: 'Jogo da memória das emoções',
+        comoUsar: {
+          crianca: 'Vire duas cartas. Se o emoji e o nome combinarem, você achou um par! Tente com poucas jogadas. 🧠',
+          adolescente: 'Vire duas cartas por vez e ache os pares de emoji e nome da emoção, com o menor número de tentativas.',
+          adulto: 'Encontre os pares de emoji e nome. O jogo mostra o número de tentativas e o tempo gasto.',
+          idoso: 'Vire duas cartas por vez e encontre os pares de emoji e nome. Não há pressa.'
+        },
+        montar: montarMemoria
+      },
+      roleta: {
+        titulo: 'Roleta das estratégias',
+        comoUsar: {
+          crianca: 'Clique em Girar e veja uma ideia e um desafio rápido. Faça o desafio junto! 🎡',
+          adolescente: 'Gire a roleta para sortear uma estratégia e um desafio rápido. Faça o desafio agora mesmo.',
+          adulto: 'Gire para sortear uma estratégia do tema e um desafio curto. Faça o desafio antes de voltar às suas atividades.',
+          idoso: 'Gire a roleta e veja uma estratégia e um desafio curto. Faça o desafio no seu ritmo.'
+        },
+        montar: montarRoleta
+      }
+    };
+
+    const recursoPorId = (id) => RECURSOS[id] || JOGOS[id];
+
+    /* ---------- Telas ---------- */
+
+    // Todos os recursos disponíveis para o dever de casa
+    const TODOS_RECURSOS = Object.keys(RECURSOS);
+
+    function botoesOpcoes(acao, opcoes, selecionado) {
+      return `<div class="opcoes" role="group">${Object.entries(opcoes).map(([valor, rotulo]) => `
+        <button type="button" class="opcao" data-acao="${acao}" data-valor="${valor}" aria-pressed="${selecionado === valor}">${rotulo}</button>`).join('')}</div>`;
+    }
+
+    // Desenha as quatro escolhas (categoria, recurso, público e tema) a partir do estado atual
+    function desenhaEscolhas() {
+      const { categoria, recurso, recursosDever, publico, tema } = escolha;
+
+      const cartoesCategoria = Object.entries(CATEGORIAS).map(([chave, cat]) => `
+        <button type="button" class="cat-cartao" data-acao="categoria" data-valor="${chave}" aria-pressed="${categoria === chave}">
+          <span class="cat-nome">${cat.nome}</span>
+          <span class="cat-desc">${cat.descricao}</span>
+        </button>`).join('');
+
+      let conteudoRecurso = '<p class="dica">Escolha uma categoria acima.</p>';
+      if (categoria === 'dever') {
+        const cheio = recursosDever.length >= 3;
+        conteudoRecurso = `
+          <p class="dica">Escolha de 1 a 3 recursos para o dever (${recursosDever.length} de 3).</p>
+          <div class="grade-checks">
+            ${TODOS_RECURSOS.map((chave) => {
+              const marcado = recursosDever.includes(chave);
+              return `<label class="check"><input type="checkbox" data-dever="${chave}" ${marcado ? 'checked' : ''} ${!marcado && cheio ? 'disabled' : ''} /><span>${RECURSOS[chave].titulo}</span></label>`;
+            }).join('')}
+          </div>`;
+      } else if (categoria) {
+        const rotulos = Object.fromEntries(CATEGORIAS[categoria].recursos.map((chave) => [chave, recursoPorId(chave).titulo]));
+        conteudoRecurso = botoesOpcoes('recurso', rotulos, recurso);
+      }
+
+      document.getElementById('grupos').innerHTML = `
+        <section class="grupo">
+          <h2><span class="num">1</span> Categoria</h2>
+          <div class="categorias">${cartoesCategoria}</div>
+        </section>
+        <section class="grupo">
+          <h2><span class="num">2</span> Recurso</h2>
+          ${conteudoRecurso}
+        </section>
+        <section class="grupo">
+          <h2><span class="num">3</span> Público</h2>
+          ${botoesOpcoes('publico', PUBLICOS, publico)}
+        </section>
+        <section class="grupo">
+          <h2><span class="num">4</span> Tema</h2>
+          ${botoesOpcoes('tema', TEMAS, tema)}
+        </section>`;
+
+      const completo = Boolean(categoria && publico && tema && (categoria === 'dever' ? recursosDever.length > 0 : recurso));
+      document.getElementById('btn-gerar').disabled = !completo;
+      document.getElementById('dica-escolha').textContent = completo
+        ? 'Tudo pronto! Agora é só gerar.'
+        : 'Escolha uma opção em cada etapa.';
+    }
+
+    // Folha única do dever de casa: cabeçalho, instruções, espaço para escrever e combinado
+    function montarDever() {
+      const { publico, tema, recursosDever } = escolha;
+      document.body.classList.toggle('publico-idoso', publico === 'idoso');
+
+      const itens = recursosDever.map((chave) => `
+        <section class="dever-item">
+          <h3>${RECURSOS[chave].titulo}</h3>
+          <p>${RECURSOS[chave].comoUsar[publico]}</p>
+          <div class="linhas"></div>
+        </section>`).join('');
+
+      document.getElementById('folha').innerHTML = `
+        <header class="folha-topo">
+          <p class="folha-meta">Dever de casa · ${PUBLICOS[publico]} · Tema: ${TEMAS[tema]}</p>
+          <h2>Dever de casa</h2>
+        </header>
+        <div class="cabecalho-dever">
+          <label class="linha-preencher">Nome: <input type="text" /></label>
+          <label class="linha-preencher">Data: <input type="text" /></label>
+          <label class="linha-preencher">Próxima sessão: <input type="text" /></label>
+        </div>
+        <div class="corpo-recurso">
+          ${itens}
+          <section class="combinado">
+            <h3>Combinado da semana</h3>
+            ${campoTexto('dev-fazer', 'O que vou fazer', 'Ex.: caminhar 10 minutos depois do almoço', 2)}
+            ${campoLinha('dev-quantas', 'Quantas vezes', 'Ex.: 3 vezes por semana')}
+            ${campoTexto('dev-lembrar', 'Como vou me lembrar', 'Ex.: alarme no celular, bilhete na geladeira', 2)}
+          </section>
+        </div>`;
+    }
+
+    function montarFolha() {
+      const recurso = recursoPorId(escolha.recurso);
+      const { publico, tema } = escolha;
+      document.body.classList.toggle('publico-idoso', publico === 'idoso');
+
+      const folha = document.getElementById('folha');
+      folha.classList.remove('imprimir-cartas');
+      folha.innerHTML = `
+        <header class="folha-topo">
+          <p class="folha-meta">${PUBLICOS[publico]} · Tema: ${TEMAS[tema]}</p>
+          <h2>${recurso.titulo}</h2>
+        </header>
+        <section class="bloco">
+          <h3>Como usar</h3>
+          <p>${recurso.comoUsar[publico]}</p>
+        </section>
+        ${recurso.exemplo ? `<details class="exemplo">
+          <summary>Ver exemplo preenchido (fictício)</summary>
+          <dl>
+            ${recurso.exemplo[tema].map(([rotulo, texto]) => `<div><dt>${rotulo}</dt><dd>${texto}</dd></div>`).join('')}
+          </dl>
+        </details>` : ''}
+        <div class="corpo-recurso"></div>`;
+
+      recurso.montar(folha.querySelector('.corpo-recurso'), tema, publico);
+    }
+
+    let refazer = null;
+
+    document.getElementById('btn-gerar').addEventListener('click', () => {
+      refazer = escolha.categoria === 'dever' ? montarDever : montarFolha;
+      refazer();
+      document.getElementById('tela-escolhas').classList.add('oculta');
+      document.getElementById('tela-folha').classList.remove('oculta');
+      window.scrollTo(0, 0);
+    });
+
+    document.getElementById('btn-voltar').addEventListener('click', () => {
+      document.getElementById('tela-folha').classList.add('oculta');
+      document.getElementById('tela-escolhas').classList.remove('oculta');
+      document.body.classList.remove('publico-idoso');
+      window.scrollTo(0, 0);
+    });
+
+    document.getElementById('btn-limpar').addEventListener('click', () => {
+      if (confirm('Apagar tudo o que foi escrito nesta folha?')) refazer();
+    });
+
+    document.getElementById('btn-imprimir').addEventListener('click', () => window.print());
+
+    const grupos = document.getElementById('grupos');
+
+    grupos.addEventListener('click', (evento) => {
+      const botao = evento.target.closest('[data-acao]');
+      if (!botao || botao.disabled) return;
+      const { acao, valor } = botao.dataset;
+      if (acao === 'categoria') {
+        escolha.categoria = valor;
+        escolha.recurso = null;
+        escolha.recursosDever = [];
+      }
+      if (acao === 'recurso') escolha.recurso = valor;
+      if (acao === 'publico') escolha.publico = valor;
+      if (acao === 'tema') escolha.tema = valor;
+      desenhaEscolhas();
+    });
+
+    grupos.addEventListener('change', (evento) => {
+      const caixa = evento.target.closest('[data-dever]');
+      if (!caixa) return;
+      const valor = caixa.dataset.dever;
+      escolha.recursosDever = caixa.checked
+        ? [...escolha.recursosDever, valor]
+        : escolha.recursosDever.filter((chave) => chave !== valor);
+      desenhaEscolhas();
+    });
+
+    desenhaEscolhas();
+  </script>
+</body>
+</html>
 
