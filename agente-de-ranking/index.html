@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Agente de ranking - Processos seletivos | Liandra Constantino</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../estilo-projeto.css">
+</head>
+<body>
+<a class="voltar" href="../">← Voltar ao portfólio</a>
+<header>
+  <span class="etiqueta">Projeto · Gestão de pessoas</span>
+  <h1>Agente de ranking - Processos seletivos</h1>
+  <p class="sub">Ranking de candidatos por critérios e justificativas escritas e revisadas por dois agentes de IA.</p>
+  <div class="selos"><span>Make</span><span>Gemini</span><span>Google Planilhas</span><span>Prompt engineering</span></div>
+  <span class="aviso">Demonstração: todos os candidatos e dados são fictícios</span>
+</header>
+
+<main>
+<section>
+  <h2>Qual era o objetivo</h2>
+  <p>Comparar candidatos de forma organizada e entregar ao gestor uma lista com a posição de cada pessoa e uma justificativa curta, sem passar horas escrevendo texto por candidato.</p>
+  <p>A ferramenta <b>apoia</b> quem decide. Ela organiza os dados e escreve o rascunho das justificativas, e a decisão final continua sendo humana.</p>
+</section>
+
+<section>
+  <h2>O problema, em palavras simples</h2>
+  <ul>
+    <li>Comparar candidatos entre várias etapas (triagem, entrevistas) é trabalhoso e fica subjetivo quando não há critérios claros.</li>
+    <li>Escrever uma justificativa individual para cada pessoa consome muito tempo, e o estilo muda de um parecer para outro.</li>
+  </ul>
+</section>
+
+<section>
+  <h2>O que foi feito</h2>
+
+  <h3>1. A planilha com os critérios</h3>
+  <p>Cada candidato recebe notas de 0 a 10 em: triagem, entrevista de RH, entrevista com o gestor, experiência para a vaga e aderência à cultura. Há também um campo de observação extra, para o que as notas não mostram.</p>
+
+  <h3>2. Nota final e ranking calculados por fórmula</h3>
+  <p>As três etapas viram uma média. A nota final combina essa média com a experiência e a cultura, usando pesos que podem ser mudados em uma aba própria:</p>
+  <div class="tabela"><table>
+    <tr><th>Critério</th><th>Peso</th></tr>
+    <tr><td>Etapas do processo (média)</td><td>40%</td></tr>
+    <tr><td>Experiência para a vaga</td><td>35%</td></tr>
+    <tr><td>Aderência à cultura</td><td>25%</td></tr>
+  </table></div>
+  <p>O ranking sai da <b>conta</b>, e não da IA. Assim qualquer pessoa vê de onde vem cada posição e pode alterar os pesos para ver o resultado mudar.</p>
+
+  <h3>3. Dois agentes de IA no Make</h3>
+  <div class="fluxo"><span>Planilha</span><b>→</b><span>Agente 1: redator</span><b>→</b><span>Agente 2: revisor</span><b>→</b><span>Justificativa volta para a planilha</span></div>
+  <ul>
+    <li><b>Agente 1 (redator):</b> recebe só os dados do candidato e escreve até 3 frases: ponto forte, ponto de atenção e posição no ranking.</li>
+    <li><b>Agente 2 (revisor):</b> lê o texto do primeiro e remove o que não estiver nos dados, frases vagas e qualquer viés ou característica pessoal.</li>
+  </ul>
+  <p>Os dois receberam regras claras: não inventar fatos, não usar idade, gênero, origem ou aparência e <b>nunca decidir por aprovação ou reprovação</b>.</p>
+
+  <h3>4. Entrega ao gestor</h3>
+  <p>Com as justificativas na planilha, basta baixar a planilha em PDF e enviar ao gestor para análise.</p>
+</section>
+
+<section>
+  <h2>Como ficou (prints)</h2>
+  <figure><a href="01-cenario-make.png" target="_blank" rel="noopener"><img src="01-cenario-make.png" alt="Cenário no Make" loading="lazy"></a><figcaption>O cenário no Make: lê o candidato, passa pelos dois agentes e grava o resultado.</figcaption></figure>
+  <figure><a href="02-planilha-ranking.png" target="_blank" rel="noopener"><img src="02-planilha-ranking.png" alt="Planilha com ranking e justificativas" loading="lazy"></a><figcaption>A planilha com notas, nota final, ranking e a justificativa de cada candidato.</figcaption></figure>
+  <figure><a href="03-modulo2-redator.png" target="_blank" rel="noopener"><img src="03-modulo2-redator.png" alt="Módulo do agente redator" loading="lazy"></a><figcaption>O agente 1 (redator): instruções e dados que ele recebe.</figcaption></figure>
+  <figure><a href="04-modulo3-revisor.png" target="_blank" rel="noopener"><img src="04-modulo3-revisor.png" alt="Módulo do agente revisor" loading="lazy"></a><figcaption>O agente 2 (revisor): as regras de revisão aplicadas ao texto do primeiro.</figcaption></figure>
+</section>
+
+<section>
+  <h2>Horas ganhas <small style="color:var(--suave);font-weight:400">(medido em cenário simulado)</small></h2>
+  <div class="destaque">
+    <div><strong>15 min</strong><small>por candidato, à mão (estimativa)</small></div>
+    <div><strong>1 min</strong><small>para rodar o fluxo, para todos</small></div>
+    <div><strong>~2 h</strong><small>economizadas em uma rodada de 8</small></div>
+  </div>
+  <p>Conta: 8 candidatos × 15 minutos = 120 minutos à mão, contra cerca de 1 minuto para rodar o fluxo. O tempo à mão é uma <b>estimativa minha</b>, e não foi cronometrado. A leitura e a revisão humana dos textos continuam necessárias e não estão incluídas nesse minuto.</p>
+</section>
+
+<section>
+  <h2>Limites desta demonstração</h2>
+  <ul>
+    <li>São 8 candidatos fictícios e uma vaga fictícia.</li>
+    <li>Usei o plano gratuito do Gemini, em que o Google pode aproveitar o conteúdo enviado para melhorar seus produtos. Por isso, só dados fictícios foram usados, e <b>dados reais de candidatos nunca devem ser colocados</b> nesta ferramenta.</li>
+    <li>O ranking apoia a decisão, e não a substitui. Notas e critérios devem ser definidos por pessoas e revisados para evitar viés.</li>
+    <li>O fluxo roda manualmente, sem agendamento.</li>
+  </ul>
+</section>
+</main>
+
+<footer>
+  <a href="../">← Voltar ao portfólio</a> ·
+  <a href="https://github.com/liandraconstantino/portfolio/tree/main/agente-de-ranking">Ver arquivos no GitHub</a>
+</footer>
+</body>
+</html>
