@@ -1,1 +1,1743 @@
+<!doctype html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Painel do funil de seleção</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Space+Grotesk:wght@500;600;700&display=swap"
+      rel="stylesheet"
+    />
+    <style>
+      /* ====== Variáveis de cor e tema ====== */
+      :root {
+        --bg: #070b16;
+        --bg-2: #0b1120;
+        --card: #0f172a;
+        --card-2: #131c33;
+        --line: #1e293b;
+        --line-2: #243352;
+        --txt: #e2e8f0;
+        --txt-soft: #94a3b8;
+        --txt-mut: #64748b;
+        --cyan: #22d3ee;
+        --violet: #8b5cf6;
+        --green: #10b981;
+        --red: #ef4444;
+        --amber: #f59e0b;
+        --blue: #3b82f6;
+        --radius: 14px;
+        --shadow: 0 10px 30px -12px rgba(0, 0, 0, 0.7);
+      }
+      * { box-sizing: border-box; }
+      html, body { margin: 0; padding: 0; }
+      body {
+        background:
+          radial-gradient(1200px 600px at 80% -10%, rgba(139, 92, 246, 0.08), transparent 60%),
+          radial-gradient(1000px 500px at -10% 10%, rgba(34, 211, 238, 0.07), transparent 55%),
+          var(--bg);
+        color: var(--txt);
+        font-family: 'Inter', system-ui, sans-serif;
+        min-height: 100vh;
+        -webkit-font-smoothing: antialiased;
+      }
+      h1, h2, h3, .grotesk { font-family: 'Space Grotesk', 'Inter', sans-serif; }
+      a { color: var(--cyan); }
+      .wrap { max-width: 1280px; margin: 0 auto; padding: 0 18px 80px; }
+
+      /* ====== Cabeçalho ====== */
+      header.top {
+        position: sticky; top: 0; z-index: 30;
+        backdrop-filter: blur(10px);
+        background: linear-gradient(180deg, rgba(7, 11, 22, 0.92), rgba(7, 11, 22, 0.72));
+        border-bottom: 1px solid var(--line);
+      }
+      .top-row {
+        display: flex; align-items: center; gap: 16px;
+        padding: 12px 18px; max-width: 1280px; margin: 0 auto; flex-wrap: wrap;
+      }
+      .logo {
+        display: flex; align-items: center; gap: 10px;
+        font-family: 'Space Grotesk'; font-weight: 700; font-size: 17px;
+        letter-spacing: -0.01em;
+      }
+      .logo .badge {
+        width: 30px; height: 30px; border-radius: 9px;
+        background: linear-gradient(135deg, var(--cyan), var(--violet));
+        display: grid; place-items: center; color: #061021; font-weight: 800;
+        box-shadow: 0 6px 16px -6px rgba(34, 211, 238, 0.6);
+      }
+      .logo small { color: var(--txt-mut); font-weight: 500; font-family: 'Inter'; font-size: 12px; }
+      .spacer { flex: 1 1 auto; }
+
+      /* Alternador de modo */
+      .mode-switch {
+        display: inline-flex; background: var(--card); border: 1px solid var(--line);
+        border-radius: 999px; padding: 4px; gap: 4px;
+      }
+      .mode-switch button {
+        border: 0; background: transparent; color: var(--txt-soft);
+        padding: 7px 14px; border-radius: 999px; font-size: 13px; font-weight: 600;
+        cursor: pointer; font-family: inherit; transition: all 0.18s;
+      }
+      .mode-switch button.active {
+        background: linear-gradient(135deg, var(--cyan), var(--violet));
+        color: #061021; box-shadow: 0 4px 12px -4px rgba(34, 211, 238, 0.5);
+      }
+      .mode-switch button:not(.active):hover { color: var(--txt); }
+
+      .top-link {
+        font-size: 12.5px; color: var(--txt-mut); text-decoration: none;
+        border: 1px solid var(--line); padding: 7px 12px; border-radius: 9px;
+        background: var(--card); transition: all 0.18s;
+      }
+      .top-link:hover { color: var(--txt); border-color: var(--line-2); }
+
+      /* ====== Abas (somente Meus dados) ====== */
+      .tabs {
+        display: flex; gap: 4px; padding: 0 18px; max-width: 1280px; margin: 0 auto;
+        overflow-x: auto;
+      }
+      .tabs button {
+        border: 0; background: transparent; color: var(--txt-mut);
+        padding: 12px 16px; font-size: 13.5px; font-weight: 600; cursor: pointer;
+        font-family: inherit; border-bottom: 2px solid transparent; white-space: nowrap;
+        transition: all 0.18s;
+      }
+      .tabs button:hover { color: var(--txt-soft); }
+      .tabs button.active { color: var(--cyan); border-bottom-color: var(--cyan); }
+
+      /* ====== Cartões de resumo ====== */
+      .cards {
+        display: grid; grid-template-columns: repeat(5, 1fr); gap: 14px;
+        margin-top: 18px;
+      }
+      @media (max-width: 1000px) { .cards { grid-template-columns: repeat(3, 1fr); } }
+      @media (max-width: 640px) { .cards { grid-template-columns: repeat(2, 1fr); } }
+      .card {
+        background: linear-gradient(180deg, var(--card), var(--bg-2));
+        border: 1px solid var(--line); border-radius: var(--radius);
+        padding: 16px; box-shadow: var(--shadow); position: relative; overflow: hidden;
+      }
+      .card::before {
+        content: ''; position: absolute; inset: 0 auto 0 0; width: 3px;
+        background: linear-gradient(180deg, var(--cyan), var(--violet));
+        opacity: 0.85;
+      }
+      .card .label { font-size: 12px; color: var(--txt-mut); font-weight: 500; }
+      .card .value { font-family: 'Space Grotesk'; font-size: 28px; font-weight: 700; margin-top: 4px; }
+      .card .sub { font-size: 11.5px; color: var(--txt-soft); margin-top: 2px; }
+      .card .value.cyan { color: var(--cyan); }
+      .card .value.violet { color: var(--violet); }
+      .card .value.green { color: var(--green); }
+      .card .value.red { color: var(--red); }
+
+      /* ====== Filtros ====== */
+      .filters {
+        display: flex; gap: 10px; flex-wrap: wrap; margin-top: 18px; align-items: center;
+      }
+      .filters .f-label { font-size: 12px; color: var(--txt-mut); margin-right: 4px; }
+      .field {
+        background: var(--card); border: 1px solid var(--line); color: var(--txt);
+        padding: 8px 12px; border-radius: 10px; font-size: 13px; font-family: inherit;
+        outline: none; transition: border-color 0.18s;
+      }
+      .field:focus { border-color: var(--cyan); }
+      select.field { cursor: pointer; }
+      .btn {
+        background: var(--card); border: 1px solid var(--line-2); color: var(--txt);
+        padding: 9px 14px; border-radius: 10px; font-size: 13px; font-weight: 600;
+        cursor: pointer; font-family: inherit; transition: all 0.18s;
+        display: inline-flex; align-items: center; gap: 7px;
+      }
+      .btn:hover { border-color: var(--cyan); color: var(--cyan); }
+      .btn.primary {
+        background: linear-gradient(135deg, var(--cyan), var(--violet));
+        color: #061021; border: 0;
+      }
+      .btn.primary:hover { color: #061021; opacity: 0.93; filter: brightness(1.05); }
+      .btn.danger { border-color: rgba(239, 68, 68, 0.4); color: #fca5a5; }
+      .btn.danger:hover { background: rgba(239, 68, 68, 0.1); color: #fecaca; }
+      .btn.ghost { background: transparent; }
+      .btn.sm { padding: 6px 10px; font-size: 12px; }
+
+      /* ====== Grades dos gráficos ====== */
+      .grid-2 { display: grid; grid-template-columns: 1.4fr 1fr; gap: 14px; margin-top: 14px; }
+      .grid-2b { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin-top: 14px; }
+      @media (max-width: 980px) {
+        .grid-2, .grid-2b { grid-template-columns: 1fr; }
+      }
+      .panel {
+        background: linear-gradient(180deg, var(--card), var(--bg-2));
+        border: 1px solid var(--line); border-radius: var(--radius);
+        padding: 16px 18px; box-shadow: var(--shadow);
+      }
+      .panel h3 { margin: 0 0 4px; font-size: 15px; }
+      .panel .hint { font-size: 12px; color: var(--txt-mut); margin-bottom: 10px; }
+      .chart-box { position: relative; height: 260px; }
+
+      /* ====== Tabela ====== */
+      .table-scroll { overflow-x: auto; margin-top: 8px; }
+      table { width: 100%; border-collapse: collapse; font-size: 13px; }
+      th, td { text-align: left; padding: 10px 12px; border-bottom: 1px solid var(--line); }
+      th { color: var(--txt-mut); font-weight: 600; font-size: 12px; text-transform: uppercase; letter-spacing: 0.04em; }
+      td.num, th.num { text-align: right; }
+      tbody tr:hover { background: rgba(34, 211, 238, 0.04); }
+      .pill {
+        display: inline-block; padding: 2px 9px; border-radius: 999px; font-size: 11.5px; font-weight: 600;
+      }
+      .pill.ok { background: rgba(16, 185, 129, 0.14); color: #34d399; }
+      .pill.bad { background: rgba(239, 68, 68, 0.14); color: #fca5a5; }
+      .pill.warn { background: rgba(245, 158, 11, 0.14); color: #fbbf24; }
+      .pill.cyan { background: rgba(34, 211, 238, 0.12); color: var(--cyan); }
+      .pill.violet { background: rgba(139, 92, 246, 0.14); color: #c4b5fd; }
+      .pill.mut { background: rgba(100, 116, 139, 0.18); color: var(--txt-soft); }
+
+      /* ====== Insights ====== */
+      .insights { display: grid; gap: 8px; margin-top: 4px; }
+      .insight {
+        display: flex; gap: 10px; align-items: flex-start;
+        background: rgba(34, 211, 238, 0.04); border: 1px solid rgba(34, 211, 238, 0.18);
+        padding: 11px 13px; border-radius: 10px; font-size: 13.5px; line-height: 1.5;
+      }
+      .insight .dot { width: 8px; height: 8px; border-radius: 50%; margin-top: 7px; flex: 0 0 auto; background: var(--cyan); }
+      .insight.warn { background: rgba(245, 158, 11, 0.05); border-color: rgba(245, 158, 11, 0.22); }
+      .insight.warn .dot { background: var(--amber); }
+      .insight.good { background: rgba(16, 185, 129, 0.05); border-color: rgba(16, 185, 129, 0.22); }
+      .insight.good .dot { background: var(--green); }
+      .insight.bad { background: rgba(239, 68, 68, 0.05); border-color: rgba(239, 68, 68, 0.22); }
+      .insight.bad .dot { background: var(--red); }
+
+      /* ====== Avisos fixos ====== */
+      .notice {
+        margin-top: 14px; font-size: 12.5px; color: var(--txt-soft);
+        background: var(--card); border: 1px solid var(--line); border-left: 3px solid var(--amber);
+        padding: 10px 13px; border-radius: 10px; display: flex; gap: 9px; align-items: flex-start;
+      }
+      .notice.cyan { border-left-color: var(--cyan); }
+      .notice .ic { flex: 0 0 auto; margin-top: 1px; }
+
+      /* ====== Boas-vindas (Meus dados vazio) ====== */
+      .welcome { text-align: center; padding: 36px 18px; }
+      .welcome h2 { font-size: 22px; margin: 0 0 8px; }
+      .welcome p { color: var(--txt-soft); max-width: 560px; margin: 0 auto 22px; font-size: 14px; }
+      .steps { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; max-width: 820px; margin: 0 auto; }
+      @media (max-width: 760px) { .steps { grid-template-columns: 1fr; } }
+      .step {
+        background: var(--card); border: 1px solid var(--line); border-radius: var(--radius);
+        padding: 18px; text-align: left; position: relative;
+      }
+      .step .n {
+        width: 32px; height: 32px; border-radius: 9px; display: grid; place-items: center;
+        background: linear-gradient(135deg, var(--cyan), var(--violet)); color: #061021;
+        font-weight: 800; font-family: 'Space Grotesk'; margin-bottom: 10px;
+      }
+      .step h4 { margin: 0 0 6px; font-size: 15px; }
+      .step p { margin: 0; font-size: 13px; color: var(--txt-soft); text-align: left; }
+      .welcome-cta { margin-top: 22px; display: flex; gap: 10px; justify-content: center; flex-wrap: wrap; }
+
+      /* ====== Formulários / Modal ====== */
+      .modal-back {
+        position: fixed; inset: 0; background: rgba(2, 6, 23, 0.74); z-index: 50;
+        display: none; align-items: flex; justify-content: center; padding: 18px;
+        backdrop-filter: blur(4px);
+      }
+      .modal-back.show { display: flex; }
+      .modal {
+        background: linear-gradient(180deg, var(--card), var(--bg-2));
+        border: 1px solid var(--line-2); border-radius: 16px; width: 100%; max-width: 620px;
+        max-height: 90vh; overflow: auto; box-shadow: 0 30px 60px -20px rgba(0,0,0,0.8);
+      }
+      .modal-head {
+        padding: 16px 18px; border-bottom: 1px solid var(--line); display: flex; align-items: center;
+      }
+      .modal-head h3 { margin: 0; font-size: 16px; flex: 1; }
+      .modal-body { padding: 18px; }
+      .form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+      @media (max-width: 560px) { .form-grid { grid-template-columns: 1fr; } }
+      .form-grid .full { grid-column: 1 / -1; }
+      label.fl { display: block; font-size: 12px; color: var(--txt-mut); margin-bottom: 5px; font-weight: 600; }
+      .modal-foot { padding: 14px 18px; border-top: 1px solid var(--line); display: flex; gap: 10px; justify-content: flex-end; }
+      .err-line { color: var(--red); font-size: 12.5px; margin-top: 8px; }
+      .ok-line { color: var(--green); font-size: 12.5px; margin-top: 8px; }
+
+      /* ====== Tela de importação ====== */
+      .io-block { display: grid; gap: 14px; }
+      .io-card {
+        background: var(--card); border: 1px solid var(--line); border-radius: var(--radius);
+        padding: 16px 18px;
+      }
+      .io-card h4 { margin: 0 0 6px; font-size: 14.5px; }
+      .io-card p { margin: 0 0 12px; font-size: 13px; color: var(--txt-soft); }
+      .io-actions { display: flex; gap: 10px; flex-wrap: wrap; }
+      .preview-tab { margin-top: 10px; font-size: 12.5px; max-height: 260px; overflow: auto; }
+      .preview-tab table { font-size: 12px; }
+
+      /* ====== Gráficos SVG puros ====== */
+      .svg-chart { width: 100%; display: block; overflow: visible; }
+      .funil-row { display: flex; align-items: center; gap: 10px; margin: 6px 0; }
+      .funil-row .fl-label { width: 116px; flex: 0 0 auto; font-size: 12.5px; color: var(--txt-soft); text-align: right; }
+      .funil-row .fl-bar { height: 26px; border-radius: 6px; background: linear-gradient(90deg, var(--cyan), var(--violet)); display: flex; align-items: center; justify-content: flex-end; padding-right: 8px; color: #061021; font-weight: 700; font-size: 12px; transition: width 0.4s ease; min-width: 2px; }
+      .funil-row .fl-val { font-size: 12px; color: var(--txt-mut); white-space: nowrap; }
+      .bar-chart { display: flex; flex-direction: column; gap: 10px; }
+      .bar-row { display: flex; align-items: center; gap: 10px; }
+      .bar-row .b-label { width: 130px; flex: 0 0 auto; font-size: 12px; color: var(--txt-soft); text-align: right; }
+      .bar-row .b-track { flex: 1; height: 22px; background: rgba(30, 41, 59, 0.5); border-radius: 6px; overflow: hidden; position: relative; }
+      .bar-row .b-fill { height: 100%; border-radius: 6px; background: var(--violet); transition: width 0.4s ease; min-width: 2px; }
+      .bar-row .b-val { font-size: 11.5px; color: var(--txt); font-weight: 600; width: 48px; }
+      .line-chart-wrap { position: relative; }
+      .line-axis-y { font-size: 10px; fill: var(--txt-mut); }
+      .line-axis-x { font-size: 10px; fill: var(--txt-mut); }
+      .line-label { font-size: 11px; fill: var(--txt-soft); }
+
+      .hidden { display: none !important; }
+
+      /* Scrollbar escura */
+      ::-webkit-scrollbar { width: 10px; height: 10px; }
+      ::-webkit-scrollbar-track { background: var(--bg); }
+      ::-webkit-scrollbar-thumb { background: var(--line-2); border-radius: 8px; }
+      ::-webkit-scrollbar-thumb:hover { background: #334159; }
+
+      .small-muted { font-size: 12px; color: var(--txt-mut); }
+      .section-title { font-size: 14px; margin: 22px 0 4px; color: var(--txt-soft); }
+    </style>
+    <meta property="og:image" content="https://bolt.new/static/og_default.png">
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:image" content="https://bolt.new/static/og_default.png">
+  </head>
+  <body>
+    <!-- ====================== CABEÇALHO ====================== -->
+    <header class="top">
+      <div class="top-row">
+        <div class="logo">
+          <div class="badge">F</div>
+          <div>Painel do funil de seleção <small>v1.0</small></div>
+        </div>
+        <div class="spacer"></div>
+        <a class="top-link" id="aboutLink" href="#" title="Sobre o painel">Sobre</a>
+      </div>
+
+      <!-- Abas (aparecem só no modo Meus dados) -->
+      <div class="tabs" id="tabs">
+        <button data-tab="painel" class="active">Painel</button>
+        <button data-tab="vagas">Vagas</button>
+        <button data-tab="candidaturas">Candidaturas</button>
+        <button data-tab="io">Importar e exportar</button>
+      </div>
+    </header>
+
+    <!-- ====================== Aviso fixo (sempre visível) ====================== -->
+    <div class="wrap" style="padding-top: 10px;">
+      <div class="notice cyan" id="modeNotice">
+        <span class="ic">🔒</span><span>Seus dados ficam só neste navegador. Não são enviados a nenhum servidor. Faça backup com frequência. Começamos com dados fictícios de exemplo — você pode editar, excluir ou importar os seus.</span>
+      </div>
+    </div>
+
+    <!-- ====================== CONTEÚDO PRINCIPAL ====================== -->
+    <main class="wrap" id="main"></main>
+
+    <!-- ====================== MODAL (formulários) ====================== -->
+    <div class="modal-back" id="modalBack">
+      <div class="modal" id="modalBox"></div>
+    </div>
+
+    <script>
+      /* ===================================================================
+       *  PAINEL DO FUNIL DE SELEÇÃO  —  JavaScript puro (sem framework)
+       *  Tudo em um único index.html. Dados salvos em localStorage.
+       * =================================================================== */
+
+      'use strict';
+
+      /* ---- Chaves do localStorage ---- */
+      const LS_KEY = 'painelFunilDados_v1';
+
+      /* ---- Etapas do funil (em ordem) ---- */
+      const ETAPAS = ['inscrito', 'triagem', 'entrevista_rh', 'entrevista_gestor', 'proposta', 'contratacao'];
+      const ETAPA_LABELS = {
+        inscrito: 'Inscrito',
+        triagem: 'Triagem',
+        entrevista_rh: 'Entrevista RH',
+        entrevista_gestor: 'Entrevista gestor',
+        proposta: 'Proposta',
+        contratacao: 'Contratado',
+      };
+      /* Campos de data por etapa (usados no formulário da candidatura) */
+      const ETAPA_DATAS = ['triagem', 'entrevista_rh', 'entrevista_gestor', 'proposta', 'contratacao'];
+
+      const ORIGENS_PADRAO = ['LinkedIn', 'Indicação', 'Site da empresa', 'Banco de talentos', 'Evento'];
+      const SITUACOES = ['em_andamento', 'contratado', 'reprovado', 'desistiu'];
+      const SITUACAO_LABELS = {
+        em_andamento: 'Em andamento',
+        contratado: 'Contratado',
+        reprovado: 'Reprovado',
+        desistiu: 'Desistiu',
+      };
+      const SITUACAO_PILL = {
+        em_andamento: 'cyan', contratado: 'ok', reprovado: 'bad', desistiu: 'warn',
+      };
+
+      /* ===================================================================
+       *  Gerador pseudoaleatório determinístico (semente fixa)
+       *  Garante que os dados fictícios sejam sempre os mesmos.
+       * =================================================================== */
+      function mulberry32(seed) {
+        return function () {
+          let t = (seed += 0x6d2b79f5);
+          t = Math.imul(t ^ (t >>> 15), t | 1);
+          t ^= t + Math.imul(t ^ (t >>> 7), t | 61);
+          return ((t ^ (t >>> 14)) >>> 0) / 4294967296;
+        };
+      }
+      const rand = mulberry32(20260129);
+      const pick = (arr) => arr[Math.floor(rand() * arr.length)];
+      const randInt = (min, max) => Math.floor(rand() * (max - min + 1)) + min;
+
+      /* ===================================================================
+       *  Dados fictícios de Demonstração
+       *  5 vagas de áreas diferentes + 50 candidaturas determinísticas.
+       * =================================================================== */
+      function gerarDadosDemo() {
+        const vagas = [
+          { id: 'v1', nome: 'Desenvolvedor Backend Pleno', area: 'Tecnologia', abertura: '2026-07-10', meta_dias: 30, situacao: 'aberta' },
+          { id: 'v2', nome: 'Analista de Marketing', area: 'Marketing', abertura: '2026-06-21', meta_dias: 30, situacao: 'fechada' },
+          { id: 'v3', nome: 'Gestor de Vendas SP', area: 'Comercial', abertura: '2026-08-01', meta_dias: 30, situacao: 'aberta' },
+          { id: 'v4', nome: 'Designer de Produto', area: 'Design', abertura: '2026-05-15', meta_dias: 45, situacao: 'fechada' },
+          { id: 'v5', nome: 'Analista Financeiro', area: 'Financeiro', abertura: '2026-09-05', meta_dias: 30, situacao: 'pausada' },
+        ];
+        // Taxas de avanço entre etapas para gerar um funil realista
+        const taxas = [1.0, 0.55, 0.30, 0.18, 0.08, 0.06];
+        const candidaturas = [];
+        const hoje = new Date('2026-10-29');
+        let cod = 1;
+        vagas.forEach((vaga, vi) => {
+          const total = 10; // 10 candidaturas por vaga = 50 no total
+          for (let i = 0; i < total; i++) {
+            // data de inscrição: aleatória nos últimos 6 meses
+            const diasAtras = randInt(7, 175);
+            const insc = new Date(hoje);
+            insc.setDate(insc.getDate() - diasAtras);
+            const dataInsc = iso(insc);
+
+            // decide a etapa final alcançada usando as taxas
+            let etapaIdx = 0; // começa em "inscrito"
+            for (let e = 1; e < ETAPAS.length; e++) {
+              if (rand() < taxas[e]) etapaIdx = e; else break;
+            }
+            // situação final: contratado se chegou no fim; senão, 35% desistiu, 65% reprovado
+            let situacao;
+            if (etapaIdx === ETAPAS.length - 1) situacao = 'contratado';
+            else situacao = rand() < 0.35 ? 'desistiu' : 'reprovado';
+
+            // monta as datas das etapas em sequência (3 a 15 dias entre cada)
+            const datas = { inscrito: dataInsc };
+            let d = new Date(insc);
+            for (let e = 1; e <= etapaIdx; e++) {
+              const avanco = randInt(3, 15);
+              d.setDate(d.getDate() + avanco);
+              datas[ETAPAS[e]] = iso(d);
+            }
+
+            candidaturas.push({
+              id: 'c' + cod,
+              codigo: 'C' + String(cod).padStart(3, '0'),
+              vaga_id: vaga.id,
+              origem: pick(ORIGENS_PADRAO),
+              data_inscricao: dataInsc,
+              triagem: datas.triagem || '',
+              entrevista_rh: datas.entrevista_rh || '',
+              entrevista_gestor: datas.entrevista_gestor || '',
+              proposta: datas.proposta || '',
+              contratacao: datas.contratacao || '',
+              situacao,
+            });
+            cod++;
+          }
+        });
+        return { vagas, candidaturas, origens: [...ORIGENS_PADRAO] };
+      }
+
+      /* ---- utilitários de data ---- */
+      function iso(d) {
+        if (!(d instanceof Date)) d = new Date(d);
+        const y = d.getFullYear();
+        const m = String(d.getMonth() + 1).padStart(2, '0');
+        const day = String(d.getDate()).padStart(2, '0');
+        return `${y}-${m}-${day}`;
+      }
+      function br(isoStr) {
+        if (!isoStr) return '';
+        const [y, m, d] = isoStr.split('-');
+        if (!y || !m || !d) return isoStr;
+        return `${d}/${m}/${y}`;
+      }
+      function parseData(str) {
+        if (!str) return null;
+        str = String(str).trim();
+        let isoStr = '';
+        if (/^\d{4}-\d{2}-\d{2}$/.test(str)) isoStr = str;
+        else if (/^\d{2}\/\d{2}\/\d{4}$/.test(str)) {
+          const [d, m, y] = str.split('/');
+          isoStr = `${y}-${m}-${d}`;
+        } else return null;
+        const dt = new Date(isoStr + 'T00:00:00');
+        if (isNaN(dt.getTime())) return null;
+        return isoStr;
+      }
+      function diasEntre(a, b) {
+        if (!a || !b) return null;
+        const da = new Date(a + 'T00:00:00');
+        const db = new Date(b + 'T00:00:00');
+        return Math.round((db - da) / 86400000);
+      }
+      function addMes(d, n) {
+        const nd = new Date(d);
+        nd.setMonth(nd.getMonth() + n);
+        return nd;
+      }
+
+      /* ===================================================================
+       *  Estado global
+       * =================================================================== */
+      const state = {
+        tab: 'painel',
+        dados: { vagas: [], candidaturas: [], origens: [...ORIGENS_PADRAO] },
+        filtros: { vaga: 'todas', origem: 'todas', periodo: '6' }, // período em meses
+      };
+
+      /* ===================================================================
+       *  Persistência (localStorage) — sempre ativa
+       *  Na primeira visita, carrega dados fictícios de exemplo.
+       * =================================================================== */
+      function salvarMeusDados() {
+        try {
+          localStorage.setItem(LS_KEY, JSON.stringify(state.dados));
+        } catch (e) { console.warn('Falha ao salvar', e); }
+      }
+      function carregarMeusDados() {
+        try {
+          const raw = localStorage.getItem(LS_KEY);
+          if (raw) {
+            const obj = JSON.parse(raw);
+            state.dados = {
+              vagas: obj.vagas || [],
+              candidaturas: obj.candidaturas || [],
+              origens: obj.origens && obj.origens.length ? obj.origens : [...ORIGENS_PADRAO],
+            };
+          } else {
+            // Primeira visita: carrega dados fictícios de exemplo e salva
+            state.dados = gerarDadosDemo();
+            salvarMeusDados();
+          }
+        } catch (e) { console.warn('Falha ao carregar', e); }
+      }
+
+      /* ---- Acesso aos dados ativos ---- */
+      function dadosAtivos() { return state.dados; }
+      function inicializar() {
+        carregarMeusDados();
+        render();
+      }
+
+      /* ===================================================================
+       *  Cálculos
+       * =================================================================== */
+
+      // Lista de candidaturas aplicando os filtros (vaga, origem, período)
+      function candidaturasFiltradas() {
+        const { vaga, origem, periodo } = state.filtros;
+        const hoje = new Date('2026-10-29');
+        const lim = addMes(hoje, -parseInt(periodo, 10));
+        return dadosAtivos().candidaturas.filter((c) => {
+          if (vaga !== 'todas' && c.vaga_id !== vaga) return false;
+          if (origem !== 'todas' && c.origem !== origem) return false;
+          if (periodo !== 'todos') {
+            const d = parseData(c.data_inscricao);
+            if (!d) return false;
+            if (new Date(d + 'T00:00:00') < lim) return false;
+          }
+          return true;
+        });
+      }
+
+      // Determina em qual etapa "final" a pessoa está (índice em ETAPAS)
+      function etapaAlcancada(c) {
+        // Se contratado: última etapa
+        if (c.situacao === 'contratado' && c.contratacao) return ETAPAS.length - 1;
+        // maior índice com data preenchida
+        let idx = 0;
+        for (let i = 0; i < ETAPAS.length; i++) {
+          if (c[ETAPAS[i]]) idx = i;
+        }
+        return idx;
+      }
+
+      // Conta quantas pessoas chegaram a cada etapa
+      // (quem tem data da etapa OU etapa atual igual/posterior)
+      function funilPorEtapa(cands) {
+        const contagem = ETAPAS.map(() => 0);
+        cands.forEach((c) => {
+          const alc = etapaAlcancada(c);
+          // conta a pessoa em todas as etapas até a alcançada
+          for (let i = 0; i <= alc; i++) contagem[i]++;
+        });
+        return contagem;
+      }
+
+      // Tempo médio entre etapas consecutivas (em dias)
+      function tempoMedioPorEtapa(cands) {
+        const somas = ETAPAS.map(() => 0);
+        const counts = ETAPAS.map(() => 0);
+        cands.forEach((c) => {
+          for (let i = 1; i < ETAPAS.length; i++) {
+            const a = c[ETAPAS[i - 1]];
+            const b = c[ETAPAS[i]];
+            if (a && b) {
+              const d = diasEntre(a, b);
+              if (d !== null && d >= 0) { somas[i] += d; counts[i]++; }
+            }
+          }
+        });
+        return ETAPAS.map((_, i) => (counts[i] ? Math.round(somas[i] / counts[i]) : 0));
+      }
+
+      // Conversão por origem: % de inscritos que viraram contratados
+      function conversaoPorOrigem(cands) {
+        const tot = {}, cont = {};
+        cands.forEach((c) => {
+          tot[c.origem] = (tot[c.origem] || 0) + 1;
+          if (c.situacao === 'contratado') cont[c.origem] = (cont[c.origem] || 0) + 1;
+        });
+        const origens = Object.keys(tot);
+        return origens.map((o) => ({
+          origem: o,
+          total: tot[o],
+          contratados: cont[o] || 0,
+          taxa: tot[o] ? Math.round((cont[o] || 0) * 100 / tot[o]) : 0,
+        }));
+      }
+
+      // Contratações por mês (YYYY-MM)
+      function contratacoesPorMes(cands) {
+        const map = {};
+        cands.forEach((c) => {
+          if (c.situacao === 'contratado' && c.contratacao) {
+            const m = c.contratacao.slice(0, 7);
+            map[m] = (map[m] || 0) + 1;
+          }
+        });
+        return Object.keys(map).sort().map((m) => ({ mes: m, total: map[m] }));
+      }
+
+      // Tempo até contratar: da inscrição (ou abertura da vaga) até a contratação
+      function tempoAteContratar(cands, vagas) {
+        const vagaById = {}; vagas.forEach((v) => (vagaById[v.id] = v));
+        let soma = 0, n = 0;
+        cands.forEach((c) => {
+          if (c.situacao !== 'contratado' || !c.contratacao) return;
+          const base = c.data_inscricao || (vagaById[c.vaga_id] && vagaById[c.vaga_id].abertura);
+          if (!base) return;
+          const d = diasEntre(base, c.contratacao);
+          if (d !== null && d >= 0) { soma += d; n++; }
+        });
+        return n ? Math.round(soma / n) : 0;
+      }
+
+      // SLA por vaga: % de vagas fechadas dentro da meta de dias
+      function slaVagas(vagas, cands) {
+        if (!vagas.length) return 0;
+        let fechadas = 0, dentro = 0;
+        vagas.forEach((v) => {
+          const cand = cands.filter((c) => c.vaga_id === v.id && c.situacao === 'contratado' && c.contratacao);
+          if (v.situacao === 'fechada' || cand.length) {
+            fechadas++;
+            // tempo: abertura -> contratação (média dos contratados; se sem contratados, ignora)
+            if (cand.length) {
+              const t = cand.reduce((s, c) => s + diasEntre(v.abertura || c.data_inscricao, c.contratacao), 0) / cand.length;
+              if (t <= (v.meta_dias || 30)) dentro++;
+            }
+          }
+        });
+        return fechadas ? Math.round(dentro * 100 / fechadas) : 0;
+      }
+
+      // Resumo por vaga (tabela de vagas)
+      function resumoVagas(vagas, cands) {
+        return vagas.map((v) => {
+          const cv = cands.filter((c) => c.vaga_id === v.id);
+          const contratados = cv.filter((c) => c.situacao === 'contratado');
+          let tempo = 0;
+          if (contratados.length) {
+            tempo = Math.round(
+              contratados.reduce((s, c) => s + diasEntre(v.abertura || c.data_inscricao, c.contratacao), 0) / contratados.length
+            );
+          }
+          const slaOk = v.situacao === 'fechada' && contratados.length
+            ? tempo <= (v.meta_dias || 30)
+            : null; // null = não se aplica
+          return {
+            vaga: v,
+            candidaturas: cv.length,
+            contratados: contratados.length,
+            tempoMedio: tempo,
+            slaOk,
+          };
+        });
+      }
+
+      /* ===================================================================
+       *  Insights automáticos (frases simples por regras)
+       * =================================================================== */
+      function gerarInsights(cands, vagas) {
+        const out = [];
+        if (!cands.length) return out;
+
+        const funil = funilPorEtapa(cands);
+        // 1) maior perda entre etapas
+        let maiorPerdaIdx = 0, maiorPerdaVal = 0;
+        for (let i = 1; i < funil.length; i++) {
+          const ant = funil[i - 1] || 1;
+          const pct = Math.round((1 - funil[i] / ant) * 100);
+          if (pct > maiorPerdaVal) { maiorPerdaVal = pct; maiorPerdaIdx = i; }
+        }
+        if (maiorPerdaVal > 0) {
+          out.push({
+            tipo: 'bad',
+            texto: `Maior perda: ${maiorPerdaVal}% das pessoas não avançam de "${ETAPA_LABELS[ETAPAS[maiorPerdaIdx - 1]]}" para "${ETAPA_LABELS[ETAPAS[maiorPerdaIdx]]}". Reveja essa etapa.`
+          });
+        }
+
+        // 2) melhor e pior origem
+        const conv = conversaoPorOrigem(cands).filter((o) => o.total >= 1);
+        if (conv.length >= 2) {
+          conv.sort((a, b) => b.taxa - a.taxa);
+          const melhor = conv[0], pior = conv[conv.length - 1];
+          out.push({ tipo: 'good', texto: `Melhor origem: ${melhor.origem} com ${melhor.taxa}% de contratação (${melhor.contratados} de ${melhor.total}).` });
+          out.push({ tipo: 'warn', texto: `Origem com menor conversão: ${pior.origem} (${pior.taxa}% — ${pior.contratados} de ${pior.total}).` });
+        }
+
+        // 3) etapa mais lenta
+        const tempos = tempoMedioPorEtapa(cands);
+        let lentaIdx = 1, lentaVal = 0;
+        for (let i = 1; i < tempos.length; i++) {
+          if (tempos[i] > lentaVal) { lentaVal = tempos[i]; lentaIdx = i; }
+        }
+        if (lentaVal > 0) {
+          out.push({ tipo: 'warn', texto: `Etapa mais lenta: "${ETAPA_LABELS[ETAPAS[lentaIdx]]}" leva em média ${lentaVal} dias.` });
+        }
+
+        // 4) vagas fora do SLA
+        const rev = resumoVagas(vagas, cands).filter((r) => r.slaOk === false);
+        if (rev.length) {
+          out.push({ tipo: 'bad', texto: `Vagas fora do SLA (meta de dias): ${rev.map((r) => r.vaga.nome).join(', ')}.` });
+        } else {
+          const fechadas = resumoVagas(vagas, cands).filter((r) => r.slaOk === true);
+          if (fechadas.length) out.push({ tipo: 'good', texto: `Todas as ${fechadas.length} vaga(s) fechada(s) estão dentro do SLA.` });
+        }
+
+        // 5) total + conversão geral
+        const total = cands.length;
+        const contratados = cands.filter((c) => c.situacao === 'contratado').length;
+        const tx = total ? Math.round(contratados * 100 / total) : 0;
+        out.unshift({ tipo: 'info', texto: `Você tem ${total} candidaturas e ${contratados} contratações — taxa geral de ${tx}%.` });
+
+        return out;
+      }
+
+      // Texto do resumo para copiar
+      function textoResumo(cands, vagas) {
+        const funil = funilPorEtapa(cands);
+        const tempos = tempoMedioPorEtapa(cands);
+        const total = cands.length;
+        const contratados = cands.filter((c) => c.situacao === 'contratado').length;
+        const tx = total ? Math.round(contratados * 100 / total) : 0;
+        const tMedio = tempoAteContratar(cands, vagas);
+        const sla = slaVagas(vagas, cands);
+        const conv = conversaoPorOrigem(cands);
+        const meses = contratacoesPorMes(cands);
+        const insights = gerarInsights(cands, vagas);
+
+        let t = 'PAINEL DO FUNIL DE SELEÇÃO — RESUMO\n';
+        t += 'Data: ' + new Date().toLocaleString('pt-BR') + '\n\n';
+        t += `Total de candidaturas: ${total}\n`;
+        t += `Contratações: ${contratados}\n`;
+        t += `Taxa de conversão geral: ${tx}%\n`;
+        t += `Tempo médio até contratar: ${tMedio} dias\n`;
+        t += `Vagas dentro do SLA: ${sla}%\n\n`;
+        t += 'Funil por etapa:\n';
+        ETAPAS.forEach((e, i) => {
+          const ant = i ? funil[i - 1] : funil[0];
+          const pct = i && ant ? Math.round(funil[i] * 100 / ant) : 100;
+          t += `  ${ETAPA_LABELS[e]}: ${funil[i]}${i ? ` (${pct}% da etapa anterior)` : ''}\n`;
+        });
+        t += '\nTempo médio por etapa (dias):\n';
+        ETAPAS.forEach((e, i) => { t += `  ${ETAPA_LABELS[e]}: ${tempos[i]} dias\n`; });
+        t += '\nConversão por origem:\n';
+        conv.forEach((o) => { t += `  ${o.origem}: ${o.contratados}/${o.total} (${o.taxa}%)\n`; });
+        t += '\nContratações por mês:\n';
+        meses.forEach((m) => { t += `  ${m.mes}: ${m.total}\n`; });
+        t += '\nInsights:\n';
+        insights.forEach((ins) => { t += `  - ${ins.texto}\n`; });
+        return t;
+      }
+
+      /* ===================================================================
+       *  Renderização principal
+       * =================================================================== */
+      function render() {
+        const main = document.getElementById('main');
+        if (state.tab === 'painel') renderPainel(main);
+        else if (state.tab === 'vagas') renderVagas(main);
+        else if (state.tab === 'candidaturas') renderCandidaturas(main);
+        else if (state.tab === 'io') renderIO(main);
+      }
+
+      /* ---- Aba Painel (cartões + filtros + gráficos + insights) ---- */
+      function renderPainel(main) {
+        const cands = candidaturasFiltradas();
+        const vagas = dadosAtivos().vagas;
+        const total = cands.length;
+        const contratados = cands.filter((c) => c.situacao === 'contratado').length;
+        const tx = total ? Math.round(contratados * 100 / total) : 0;
+        const tMedio = tempoAteContratar(cands, vagas);
+        const sla = slaVagas(vagas, cands);
+
+        const periodoOpts = ['6', '3', 'todos'];
+        const periodoLabel = { '6': 'Últimos 6 meses', '3': 'Últimos 3 meses', 'todos': 'Tudo' };
+
+        main.innerHTML = `
+          <!-- Filtros -->
+          <div class="filters">
+            <span class="f-label">Filtros:</span>
+            <select class="field" id="fVaga">
+              <option value="todas">Todas as vagas</option>
+              ${vagas.map((v) => `<option value="${v.id}" ${state.filtros.vaga === v.id ? 'selected' : ''}>${esc(v.nome)}</option>`).join('')}
+            </select>
+            <select class="field" id="fOrigem">
+              <option value="todas">Todas as origens</option>
+              ${dadosAtivos().origens.map((o) => `<option value="${esc(o)}" ${state.filtros.origem === o ? 'selected' : ''}>${esc(o)}</option>`).join('')}
+            </select>
+            <select class="field" id="fPeriodo">
+              ${periodoOpts.map((p) => `<option value="${p}" ${state.filtros.periodo === p ? 'selected' : ''}>${periodoLabel[p]}</option>`).join('')}
+            </select>
+          </div>
+
+          <!-- Aviso de poucos dados -->
+          ${total > 0 && total < 5 ? `<div class="notice"><span class="ic">⚠️</span><span>Você tem poucas candidaturas (${total}). Os percentuais ainda não são confiáveis.</span></div>` : ''}
+
+          <!-- Cartões de resumo -->
+          <div class="cards">
+            <div class="card"><div class="label">Candidaturas</div><div class="value">${total}</div><div class="sub">no período selecionado</div></div>
+            <div class="card"><div class="label">Contratações</div><div class="value green">${contratados}</div><div class="sub">${tx}% do total</div></div>
+            <div class="card"><div class="label">Taxa de conversão</div><div class="value cyan">${tx}%</div><div class="sub">inscrito → contratado</div></div>
+            <div class="card"><div class="label">Tempo médio até contratar</div><div class="value violet">${tMedio}</div><div class="sub">dias (média)</div></div>
+            <div class="card"><div class="label">Vagas dentro do SLA</div><div class="value ${sla >= 70 ? 'green' : sla >= 40 ? '' : 'red'}">${sla}%</div><div class="sub">meta: 30 dias</div></div>
+          </div>
+
+          ${total === 0 ? `
+            <div class="panel" style="margin-top:18px;text-align:center;padding:40px">
+              <h3>Sem dados para os filtros selecionados</h3>
+              <p class="small-muted" style="margin:8px 0 16px">Cadastre vagas e candidaturas, ou ajuste os filtros para ver os gráficos.</p>
+            </div>
+          ` : `
+            <!-- Gráficos -->
+            <div class="grid-2">
+              <div class="panel">
+                <h3>Funil por etapa</h3>
+                <div class="hint">Quantas pessoas chegaram a cada etapa e % em relação à etapa anterior.</div>
+                <div id="gFunil"></div>
+              </div>
+              <div class="panel">
+                <h3>Conversão por origem</h3>
+                <div class="hint">% de inscritos que viraram contratados, por origem.</div>
+                <div id="gOrigem"></div>
+              </div>
+            </div>
+            <div class="grid-2b">
+              <div class="panel">
+                <h3>Tempo médio por etapa</h3>
+                <div class="hint">Dias entre etapas consecutivas. A barra mais vermelha é a mais lenta.</div>
+                <div id="gTempo"></div>
+              </div>
+              <div class="panel">
+                <h3>Contratações por mês</h3>
+                <div class="hint">Quantas contratações foram concluídas a cada mês.</div>
+                <div id="gMes"></div>
+              </div>
+            </div>
+          `}
+
+          <!-- Tabela de vagas -->
+          <div class="panel" style="margin-top:14px">
+            <h3>Vagas</h3>
+            <div class="hint">Candidaturas, contratados, tempo médio e SLA por vaga.</div>
+            <div class="table-scroll">
+              <table>
+                <thead>
+                  <tr><th>Vaga</th><th>Área</th><th class="num">Candidaturas</th><th class="num">Contratados</th><th class="num">Tempo médio</th><th>SLA</th></tr>
+                </thead>
+                <tbody>
+                  ${resumoVagas(vagas, cands).map((r) => `
+                    <tr>
+                      <td>${esc(r.vaga.nome)}</td>
+                      <td>${esc(r.vaga.area || '—')}</td>
+                      <td class="num">${r.candidaturas}</td>
+                      <td class="num">${r.contratados}</td>
+                      <td class="num">${r.tempoMedio ? r.tempoMedio + ' dias' : '—'}</td>
+                      <td>${r.slaOk === true ? '<span class="pill ok">Dentro</span>' : r.slaOk === false ? '<span class="pill bad">Fora</span>' : '<span class="pill mut">Em aberto</span>'}</td>
+                    </tr>`).join('')}
+                </tbody>
+              </table>
+            </div>
+          </div>
+
+          <!-- Insights automáticos -->
+          <div class="panel" style="margin-top:14px">
+            <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap">
+              <h3 style="margin:0">Insights automáticos</h3>
+              <div class="spacer" style="flex:1"></div>
+              <button class="btn sm" id="btnCopiar">Copiar resumo para análise</button>
+            </div>
+            <div class="hint">Gerados por regras simples a partir dos seus dados atuais.</div>
+            <div class="insights">
+              ${gerarInsights(cands, vagas).map((i) => `
+                <div class="insight ${i.tipo === 'bad' ? 'bad' : i.tipo === 'good' ? 'good' : i.tipo === 'warn' ? 'warn' : ''}">
+                  <span class="dot"></span><span>${esc(i.texto)}</span>
+                </div>`).join('')}
+            </div>
+          </div>
+        `;
+
+        // Conectar filtros
+        const fVaga = document.getElementById('fVaga');
+        const fOrigem = document.getElementById('fOrigem');
+        const fPeriodo = document.getElementById('fPeriodo');
+        if (fVaga) fVaga.onchange = (e) => { state.filtros.vaga = e.target.value; render(); };
+        if (fOrigem) fOrigem.onchange = (e) => { state.filtros.origem = e.target.value; render(); };
+        if (fPeriodo) fPeriodo.onchange = (e) => { state.filtros.periodo = e.target.value; render(); };
+
+        const btnCopiar = document.getElementById('btnCopiar');
+        if (btnCopiar) btnCopiar.onclick = copiarResumo;
+
+        const aviso = document.createElement('div');
+        aviso.className = 'notice cyan';
+        aviso.style.marginTop = '14px';
+        aviso.innerHTML = '<span class="ic">💡</span><span>Prefira códigos ou iniciais em vez do nome completo dos candidatos.</span>';
+        main.appendChild(aviso);
+
+        if (total > 0) desenharGraficos(cands);
+      }
+
+      /* ===================================================================
+       *  Gráficos (SVG e CSS puros — sem biblioteca externa)
+       * =================================================================== */
+      function desenharGraficos(cands) {
+        // 1) Funil por etapa (barras horizontais em CSS)
+        const funil = funilPorEtapa(cands);
+        const maxF = Math.max(...funil, 1);
+        const pctsFunil = funil.map((v, i) => i ? (funil[i - 1] ? Math.round(v * 100 / funil[i - 1]) : 0) : 100);
+        const divF = document.getElementById('gFunil');
+        if (divF) {
+          divF.innerHTML = '<div class="bar-chart">' + ETAPAS.map((e, i) => {
+            const largura = (funil[i] / maxF) * 100;
+            return `<div class="funil-row">
+              <div class="fl-label">${ETAPA_LABELS[e]}</div>
+              <div class="fl-bar" style="width:${largura}%" title="${funil[i]} pessoas${i ? ` (${pctsFunil[i]}% da etapa anterior)` : ''}">${funil[i]}</div>
+              <div class="fl-val">${i ? pctsFunil[i] + '%' : '100%'}</div>
+            </div>`;
+          }).join('') + '</div>';
+        }
+
+        // 2) Conversão por origem (barras verticais/horizontais em CSS)
+        const conv = conversaoPorOrigem(cands);
+        const divO = document.getElementById('gOrigem');
+        if (divO) {
+          divO.innerHTML = '<div class="bar-chart">' + conv.map((o) => {
+            const largura = o.taxa;
+            return `<div class="bar-row">
+              <div class="b-label">${esc(o.origem)}</div>
+              <div class="b-track"><div class="b-fill" style="width:${largura}%;background:var(--violet)" title="${o.contratados} de ${o.total}"></div></div>
+              <div class="b-val">${o.taxa}%</div>
+            </div>`;
+          }).join('') + '</div>'
+          + `<div class="small-muted" style="margin-top:8px">Total de inscritos: ${conv.reduce((s, o) => s + o.total, 0)} · Contratados: ${conv.reduce((s, o) => s + o.contratados, 0)}</div>`;
+        }
+
+        // 3) Tempo médio por etapa (destaca a mais lenta em vermelho)
+        const tempos = tempoMedioPorEtapa(cands).slice(1);
+        const labelsT = ETAPAS.slice(1).map((e) => ETAPA_LABELS[e]);
+        const maxT = Math.max(...tempos, 1);
+        let lentaIdx = 0;
+        tempos.forEach((v, i) => { if (v === maxT && v > 0) lentaIdx = i; });
+        const divT = document.getElementById('gTempo');
+        if (divT) {
+          divT.innerHTML = '<div class="bar-chart">' + labelsT.map((lb, i) => {
+            const largura = (tempos[i] / maxT) * 100;
+            const cor = i === lentaIdx && tempos[i] > 0 ? 'var(--red)' : 'var(--cyan)';
+            return `<div class="bar-row">
+              <div class="b-label">${lb}</div>
+              <div class="b-track"><div class="b-fill" style="width:${largura}%;background:${cor}" title="${tempos[i]} dias (média)"></div></div>
+              <div class="b-val">${tempos[i]}d</div>
+            </div>`;
+          }).join('') + '</div>'
+          + (lentaIdx >= 0 && tempos[lentaIdx] > 0 ? `<div class="small-muted" style="margin-top:8px">Etapa mais lenta: <strong style="color:var(--red)">${labelsT[lentaIdx]}</strong> (${tempos[lentaIdx]} dias em média)</div>` : '');
+        }
+
+        // 4) Contratações por mês (linha em SVG)
+        const meses = contratacoesPorMes(cands);
+        const divM = document.getElementById('gMes');
+        if (divM) {
+          if (!meses.length) {
+            divM.innerHTML = '<div class="small-muted" style="text-align:center;padding:30px">Nenhuma contratação registrada ainda.</div>';
+          } else {
+            divM.innerHTML = desenharLinhaSVG(meses);
+          }
+        }
+      }
+
+      /* Gera um gráfico de linha em SVG puro */
+      function desenharLinhaSVG(meses) {
+        const W = 320, H = 180, padL = 28, padR = 12, padT = 14, padB = 26;
+        const plotW = W - padL - padR, plotH = H - padT - padB;
+        const maxV = Math.max(...meses.map((m) => m.total), 1);
+        const n = meses.length;
+        const stepX = n > 1 ? plotW / (n - 1) : 0;
+        const pontos = meses.map((m, i) => {
+          const x = padL + i * stepX;
+          const y = padT + plotH - (m.total / maxV) * plotH;
+          return { x, y, m };
+        });
+        // path da linha
+        const pathD = pontos.map((p, i) => (i === 0 ? 'M' : 'L') + p.x.toFixed(1) + ',' + p.y.toFixed(1)).join(' ');
+        // área preenchida
+        const areaD = pathD + ` L${pontos[pontos.length - 1].x.toFixed(1)},${(padT + plotH).toFixed(1)} L${padL},${(padT + plotH).toFixed(1)} Z`;
+        // gridlines (4 linhas)
+        let grid = '';
+        for (let g = 0; g <= 4; g++) {
+          const y = padT + (plotH / 4) * g;
+          grid += `<line x1="${padL}" y1="${y}" x2="${padL + plotW}" y2="${y}" stroke="#1e293b" stroke-width="1"/>`;
+          const val = Math.round(maxV - (maxV / 4) * g);
+          grid += `<text x="${padL - 6}" y="${y + 3}" text-anchor="end" class="line-axis-y">${val}</text>`;
+        }
+        // labels do eixo X (máx 8 para não amontoar)
+        let xLabels = '';
+        const passoLabel = n > 8 ? Math.ceil(n / 8) : 1;
+        meses.forEach((m, i) => {
+          if (i % passoLabel !== 0 && i !== n - 1) return;
+          const x = padL + i * stepX;
+          xLabels += `<text x="${x}" y="${H - 8}" text-anchor="middle" class="line-axis-x">${m.mes}</text>`;
+        });
+        // pontos + valores
+        let dots = '';
+        pontos.forEach((p) => {
+          dots += `<circle cx="${p.x.toFixed(1)}" cy="${p.y.toFixed(1)}" r="3.5" fill="#22d3ee" stroke="#070b16" stroke-width="1.5"/>`;
+          dots += `<text x="${p.x.toFixed(1)}" y="${(p.y - 8).toFixed(1)}" text-anchor="middle" class="line-label">${p.m.total}</text>`;
+        });
+        return `<svg class="svg-chart" viewBox="0 0 ${W} ${H}" preserveAspectRatio="xMidYMid meet">
+          <defs>
+            <linearGradient id="gradMes" x1="0" y1="0" x2="0" y2="1">
+              <stop offset="0%" stop-color="rgba(34,211,238,0.35)"/>
+              <stop offset="100%" stop-color="rgba(34,211,238,0)"/>
+            </linearGradient>
+          </defs>
+          ${grid}
+          <path d="${areaD}" fill="url(#gradMes)"/>
+          <path d="${pathD}" fill="none" stroke="#22d3ee" stroke-width="2" stroke-linejoin="round" stroke-linecap="round"/>
+          ${xLabels}
+          ${dots}
+        </svg>`;
+      }
+
+      /* ===================================================================
+       *  Aba Vagas
+       * =================================================================== */
+      function renderVagas(main) {
+        const vagas = dadosAtivos().vagas;
+        main.innerHTML = `
+          <div style="display:flex;align-items:center;gap:10px;margin-top:6px;flex-wrap:wrap">
+            <h2 style="margin:0;font-size:18px">Vagas</h2>
+            <div class="spacer" style="flex:1"></div>
+            <button class="btn primary" id="novaVaga">Nova vaga</button>
+          </div>
+          <p class="small-muted" style="margin:6px 0 14px">Cadastre, edite e exclua suas vagas. O SLA é calculado a partir da data de abertura.</p>
+          <div class="panel">
+            <div class="table-scroll">
+              <table>
+                <thead>
+                  <tr><th>Nome</th><th>Área</th><th>Abertura</th><th class="num">Meta (dias)</th><th>Situação</th><th></th></tr>
+                </thead>
+                <tbody>
+                  ${vagas.length === 0 ? `<tr><td colspan="6" style="text-align:center;color:var(--txt-mut);padding:24px">Nenhuma vaga cadastrada.</td></tr>` :
+                    vagas.map((v) => `
+                    <tr>
+                      <td>${esc(v.nome)}</td>
+                      <td>${esc(v.area || '—')}</td>
+                      <td>${br(v.abertura) || '—'}</td>
+                      <td class="num">${v.meta_dias || 30}</td>
+                      <td><span class="pill ${v.situacao === 'aberta' ? 'cyan' : v.situacao === 'fechada' ? 'ok' : 'warn'}">${situacaoVagaLabel(v.situacao)}</span></td>
+                      <td style="white-space:nowrap;text-align:right">
+                        <button class="btn sm" data-edit-vaga="${v.id}">Editar</button>
+                        <button class="btn sm danger" data-del-vaga="${v.id}">Excluir</button>
+                      </td>
+                    </tr>`).join('')}
+                </tbody>
+              </table>
+            </div>
+          </div>
+          <div class="notice cyan"><span class="ic">💡</span><span>Prefira códigos ou iniciais em vez do nome completo dos candidatos.</span></div>
+        `;
+        document.getElementById('novaVaga').onclick = () => abrirModalVaga();
+        main.querySelectorAll('[data-edit-vaga]').forEach((b) => b.onclick = () => abrirModalVaga(b.dataset.editVaga));
+        main.querySelectorAll('[data-del-vaga]').forEach((b) => b.onclick = () => excluirVaga(b.dataset.delVaga));
+      }
+      function situacaoVagaLabel(s) {
+        return { aberta: 'Aberta', fechada: 'Fechada', pausada: 'Pausada' }[s] || 'Aberta';
+      }
+      function abrirModalVaga(id) {
+        const v = id ? dadosAtivos().vagas.find((x) => x.id === id) : null;
+        modalBox.innerHTML = `
+          <div class="modal-head"><h3>${v ? 'Editar vaga' : 'Nova vaga'}</h3><button class="btn ghost sm" id="fechaModal">✕</button></div>
+          <div class="modal-body">
+            <div class="form-grid">
+              <div class="full">
+                <label class="fl">Nome da vaga *</label>
+                <input class="field" id="vNome" placeholder="Ex.: Desenvolvedor Backend Pleno" value="${v ? esc(v.nome) : ''}">
+              </div>
+              <div>
+                <label class="fl">Área</label>
+                <input class="field" id="vArea" placeholder="Ex.: Tecnologia" value="${v ? esc(v.area || '') : ''}">
+              </div>
+              <div>
+                <label class="fl">Data de abertura</label>
+                <input class="field" type="date" id="vAbertura" value="${v ? v.abertura : iso(new Date('2026-10-29'))}">
+              </div>
+              <div>
+                <label class="fl">Meta de dias para fechar</label>
+                <input class="field" type="number" id="vMeta" min="1" value="${v ? v.meta_dias || 30 : 30}">
+              </div>
+              <div>
+                <label class="fl">Situação</label>
+                <select class="field" id="vSit">
+                  <option value="aberta" ${v && v.situacao === 'aberta' ? 'selected' : ''}>Aberta</option>
+                  <option value="pausada" ${v && v.situacao === 'pausada' ? 'selected' : ''}>Pausada</option>
+                  <option value="fechada" ${v && v.situacao === 'fechada' ? 'selected' : ''}>Fechada</option>
+                </select>
+              </div>
+              <div class="full err-line" id="vErr"></div>
+            </div>
+          </div>
+          <div class="modal-foot">
+            <button class="btn" id="cancelVaga">Cancelar</button>
+            <button class="btn primary" id="salvarVaga">Salvar</button>
+          </div>`;
+        mostrarModal();
+        document.getElementById('fechaModal').onclick = fecharModal;
+        document.getElementById('cancelVaga').onclick = fecharModal;
+        document.getElementById('salvarVaga').onclick = () => salvarVaga(id);
+      }
+      function salvarVaga(id) {
+        const nome = document.getElementById('vNome').value.trim();
+        const area = document.getElementById('vArea').value.trim();
+        const abertura = parseData(document.getElementById('vAbertura').value);
+        const meta_dias = parseInt(document.getElementById('vMeta').value, 10) || 30;
+        const situacao = document.getElementById('vSit').value;
+        const err = document.getElementById('vErr');
+        err.textContent = '';
+        if (!nome) { err.textContent = 'Informe o nome da vaga.'; return; }
+        if (!abertura) { err.textContent = 'Informe uma data de abertura válida.'; return; }
+        if (id) {
+          const v = dadosAtivos().vagas.find((x) => x.id === id);
+          Object.assign(v, { nome, area, abertura, meta_dias, situacao });
+        } else {
+          dadosAtivos().vagas.push({ id: 'v' + Date.now().toString(36), nome, area, abertura, meta_dias, situacao });
+        }
+        salvarMeusDados();
+        fecharModal(); render();
+      }
+      function excluirVaga(id) {
+        const v = dadosAtivos().vagas.find((x) => x.id === id);
+        const cands = dadosAtivos().candidaturas.filter((c) => c.vaga_id === id);
+        if (!confirm(`Excluir a vaga "${v.nome}"? ${cands.length ? `Há ${cands.length} candidatura(s) vinculada(s), que também serão removidas.` : ''}`)) return;
+        dadosAtivos().vagas = dadosAtivos().vagas.filter((x) => x.id !== id);
+        dadosAtivos().candidaturas = dadosAtivos().candidaturas.filter((c) => c.vaga_id !== id);
+        salvarMeusDados();
+        render();
+      }
+
+      /* ===================================================================
+       *  Aba Candidaturas
+       * =================================================================== */
+      function renderCandidaturas(main) {
+        const vagas = dadosAtivos().vagas;
+        if (!vagas.length) {
+          main.innerHTML = `<div class="panel" style="margin-top:18px;text-align:center;padding:34px">
+            <h3>Você precisa cadastrar uma vaga primeiro</h3>
+            <p class="small-muted" style="margin:8px 0 14px">Vá na aba Vagas e crie uma vaga para depois adicionar candidaturas.</p>
+            <button class="btn primary" onclick="state.tab='vagas';marcarAba();render();">Ir para Vagas</button>
+          </div>`;
+          return;
+        }
+        const busca = state._buscaCand || '';
+        const fSit = state._fSit || 'todas';
+        const fVaga = state._fVagaCand || 'todas';
+        let lista = dadosAtivos().candidaturas.slice();
+        if (busca) {
+          const q = busca.toLowerCase();
+          lista = lista.filter((c) => (c.codigo || '').toLowerCase().includes(q) || (c.origem || '').toLowerCase().includes(q));
+        }
+        if (fSit !== 'todas') lista = lista.filter((c) => c.situacao === fSit);
+        if (fVaga !== 'todas') lista = lista.filter((c) => c.vaga_id === fVaga);
+        const vagaNome = (id) => (vagas.find((v) => v.id === id) || {}).nome || '—';
+
+        main.innerHTML = `
+          <div style="display:flex;align-items:center;gap:10px;margin-top:6px;flex-wrap:wrap">
+            <h2 style="margin:0;font-size:18px">Candidaturas</h2>
+            <div class="spacer" style="flex:1"></div>
+            <button class="btn primary" id="novaCand">Nova candidatura</button>
+          </div>
+          <div class="filters" style="margin-top:10px">
+            <input class="field" id="buscaCand" placeholder="Buscar por código ou origem..." value="${esc(busca)}">
+            <select class="field" id="filtroVagaCand">
+              <option value="todas">Todas as vagas</option>
+              ${vagas.map((v) => `<option value="${v.id}" ${fVaga === v.id ? 'selected' : ''}>${esc(v.nome)}</option>`).join('')}
+            </select>
+            <select class="field" id="filtroSitCand">
+              <option value="todas">Todas as situações</option>
+              ${SITUACOES.map((s) => `<option value="${s}" ${fSit === s ? 'selected' : ''}>${SITUACAO_LABELS[s]}</option>`).join('')}
+            </select>
+          </div>
+          <div class="panel" style="margin-top:12px">
+            <div class="table-scroll">
+              <table>
+                <thead>
+                  <tr><th>Código</th><th>Vaga</th><th>Origem</th><th>Inscrição</th><th>Etapa atual</th><th>Situação</th><th></th></tr>
+                </thead>
+                <tbody>
+                  ${lista.length === 0 ? `<tr><td colspan="7" style="text-align:center;color:var(--txt-mut);padding:24px">Nenhuma candidatura encontrada.</td></tr>` :
+                    lista.map((c) => `
+                    <tr>
+                      <td>${esc(c.codigo || '—')}</td>
+                      <td>${esc(vagaNome(c.vaga_id))}</td>
+                      <td>${esc(c.origem || '—')}</td>
+                      <td>${br(c.data_inscricao) || '—'}</td>
+                      <td>${ETAPA_LABELS[ETAPAS[etapaAlcancada(c)]]}</td>
+                      <td><span class="pill ${SITUACAO_PILL[c.situacao]}">${SITUACAO_LABELS[c.situacao]}</span></td>
+                      <td style="white-space:nowrap;text-align:right">
+                        <button class="btn sm" data-edit-cand="${c.id}">Editar</button>
+                        <button class="btn sm danger" data-del-cand="${c.id}">Excluir</button>
+                      </td>
+                    </tr>`).join('')}
+                </tbody>
+              </table>
+            </div>
+          </div>
+          <div class="notice"><span class="ic">🔒</span><span>Seus dados ficam só neste navegador. Não são enviados a nenhum servidor. Faça backup com frequência.</span></div>
+          <div class="notice cyan"><span class="ic">💡</span><span>Prefira códigos ou iniciais em vez do nome completo dos candidatos.</span></div>
+        `;
+        const b = document.getElementById('buscaCand');
+        b.oninput = (e) => { state._buscaCand = e.target.value; render(); };
+        document.getElementById('filtroVagaCand').onchange = (e) => { state._fVagaCand = e.target.value; render(); };
+        document.getElementById('filtroSitCand').onchange = (e) => { state._fSit = e.target.value; render(); };
+        document.getElementById('novaCand').onclick = () => abrirModalCand();
+        main.querySelectorAll('[data-edit-cand]').forEach((btn) => btn.onclick = () => abrirModalCand(btn.dataset.editCand));
+        main.querySelectorAll('[data-del-cand]').forEach((btn) => btn.onclick = () => excluirCand(btn.dataset.delCand));
+        // restaura foco
+        if (document.activeElement !== b) { b.focus(); b.setSelectionRange(b.value.length, b.value.length); }
+      }
+
+      function abrirModalCand(id) {
+        const vagas = dadosAtivos().vagas;
+        const c = id ? dadosAtivos().candidaturas.find((x) => x.id === id) : null;
+        const origens = dadosAtivos().origens;
+        modalBox.innerHTML = `
+          <div class="modal-head"><h3>${c ? 'Editar candidatura' : 'Nova candidatura'}</h3><button class="btn ghost sm" id="fechaModal">✕</button></div>
+          <div class="modal-body">
+            <div class="form-grid">
+              <div>
+                <label class="fl">Código ou iniciais *</label>
+                <input class="field" id="cCod" placeholder="Ex.: JS ou C001 (evite o nome completo)" value="${c ? esc(c.codigo || '') : ''}">
+              </div>
+              <div>
+                <label class="fl">Vaga *</label>
+                <select class="field" id="cVaga">
+                  ${vagas.map((v) => `<option value="${v.id}" ${c && c.vaga_id === v.id ? 'selected' : ''}>${esc(v.nome)}</option>`).join('')}
+                </select>
+              </div>
+              <div>
+                <label class="fl">Origem *</label>
+                <div style="display:flex;gap:6px">
+                  <select class="field" id="cOrigem" style="flex:1">
+                    ${origens.map((o) => `<option value="${esc(o)}" ${c && c.origem === o ? 'selected' : ''}>${esc(o)}</option>`).join('')}
+                  </select>
+                  <button class="btn sm" id="addOrigem" title="Adicionar outra origem">+</button>
+                </div>
+              </div>
+              <div>
+                <label class="fl">Data de inscrição *</label>
+                <input class="field" type="date" id="cInsc" value="${c ? c.data_inscricao : iso(new Date('2026-10-29'))}">
+              </div>
+              <div class="full" style="margin-top:4px"><strong class="small-muted">Datas de entrada em cada etapa (deixe em branco se não chegou)</strong></div>
+              ${ETAPA_DATAS.map((e) => `
+                <div>
+                  <label class="fl">${ETAPA_LABELS[e]}</label>
+                  <input class="field" type="date" id="c_${e}" data-etapa="${e}" value="${c ? c[e] || '' : ''}">
+                </div>`).join('')}
+              <div class="full">
+                <label class="fl">Situação *</label>
+                <select class="field" id="cSit">
+                  ${SITUACOES.map((s) => `<option value="${s}" ${c && c.situacao === s ? 'selected' : ''}>${SITUACAO_LABELS[s]}</option>`).join('')}
+                </select>
+              </div>
+              <div class="full err-line" id="cErr"></div>
+            </div>
+          </div>
+          <div class="modal-foot">
+            <button class="btn" id="cancelCand">Cancelar</button>
+            <button class="btn primary" id="salvarCand">Salvar</button>
+          </div>`;
+        mostrarModal();
+        document.getElementById('fechaModal').onclick = fecharModal;
+        document.getElementById('cancelCand').onclick = fecharModal;
+        document.getElementById('addOrigem').onclick = (ev) => { ev.preventDefault(); addOutraOrigem(); };
+        document.getElementById('salvarCand').onclick = () => salvarCand(id);
+      }
+
+      function addOutraOrigem() {
+        const nova = prompt('Nome da nova origem:');
+        if (!nova) return;
+        const o = nova.trim();
+        if (!o) return;
+        if (!dadosAtivos().origens.includes(o)) {
+          dadosAtivos().origens.push(o);
+          salvarMeusDados();
+        }
+        const sel = document.getElementById('cOrigem');
+        const opt = document.createElement('option');
+        opt.value = o; opt.textContent = o; opt.selected = true;
+        sel.appendChild(opt);
+      }
+
+      function salvarCand(id) {
+        const codigo = document.getElementById('cCod').value.trim();
+        const vaga_id = document.getElementById('cVaga').value;
+        const origem = document.getElementById('cOrigem').value;
+        const data_inscricao = parseData(document.getElementById('cInsc').value);
+        const situacao = document.getElementById('cSit').value;
+        const err = document.getElementById('cErr');
+        err.textContent = '';
+        if (!codigo) { err.textContent = 'Informe um código ou iniciais (evite o nome completo).'; return; }
+        if (!vaga_id) { err.textContent = 'Selecione uma vaga.'; return; }
+        if (!origem) { err.textContent = 'Selecione a origem.'; return; }
+        if (!data_inscricao) { err.textContent = 'Informe a data de inscrição.'; return; }
+
+        // coleta datas das etapas
+        const obj = { codigo, vaga_id, origem, data_inscricao, situacao };
+        ETAPA_DATAS.forEach((e) => { obj[e] = parseData(document.getElementById('c_' + e).value) || ''; });
+
+        // validação: nenhuma etapa pode ter data anterior à anterior
+        const ordem = ['data_inscricao', ...ETAPA_DATAS];
+        let antData = data_inscricao;
+        let antLabel = 'inscrição';
+        for (let i = 1; i < ordem.length; i++) {
+          const k = ordem[i];
+          if (obj[k]) {
+            if (diasEntre(antData, obj[k]) < 0) {
+              err.textContent = `A data de "${ETAPA_LABELS[k]}" não pode ser anterior à de "${antLabel}".`;
+              return;
+            }
+            antData = obj[k]; antLabel = ETAPA_LABELS[k];
+          } else {
+            antData = data_inscricao; antLabel = 'inscrição';
+          }
+        }
+
+        if (id) {
+          const c = dadosAtivos().candidaturas.find((x) => x.id === id);
+          Object.assign(c, obj);
+        } else {
+          obj.id = 'c' + Date.now().toString(36);
+          dadosAtivos().candidaturas.push(obj);
+        }
+        salvarMeusDados();
+        fecharModal(); render();
+      }
+      function excluirCand(id) {
+        if (!confirm('Excluir esta candidatura?')) return;
+        dadosAtivos().candidaturas = dadosAtivos().candidaturas.filter((c) => c.id !== id);
+        salvarMeusDados();
+        render();
+      }
+
+      /* ===================================================================
+       *  Aba Importar e exportar
+       * =================================================================== */
+      function renderIO(main) {
+        main.innerHTML = `
+          <h2 style="margin:6px 0 14px;font-size:18px">Importar e exportar</h2>
+          <div class="io-block">
+            <div class="io-card">
+              <h4>Modelo e importação de planilha</h4>
+              <p>Baixe o modelo, preencha e importe. Aceita vírgula ou ponto e vírgula e datas no formato AAAA-MM-DD ou DD/MM/AAAA.</p>
+              <div class="io-actions">
+                <button class="btn" id="baixarModelo">Baixar modelo (CSV)</button>
+                <label class="btn primary" for="arquivoCSV">Importar CSV</label>
+                <input type="file" id="arquivoCSV" accept=".csv,text/csv" class="hidden">
+              </div>
+              <div id="previaImport" class="preview-tab"></div>
+            </div>
+
+            <div class="io-card">
+              <h4>Exportar candidaturas</h4>
+              <p>Salva todas as suas candidaturas atuais em um arquivo CSV.</p>
+              <div class="io-actions">
+                <button class="btn" id="exportarCSV">Exportar candidaturas (CSV)</button>
+              </div>
+            </div>
+
+            <div class="io-card">
+              <h4>Backup / Restaurar</h4>
+              <p>Baixe todos os seus dados (vagas + candidaturas + origens) em um arquivo JSON ou restaure a partir de um backup.</p>
+              <div class="io-actions">
+                <button class="btn" id="backupJSON">Baixar backup (JSON)</button>
+                <label class="btn" for="restaurarJSON">Restaurar de arquivo</label>
+                <input type="file" id="restaurarJSON" accept=".json,application/json" class="hidden">
+              </div>
+              <div id="restoreMsg" class="err-line"></div>
+            </div>
+
+            <div class="io-card" style="border-color:rgba(239,68,68,0.25)">
+              <h4 style="color:#fca5a5">Apagar todos os meus dados</h4>
+              <p>Remove todas as vagas e candidaturas salvas neste navegador. Não pode ser desfeito.</p>
+              <button class="btn danger" id="apagarTudo">Apagar todos os meus dados</button>
+            </div>
+          </div>
+          <div class="notice"><span class="ic">🔒</span><span>Seus dados ficam só neste navegador. Não são enviados a nenhum servidor. Faça backup com frequência.</span></div>
+          <div class="notice cyan"><span class="ic">💡</span><span>Prefira códigos ou iniciais em vez do nome completo dos candidatos.</span></div>
+        `;
+        document.getElementById('baixarModelo').onclick = baixarModelo;
+        document.getElementById('arquivoCSV').onchange = importarCSV;
+        document.getElementById('exportarCSV').onclick = exportarCSV;
+        document.getElementById('backupJSON').onclick = backupJSON;
+        document.getElementById('restaurarJSON').onchange = restaurarJSON;
+        document.getElementById('apagarTudo').onclick = apagarTudo;
+      }
+
+      // Cabeçalhos do CSV (na ordem solicitada)
+      const CSV_HEADERS = ['vaga', 'origem', 'data_inscricao', 'triagem', 'entrevista_rh', 'entrevista_gestor', 'proposta', 'contratacao', 'situacao', 'codigo'];
+
+      // Converte texto para CSV-cell (entre aspas se tiver vírgula/aspas)
+      function csvCell(v) {
+        if (v == null) v = '';
+        v = String(v);
+        if (v.includes(',') || v.includes(';') || v.includes('"') || v.includes('\n')) {
+          return '"' + v.replace(/"/g, '""') + '"';
+        }
+        return v;
+      }
+      function linhaCSV(arr) { return arr.map(csvCell).join(',') + '\n'; }
+
+      function baixarModelo() {
+        const linhas = [linhaCSV(CSV_HEADERS)];
+        // 2 linhas de exemplo
+        linhas.push(linhaCSV(['Desenvolvedor Backend Pleno', 'LinkedIn', '2026-09-01', '2026-09-03', '2026-09-08', '2026-09-15', '2026-09-22', '2026-09-29', 'contratado', 'C001']));
+        linhas.push(linhaCSV(['Analista de Marketing', 'Indicação', '2026-09-05', '2026-09-07', '', '', '', '', 'em_andamento', 'AM']));
+        const blob = new Blob(['\uFEFF' + linhas.join('')], { type: 'text/csv;charset=utf-8;' });
+        downloadBlob(blob, 'modelo-candidaturas.csv');
+      }
+
+      function exportarCSV() {
+        const vagas = dadosAtivos().vagas;
+        const nomeVaga = (id) => (vagas.find((v) => v.id === id) || {}).nome || '';
+        const linhas = [linhaCSV(CSV_HEADERS)];
+        dadosAtivos().candidaturas.forEach((c) => {
+          linhas.push(linhaCSV([
+            nomeVaga(c.vaga_id), c.origem, c.data_inscricao,
+            c.triagem, c.entrevista_rh, c.entrevista_gestor, c.proposta, c.contratacao,
+            c.situacao, c.codigo,
+          ]));
+        });
+        const blob = new Blob(['\uFEFF' + linhas.join('')], { type: 'text/csv;charset=utf-8;' });
+        downloadBlob(blob, 'candidaturas.csv');
+      }
+
+      function backupJSON() {
+        const data = JSON.stringify(state.dados, null, 2);
+        const blob = new Blob([data], { type: 'application/json' });
+        downloadBlob(blob, 'backup-painel-funil.json');
+      }
+
+      function restaurarJSON(ev) {
+        const file = ev.target.files[0];
+        if (!file) return;
+        const r = new FileReader();
+        r.onload = (e) => {
+          try {
+            const obj = JSON.parse(e.target.result);
+            if (!obj.vagas || !obj.candidaturas) throw new Error('Arquivo inválido');
+            state.dados = {
+              vagas: obj.vagas || [],
+              candidaturas: obj.candidaturas || [],
+              origens: obj.origens && obj.origens.length ? obj.origens : [...ORIGENS_PADRAO],
+            };
+            salvarMeusDados();
+            document.getElementById('restoreMsg').className = 'ok-line';
+            document.getElementById('restoreMsg').textContent = 'Backup restaurado com sucesso.';
+            render();
+          } catch (err) {
+            const el = document.getElementById('restoreMsg');
+            if (el) { el.className = 'err-line'; el.textContent = 'Não foi possível ler o arquivo: ' + err.message; }
+          }
+        };
+        r.readAsText(file);
+        ev.target.value = '';
+      }
+
+      function apagarTudo() {
+        if (!confirm('Isto vai apagar TODAS as suas vagas e candidaturas deste navegador e recarregar os dados fictícios de exemplo. Tem certeza?')) return;
+        if (!confirm('Confirma novamente? Esta ação não pode ser desfeita.')) return;
+        state.dados = gerarDadosDemo();
+        salvarMeusDados();
+        state.tab = 'painel'; marcarAba();
+        render();
+      }
+
+      // Faz download de um Blob
+      function downloadBlob(blob, nome) {
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url; a.download = nome;
+        document.body.appendChild(a); a.click();
+        document.body.removeChild(a);
+        setTimeout(() => URL.revokeObjectURL(url), 1500);
+      }
+
+      /* ---- Importação de CSV com prévia e relatório de erros ---- */
+      function importarCSV(ev) {
+        const file = ev.target.files[0];
+        if (!file) return;
+        const r = new FileReader();
+        r.onload = (e) => {
+          const texto = e.target.result;
+          const resultado = parsearCSV(texto);
+          mostrarPrevia(resultado);
+        };
+        r.readAsText(file);
+        ev.target.value = '';
+      }
+
+      function parsearCSV(texto) {
+        // detecta separador
+        const sep = (texto.split('\n')[0] || '').includes(';') ? ';' : ',';
+        const linhas = quebrarLinhasCSV(texto, sep);
+        if (!linhas.length) return { ok: [], erros: ['Arquivo vazio.'] };
+        const cab = linhas[0].map((c) => c.trim().toLowerCase());
+        // valida cabeçalho
+        const esperado = CSV_HEADERS;
+        const cabFaltando = esperado.filter((h) => !cab.includes(h));
+        if (cabFaltando.length) return { ok: [], erros: ['Cabeçalho faltando: ' + cabFaltando.join(', ')], cabecalho: cab };
+
+        const idx = {};
+        esperado.forEach((h) => { idx[h] = cab.indexOf(h); });
+
+        const ok = [], erros = [];
+        const vagas = dadosAtivos().vagas;
+        // mapeia nomes de vaga -> id (cria se não existir)
+        function vagaIdPorNome(nome) {
+          if (!nome) return null;
+          let v = vagas.find((x) => x.nome.toLowerCase() === nome.toLowerCase());
+          if (!v) {
+            v = { id: 'v' + Date.now().toString(36) + Math.floor(Math.random() * 1000), nome, area: '', abertura: iso(new Date('2026-10-29')), meta_dias: 30, situacao: 'aberta' };
+            vagas.push(v);
+          }
+          return v.id;
+        }
+        // situação aceita variações
+        function normSit(s) {
+          s = (s || '').trim().toLowerCase().replace(/[çá]/g, (m) => ({ 'ç': 'c', 'á': 'a' }[m]));
+          if (['contratado', 'contratada', 'contratados', 'contratadas'].includes(s)) return 'contratado';
+          if (['reprovado', 'reprovada', 'reprovados', 'reprovadas'].includes(s)) return 'reprovado';
+          if (['desistiu', 'desistencia', 'desistência', 'desistente'].includes(s)) return 'desistiu';
+          if (['em_andamento', 'em andamento', 'andamento', 'em progresso', 'em processo'].includes(s)) return 'em_andamento';
+          return null;
+        }
+        for (let i = 1; i < linhas.length; i++) {
+          const col = linhas[i];
+          if (col.length === 1 && col[0] === '') continue; // linha vazia
+          const nLinha = i + 1;
+          const nomeVaga = col[idx.vaga];
+          const vaga_id = vagaIdPorNome(nomeVaga);
+          if (!vaga_id) { erros.push(`Linha ${nLinha}: vaga não informada.`); continue; }
+          const origem = (col[idx.origem] || '').trim();
+          if (!origem) { erros.push(`Linha ${nLinha}: origem não informada.`); continue; }
+          const data_inscricao = parseData(col[idx.data_inscricao] || '');
+          if (!data_inscricao) { erros.push(`Linha ${nLinha}: data de inscrição inválida ("${col[idx.data_inscricao]}").`); continue; }
+          const sit = normSit(col[idx.situacao] || '');
+          if (!sit) { erros.push(`Linha ${nLinha}: situação inválida ("${col[idx.situacao]}"). Use: em_andamento, contratado, reprovado ou desistiu.`); continue; }
+          const obj = {
+            id: 'c' + Date.now().toString(36) + i,
+            codigo: (col[idx.codigo] || '').trim(),
+            vaga_id, origem, data_inscricao, situacao: sit,
+            triagem: parseData(col[idx.triagem] || '') || '',
+            entrevista_rh: parseData(col[idx.entrevista_rh] || '') || '',
+            entrevista_gestor: parseData(col[idx.entrevista_gestor] || '') || '',
+            proposta: parseData(col[idx.proposta] || '') || '',
+            contratacao: parseData(col[idx.contratacao] || '') || '',
+          };
+          // valida ordem das datas
+          const ordem = ['data_inscricao', 'triagem', 'entrevista_rh', 'entrevista_gestor', 'proposta', 'contratacao'];
+          let ant = data_inscricao, antL = 'inscrição';
+          let erroData = null;
+          for (let j = 1; j < ordem.length; j++) {
+            if (obj[ordem[j]]) {
+              if (diasEntre(ant, obj[ordem[j]]) < 0) {
+                erroData = `Linha ${nLinha}: data de "${ETAPA_LABELS[ordem[j]]}" anterior à de "${antL}".`;
+                break;
+              }
+              ant = obj[ordem[j]]; antL = ETAPA_LABELS[ordem[j]];
+            }
+          }
+          if (erroData) { erros.push(erroData); continue; }
+          // adiciona origem à lista se for nova
+          if (!dadosAtivos().origens.includes(origem)) dadosAtivos().origens.push(origem);
+          ok.push(obj);
+        }
+        return { ok, erros };
+      }
+
+      // Quebra texto CSV em linhas e colunas (respeita aspas)
+      function quebrarLinhasCSV(texto, sep) {
+        const out = [];
+        let linha = [], cell = '', inAspas = false;
+        for (let i = 0; i < texto.length; i++) {
+          const ch = texto[i];
+          if (inAspas) {
+            if (ch === '"') {
+              if (texto[i + 1] === '"') { cell += '"'; i++; }
+              else inAspas = false;
+            } else cell += ch;
+          } else {
+            if (ch === '"') inAspas = true;
+            else if (ch === sep) { linha.push(cell); cell = ''; }
+            else if (ch === '\n') { linha.push(cell); out.push(linha); linha = []; cell = ''; }
+            else if (ch === '\r') { /* ignora */ }
+            else cell += ch;
+          }
+        }
+        if (cell !== '' || linha.length) { linha.push(cell); out.push(linha); }
+        return out;
+      }
+
+      function mostrarPrevia(resultado) {
+        const div = document.getElementById('previaImport');
+        if (!div) return;
+        const { ok, erros } = resultado;
+        let html = '';
+        if (erros.length) {
+          html += `<div class="err-line" style="margin-bottom:8px">Linhas com erro (${erros.length}):</div>`;
+          html += `<div class="preview-tab" style="max-height:140px"><ul style="margin:0;padding-left:18px;color:#fca5a5;font-size:12px">`;
+          erros.forEach((e) => { html += `<li>${esc(e)}</li>`; });
+          html += `</ul></div>`;
+        }
+        if (ok.length) {
+          html += `<div class="ok-line" style="margin:8px 0">${ok.length} linha(s) pronta(s) para importar.</div>`;
+          html += `<div class="table-scroll"><table><thead><tr>`;
+          ['Código', 'Vaga', 'Origem', 'Inscrição', 'Situação'].forEach((h) => html += `<th>${h}</th>`);
+          html += `</tr></thead><tbody>`;
+          ok.slice(0, 50).forEach((c) => {
+            const v = (dadosAtivos().vagas.find((x) => x.id === c.vaga_id) || {}).nome || '';
+            html += `<tr><td>${esc(c.codigo)}</td><td>${esc(v)}</td><td>${esc(c.origem)}</td><td>${br(c.data_inscricao)}</td><td>${SITUACAO_LABELS[c.situacao]}</td></tr>`;
+          });
+          html += `</tbody></table></div>`;
+          html += `<div class="io-actions" style="margin-top:10px"><button class="btn primary" id="confirmaImport">Confirmar importação (${ok.length})</button></div>`;
+        } else if (!erros.length) {
+          html += `<div class="small-muted">Nenhuma linha encontrada.</div>`;
+        }
+        div.innerHTML = html;
+        const btn = document.getElementById('confirmaImport');
+        if (btn) btn.onclick = () => {
+          ok.forEach((c) => dadosAtivos().candidaturas.push(c));
+          salvarMeusDados();
+          div.innerHTML = `<div class="ok-line">Importação concluída: ${ok.length} candidatura(s) adicionada(s).</div>`;
+          render();
+        };
+      }
+
+      /* ===================================================================
+       *  Copiar resumo para a área de transferência
+       * =================================================================== */
+      function copiarResumo() {
+        const cands = candidaturasFiltradas();
+        const vagas = dadosAtivos().vagas;
+        const texto = textoResumo(cands, vagas);
+        if (navigator.clipboard && navigator.clipboard.writeText) {
+          navigator.clipboard.writeText(texto).then(() => alert('Resumo copiado! Cole em uma IA e peça uma análise.'))
+            .catch(() => fallbackCopiar(texto));
+        } else fallbackCopiar(texto);
+      }
+      function fallbackCopiar(texto) {
+        const ta = document.createElement('textarea');
+        ta.value = texto; document.body.appendChild(ta); ta.select();
+        try { document.execCommand('copy'); alert('Resumo copiado! Cole em uma IA e peça uma análise.'); }
+        catch (e) { alert('Não foi possível copiar. Selecione e copie manualmente.'); }
+        document.body.removeChild(ta);
+      }
+
+      /* ===================================================================
+       *  Modal helpers
+       * =================================================================== */
+      function mostrarModal() { document.getElementById('modalBack').classList.add('show'); }
+      function fecharModal() { document.getElementById('modalBack').classList.remove('show'); }
+      document.getElementById('modalBack').addEventListener('click', (e) => {
+        if (e.target.id === 'modalBack') fecharModal();
+      });
+      document.addEventListener('keydown', (e) => { if (e.key === 'Escape') fecharModal(); });
+
+      /* ===================================================================
+       *  Escape de HTML para evitar injeção
+       * =================================================================== */
+      function esc(s) {
+        if (s == null) return '';
+        return String(s).replace(/[&<>"']/g, (m) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[m]));
+      }
+
+      /* ===================================================================
+       *  Marcar aba ativa
+       * =================================================================== */
+      function marcarAba() {
+        document.querySelectorAll('#tabs button').forEach((b) => {
+          b.classList.toggle('active', b.dataset.tab === state.tab);
+        });
+      }
+
+      /* ===================================================================
+       *  Eventos fixos (abas, sobre)
+       * =================================================================== */
+      document.querySelectorAll('#tabs button').forEach((b) => {
+        b.onclick = () => { state.tab = b.dataset.tab; marcarAba(); render(); };
+      });
+      document.getElementById('aboutLink').onclick = (e) => {
+        e.preventDefault();
+        modalBox.innerHTML = `
+          <div class="modal-head"><h3>Sobre o Painel do funil de seleção</h3><button class="btn ghost sm" id="fechaModal">✕</button></div>
+          <div class="modal-body">
+            <p style="margin:0 0 10px;font-size:14px;line-height:1.55">Ferramenta de uso real para acompanhar vagas e candidaturas.
+               Tudo roda no seu navegador — sem backend, sem login, sem envio de dados.</p>
+            <p style="margin:0 0 10px;font-size:13.5px;line-height:1.55;color:var(--txt-soft)">O painel já vem com dados fictícios de exemplo para você explorar.
+               Você pode editar, excluir ou importar seus próprios dados a qualquer momento —
+               tudo fica salvo neste navegador.</p>
+            <p style="margin:0;font-size:13px;color:var(--txt-mut)">Gráficos em SVG e CSS puros. Fontes Inter e Space Grotesk.</p>
+          </div>`;
+        mostrarModal();
+        document.getElementById('fechaModal').onclick = fecharModal;
+      };
+
+      /* ===================================================================
+       *  Inicialização
+       * =================================================================== */
+      inicializar();
+    </script>
+  </body>
+</html>
 
