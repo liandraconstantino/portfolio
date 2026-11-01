@@ -111,7 +111,7 @@ const projetos = [
     ferramentas:["Prompt engineering", "Claude", "Bolt", "JavaScript"],
     problema:"Tarefas, notas e agenda ficavam espalhadas em várias ferramentas, e muito tempo se perdia abrindo e conferindo cada uma.",
     como:"Um app próprio com quadro Kanban, notas em pastas e visão da semana. Os dados ficam no navegador de quem usa. O modo demonstração mostra dados fictícios para qualquer pessoa testar.",
-    horas:"Estimativa de 40 minutos diários conferindo cada sistema à mão , o que soma 3 horas e 20 minutos semanais ou cerca de 13 horas mensais, contra apenas 10 minutos por dia no painel único que reduz o tempo de checagem diária e devolve a você quase 20 dias de trabalho por ano.",
+    horas:"Antes: 40 min por dia conferindo cada sistema à mão. 40 min × 5 dias = 3h20 por semana, ou cerca de 13 horas por mês. Depois: 10 min por dia no painel único. 10 min × 5 dias = 50 min por semana, ou cerca de 3h20 por mês. Economia: 30 min por dia, ou 10 horas por mês e 120 horas por ano. Isso devolve cerca de 15 dias de trabalho por ano.",
     link:"plataforma-unica/", embed:true },
   { tema:"Saúde e bem-estar", icone:"🍽️", status:"no ar",
     titulo:"MenuSeguro",
@@ -126,7 +126,7 @@ const projetos = [
     ferramentas:["Prompt engineering", "Make", "Integração de APIs (Google Planilhas, Gmail, Google Drive e Google Docs)"],
     problema:"Contratos de estágio vencem, e as informações de cada pessoa ficam espalhadas em vários lugares.",
     como:"Um fluxo no Make lê a planilha e envia por e-mail a lista dos contratos perto do vencimento. Outro fluxo cria, para cada pessoa, uma pasta no Drive com subpastas de avaliação de desempenho, pesquisa de clima e observações, mais um documento de anotações. Os links voltam para a planilha.",
-    horas:"Em média 15 minutos por pessoa à mão contra 1 minuto com o fluxo. Com 10 pessoas novas por mês (exemplo para facilitar o cálculo), são cerca de 2,3 h/mês e 28 h/ano, que reduz o trabalho operacional e devolve a você mais de 3 dias de trabalho por ano.",
+    horas:"Antes: 15 min por pessoa, à mão. Depois: 1 min por pessoa, com o fluxo. Economia: 14 min por pessoa. Com 10 pessoas novas por mês (exemplo para facilitar o cálculo): 14 × 10 = 140 min, ou cerca de 2,3 horas por mês. Isso dá 28 horas por ano, ou mais de 3 dias de trabalho.",
     link:"central-de-contratos/" },
   { tema:"Gestão de pessoas", icone:"🏅", status:"no ar",
     titulo:"Agente de ranking - Processos seletivos",
@@ -134,7 +134,7 @@ const projetos = [
     ferramentas:["Make","Prompt engineering","Orquestração de agentes (Gemini e Claude)","API do Google AI Studio","Integração de APIs (Google Planilhas)"],
     problema:"Comparar candidatos e escrever a justificativa de cada um toma muito tempo e muda de pessoa para pessoa.",
     como:"A planilha calcula a nota final e o ranking por fórmula, com pesos definidos pela pessoa recrutadora. No Make, um primeiro agente de IA escreve a justificativa de cada candidato e um segundo agente revisa o texto, tirando frases vagas e afirmações sem base. O resultado vai para a planilha, que pode ser enviada em PDF ao gestor. A decisão final é sempre humana.",
-    horas:"Estimativa de 15 minutos por candidato para avaliar cada perfil manualmente, o que soma 2 horas por rodada de 8 candidatos/mês (exemplo para facilitar o cálculo) ou  cerca de 8 horas mensais ou 96 horas por ano, contra apenas 4 minutos mensais para rodar e devolve a você 12 dias de trabalho por ano",
+    horas:"Antes: 15 min por candidato, avaliado à mão. Em uma rodada com 8 candidatos (exemplo para facilitar o cálculo): 15 × 8 = 120 min, ou 2 horas por rodada. Com 1 rodada por semana, são 8 horas por mês. Depois: cerca de 4 min por rodada para rodar o agente, ou cerca de 16 min por mês. Economia: cerca de 7h45 por mês, ou cerca de 93 horas por ano. Isso devolve mais de 11 dias de trabalho.",
     link:"agente-de-ranking/" },
   { tema:"Gestão de pessoas", icone:"📊", status:"no ar",
     titulo:"Painel do funil de seleção",
@@ -142,7 +142,7 @@ const projetos = [
     ferramentas:["Prompt engineering", "Claude", "Bolt", "JavaScript", "Análise de dados"],
     problema:"Sem números, fica difícil saber onde um processo seletivo trava e quais origens trazem melhores contratações.",
     como:"Um painel para cadastar candidaturas, filtros por vaga, origem e período, gráficos do funil, conversão, tempo por etapa e contratações por mês. Os insights são escritos por regras, e um botão copia os números para qualquer pessoa pedir uma análise a uma IA.",
-    horas:"Estimativa de 10 minutos por candidato cadastrando dados e calculando conversões à mão na planilha, o que soma cerca de 8,3 horas mensais para um fluxo com 50 candidaturas/mês (exemplo para facilitar o cálculo), em média 100 horas por ano, contra apenas 3 minutos/mês no painel único que reduz o tempo de análise que totaliza 2,5 horas mensais e devolve a você mais de 8 dias inteiros de trabalho por ano.",
+    horas:"Antes: 10 min por candidato, cadastrando dados e calculando conversões à mão. Com 50 candidaturas por mês (exemplo para facilitar o cálculo): 10 × 50 = 500 min, ou cerca de 8h20 por mês. Depois: 3 min por candidato no painel. 3 × 50 = 150 min, ou 2h30 por mês. Economia: cerca de 5h50 por mês, ou 70 horas por ano. Isso devolve quase 9 dias de trabalho.",
     link:"painel-funil/", embed:true },
   { tema:"Saúde e bem-estar", icone:"🧠", status:"no ar",
     titulo:"Gerador de recursos terapêuticos (TCC)",
@@ -150,7 +150,7 @@ const projetos = [
     ferramentas:["Prompt engineering", "Claude", "Bolt", "JavaScript"],
     problema:"Montar materiais de Terapia Cognitivo-Comportamental para cada público toma tempo e, muitas vezes, falta recurso para imprimir ou comprar.",
     como:"O profissional escolhe o recurso, o público (criança, adolescente, adulto ou pessoa idosa) e o tema. Há registros e técnicas, escalas de acompanhamento, relaxamento guiado, baralhos, jogos e um gerador de dever de casa. Dá para preencher na tela ou imprimir. Nenhum dado de paciente é usado, nada é salvo, e a ferramenta apoia o psicólogo sem substituir o acompanhamento.",
-    horas:"Estimativa de 40 minutos por paciente buscando manualmente materiais de TCC na internet, o que soma 10 horas semanais ou 40 horas mensais, considerando 15 pacientes/semana (exemplo para facilitar o cálculo), contra 2 minutos no gerador único que reduz drasticamente o tempo de busca e devolve 2 meses de trabalho por ano.",
+    horas:"Antes: 40 min por paciente buscando materiais na internet. Com 15 pacientes por semana (exemplo para facilitar o cálculo): 40 × 15 = 600 min, ou 10 horas por semana, ou 40 horas por mês. Depois: 2 min por paciente no gerador. 2 × 15 = 30 min por semana, ou cerca de 2 horas por mês. Economia: cerca de 38 horas por mês, ou 456 horas por ano. Isso devolve mais de 2 meses de trabalho.",
     link:"gerador-tcc/", embed:true }
 ];
 
@@ -195,7 +195,7 @@ function abrir(p){
     <h2>${p.icone} ${p.titulo}</h2>
     <h4>Qual problema resolve</h4><p>${p.problema}</p>
     <h4>Como funciona</h4><p>${p.como}</p>
-    ${p.horas?`<h4>Horas ganhas (medido em cenário simulado)</h4><p>${p.horas}</p>`:""}
+    ${p.horas?`<h4>Tempo ganho (medido em cenário simulado)</h4><p>${p.horas}</p>`:""}
     ${p.embed?`<h4>Teste aqui mesmo</h4><iframe src="${p.link}" title="${p.titulo}"></iframe>
     <a class="botao" href="${p.link}" target="_blank" rel="noopener">Abrir em tela cheia</a>`:""}
     ${(p.link&&!p.embed)?`<a class="botao" href="${p.link}" target="_blank" rel="noopener">Abrir projeto</a>`:""}`;
