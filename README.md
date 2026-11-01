@@ -9,9 +9,9 @@ Página do portfólio: https://liandraconstantino.github.io/portfolio/
 1. Plataforma única de organização (no ar): pasta plataforma-unica
 2. Central de contratos de estágio (no ar): pasta central-de-contratos
 3. MenuSeguro (no ar): https://liandraconstantino.github.io/menuseguro/
-4. Agente de entrevista e ranking: em breve
-5. Gerador de recursos terapêuticos (TCC): em breve
-6. Onboarding e jornada dos 90 dias: em breve
+4. Agente de entrevista e ranking: (no ar): pasta agente-de-ranking
+5. Gerador de recursos terapêuticos (TCC): (no ar): pasta gerador-tcc
+6. Painel Funil: (no ar): pasta painel-funil
 
 ## Ferramentas em que estou aprofundando
 Make (automação) · Bolt (vibe coding) · Claude (agentes e prompts) · APIs do Google · Git/GitHub
