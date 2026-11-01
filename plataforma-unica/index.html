@@ -561,9 +561,11 @@
 
 <script>
   // Chaves usadas no localStorage: uma para os dados reais, outra para a demonstração
+  // "v2" na chave da demonstração força a regeração dos dados com prazos de 2027,
+  // mesmo para quem já abriu a demonstração antes com prazos antigos.
   const CHAVE_DADOS = {
     real: 'minhaPlataforma.dados.real',
-    demo: 'minhaPlataforma.dados.demo'
+    demo: 'minhaPlataforma.dados.demo.v3'
   };
   const CHAVE_MODO = 'minhaPlataforma.modo';
 
@@ -711,14 +713,13 @@
     };
   }
 
-  // Dados fictícios de uma rotina de recrutamento e faculdade
+  // Dados fictícios de uma rotina de recrutamento e faculdade.
+  // Prazos fixos em 2027 para a demonstração nunca ficar com cartões atrasados.
   function criarDadosDemo() {
-    const hoje = new Date();
-    const emDias = (n) => paraDataISO(somarDias(hoje, n));
     const pastaRecrutamento = gerarId();
     const pastaFaculdade = gerarId();
-    const cartao = (titulo, descricao, dias, prioridade, coluna) => ({
-      id: gerarId(), titulo, descricao, prazo: emDias(dias), prioridade, coluna
+    const cartao = (titulo, descricao, prazo, prioridade, coluna) => ({
+      id: gerarId(), titulo, descricao, prazo, prioridade, coluna
     });
     const nota = (titulo, conteudo, pastaId) => ({
       id: gerarId(), titulo, conteudo, pastaId, atualizadoEm: Date.now()
@@ -730,17 +731,17 @@
         { id: pastaFaculdade, nome: 'Faculdade' }
       ],
       cartoes: [
-        cartao('Enviar currículo para a Empresa Alfa', 'Adaptar o currículo para a vaga de analista de dados.', 1, 'alta', 'afazer'),
-        cartao('Preparar entrevista técnica - Beta Tech', 'Revisar SQL básico e estudar três casos de sistemas.', 2, 'alta', 'fazendo'),
-        cartao('Entrevista de RH - Gama Serviços', 'Levar dúvidas sobre o plano de carreira.', 3, 'alta', 'afazer'),
-        cartao('Revisar portfólio online', 'Incluir dois projetos novos com descrição curta.', 4, 'media', 'afazer'),
-        cartao('Simulado de inglês para entrevistas', 'Praticar apresentação pessoal em inglês.', 6, 'baixa', 'afazer'),
-        cartao('Prova de Cálculo II', 'Capítulos 4 a 6 e lista de exercícios.', 5, 'alta', 'fazendo'),
-        cartao('Trabalho em grupo de Engenharia de Software', 'Entregar o diagrama de casos de uso.', 7, 'media', 'afazer'),
-        cartao('Estudar Estruturas de Dados', 'Listas encadeadas e árvores binárias.', 0, 'media', 'fazendo'),
-        cartao('Entregar relatório de Física Experimental', 'Relatório do experimento do pêndulo.', -2, 'alta', 'afazer'),
-        cartao('Responder e-mail da vaga Delta', 'Confirmar disponibilidade para a próxima etapa.', -1, 'baixa', 'feito'),
-        cartao('Atualizar perfil no LinkedIn', 'Incluir as certificações do semestre.', -3, 'media', 'feito')
+        cartao('Enviar currículo para a Empresa Alfa', 'Adaptar o currículo para a vaga de analista de dados.', '2026-11-02', 'alta', 'afazer'),
+        cartao('Preparar entrevista técnica - Beta Tech', 'Revisar SQL básico e estudar três casos de sistemas.', '2027-02-12', 'alta', 'fazendo'),
+        cartao('Entrevista de RH - Gama Serviços', 'Levar dúvidas sobre o plano de carreira.', '2027-02-15', 'alta', 'afazer'),
+        cartao('Revisar portfólio online', 'Incluir dois projetos novos com descrição curta.', '2027-02-18', 'media', 'afazer'),
+        cartao('Simulado de inglês para entrevistas', 'Praticar apresentação pessoal em inglês.', '2027-02-24', 'baixa', 'afazer'),
+        cartao('Prova de Cálculo II', 'Capítulos 4 a 6 e lista de exercícios.', '2027-02-20', 'alta', 'fazendo'),
+        cartao('Trabalho em grupo de Engenharia de Software', 'Entregar o diagrama de casos de uso.', '2027-03-02', 'media', 'afazer'),
+        cartao('Estudar Estruturas de Dados', 'Listas encadeadas e árvores binárias.', '2027-02-08', 'media', 'fazendo'),
+        cartao('Entregar relatório de Física Experimental', 'Relatório do experimento do pêndulo.', '2026-10-30', 'alta', 'afazer'),
+        cartao('Responder e-mail da vaga Delta', 'Confirmar disponibilidade para a próxima etapa.', '2027-01-28', 'baixa', 'feito'),
+        cartao('Atualizar perfil no LinkedIn', 'Incluir as certificações do semestre.', '2027-01-25', 'media', 'feito')
       ],
       notas: [
         nota('Roteiro para entrevista técnica', '1. Apresentação (2 min)\n2. Projetos recentes\n3. Perguntas sobre a empresa', pastaRecrutamento),
